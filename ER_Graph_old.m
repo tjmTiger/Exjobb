@@ -1,4 +1,4 @@
-function [Gg,n,m] = ER_Graph(n,p,s,seed,format,opt) % cleaned up version
+function [Gg,n,m] = ER_Graph_old(n,p,s,seed,format,opt) % original version with some extra comments
 %    Description:
 %        this function create Erdos-Renyi random Graph*
 %        *This code only generate approximately Erdos-Renyi Random Graph. 
@@ -45,14 +45,7 @@ end
 
 Ag = full(G); % Note: converts to normal matrix
 
-figure(1)
-plot(digraph(Ag))
-
-[bin, binsize] = conncomp(graph(sparse(abs(Ag))));
-n_comp = length(binsize);
-ind_comp = bin;
-
-for i = 1:size(Ag,1) % Makes Ag directional
+for i = 1:size(Ag,1) % makes Ag directional
     for j = i+1 : size(Ag,1)
         if Ag(i,j) ~= 0
             if rand >= 0.5
@@ -64,15 +57,32 @@ for i = 1:size(Ag,1) % Makes Ag directional
     end
 end
 
+A_undir = Ag+Ag'; % makes A_undir undirectional (symetric)
+
+[bin, binsize] = conncomp(graph(sparse(abs(A_undir))));
+n_comp = length(binsize);
+ind_comp = bin;
+
 if n_comp > 1
-    for i = 1:n_comp % Make array of graphs in out graph
+%     s = sprintf('NB: undirected graph has %g connected components \n',n_comp);
+%     disp(s);
+    for i = 1:n_comp
+        A_undir_com{i} = A_undir(ind_comp==i,ind_comp==i);
+        % get the corresponding comp in the direct graph
         A_dir_com{i} = Ag(ind_comp==i,ind_comp==i);
+%         s = sprintf('%g-th subgraph:   %g edges,  %g nodes \n',i, nnz(A_undir_com{i})/2, size(A_undir_com{i},1));
+%         disp(s);
     end
 else
+    A_undir_com{1} = A_undir;
     A_dir_com{1} = Ag;
 end
 
-[~,ind_sort_com] = sort(binsize,'descend'); 
+for i = 1:numel(A_undir_com)
+    size_com(i) = size(A_undir_com{i},1);
+end
+
+[~,ind_sort_com] = sort(size_com,'descend'); 
 
 Agg = A_dir_com{ind_sort_com(1)};% Get largest graph according to ind_sort_com created earlier
 n = size(Agg,1);
