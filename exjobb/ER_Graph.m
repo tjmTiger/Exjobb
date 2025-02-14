@@ -52,18 +52,6 @@ plot(digraph(Ag))
 n_comp = length(binsize);
 ind_comp = bin;
 
-for i = 1:size(Ag,1) % Makes Ag directional
-    for j = i+1 : size(Ag,1)
-        if Ag(i,j) ~= 0
-            if rand >= 0.5
-                Ag(i,j) = 0;
-            else
-                Ag(j,i) = 0;
-            end
-        end
-    end
-end
-
 if n_comp > 1
     for i = 1:n_comp % Make array of graphs in out graph
         A_dir_com{i} = Ag(ind_comp==i,ind_comp==i);
@@ -76,6 +64,18 @@ end
 
 Agg = A_dir_com{ind_sort_com(1)};% Get largest graph according to ind_sort_com created earlier
 n = size(Agg,1);
+
+for i = 1:size(Agg,1) % Makes Ag directional
+    for j = i+1 : size(Agg,1)
+        if Agg(i,j) ~= 0
+            if rand >= 0.5
+                Agg(i,j) = 0;
+            else
+                Agg(j,i) = 0;
+            end
+        end
+    end
+end
 
 Gg = digraph(Agg');
 
