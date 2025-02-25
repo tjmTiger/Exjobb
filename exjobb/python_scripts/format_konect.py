@@ -26,6 +26,16 @@ extract_files()
 path = './Data'
 dir_list = os.listdir(path)
 
+tags_dict = {
+    "Animal network": ["dolphins", "moreno_mac"],
+    "Computer communication network": ["p2p-Gnutella08", "p2p-Gnutella09", "p2p-Gnutella06", "p2p-Gnutella05"],
+    "Interaction network": ["dimacs10-football", "moreno_crime"],
+    "Online communitie": ["librec-filmtrust-trust", "ego-facebook", "petster-hamster-household", "petster-friendships-hamster", "petster-hamster-friend", "petster-hamster", "librec-ciaodvd-trust", "soc-sign-bitcoinalpha", "soc-sign-bitcoinotc"],
+    "Electrical network": ["opsahl-powergrid"],
+    "Traffic network": ["subelj_euroroad", "opsahl-openflights", "opsahl-usairport"],
+    "Social network": ["iceland", "moreno_train", "moreno_highschool", "moreno_innovation", "arenas-jazz", "moreno_oz"],
+             }
+
 data = []
 data_info = []
 
@@ -43,9 +53,14 @@ for files in dir_list:
                 if len(row) < 3: # if unweighted, set all weights to 1
                     row.append(1)
                 this_data.append(row)
+        relevant_tags = []
+        file_name = (file.name).split("out.")[1]
+        for tags in tags_dict:
+            if file_name in tags_dict[tags]:
+                relevant_tags.append(tags)
         try:
             data.append(np.array(this_data, dtype=float))
-            data_info.append({'name': file.name, 'description': info})
+            data_info.append({'name': file_name, 'description': info, 'tags': relevant_tags})
         except:
             print("Error in {}, could not form array".format(this_dir))
 
