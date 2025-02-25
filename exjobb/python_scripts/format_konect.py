@@ -18,7 +18,7 @@ def ToObjectArray(my_array):
         object_array[i] = my_array[i]
     return object_array
 
-path = './RawData'
+path = './konect_RawData'
 dir_list = os.listdir(path)
 
 extract_files()
