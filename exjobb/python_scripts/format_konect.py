@@ -53,14 +53,14 @@ for files in dir_list:
                 if len(row) < 3: # if unweighted, set all weights to 1
                     row.append(1)
                 this_data.append(row)
-        relevant_tags = []
+        relevant_tag = ""
         file_name = (file.name).split("out.")[1]
         for tags in tags_dict:
             if file_name in tags_dict[tags]:
-                relevant_tags.append(tags)
+                relevant_tag = tags
         try:
             data.append(np.array(this_data, dtype=float))
-            data_info.append({'name': file_name, 'description': info, 'tags': relevant_tags})
+            data_info.append({'name': file_name, 'description': info, 'tag': relevant_tag})
         except:
             print("Error in {}, could not form array".format(this_dir))
 
@@ -75,5 +75,6 @@ for graph in data:
 
 obj_arr = ToObjectArray(formated_data)
 obj_arr_info = ToObjectArray(data_info)
-    
+
+# Note: graph saved with columns: in node, out node, weight
 sio.savemat(os.path.join(output_path, 'konect.mat'), mdict={'data': obj_arr, 'info': obj_arr_info})
