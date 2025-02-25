@@ -29,23 +29,23 @@ dir_list = os.listdir(path)
 data = []
 data_info = []
 
-for name in dir_list:
-    data_info.append({'name':name})
-
 for files in dir_list:
     this_path = os.path.join(path, files)
     this_dir = os.listdir(this_path)[0]
+    info = []
     with open(os.path.join(this_path, this_dir), "r") as file: # out.
         this_data = []
         for line in file:
             row = line.split()
-            if row[0] != '%': # ignore matlab comments
+            if row[0] == '%': # matlab comments
+                info.append(line[2:])
+            else:
                 if len(row) < 3: # if unweighted, set all weights to 1
                     row.append(1)
                 this_data.append(row)
-                
         try:
             data.append(np.array(this_data, dtype=float))
+            data_info.append({'name': file.name, 'description': info})
         except:
             print("Error in {}, could not form array".format(this_dir))
 
