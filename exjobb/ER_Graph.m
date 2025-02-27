@@ -45,9 +45,6 @@ end
 
 Ag = full(G); % Note: converts to normal matrix
 
-figure(1)
-plot(digraph(Ag))
-
 [bin, binsize] = conncomp(graph(sparse(abs(Ag))));
 n_comp = length(binsize);
 ind_comp = bin;

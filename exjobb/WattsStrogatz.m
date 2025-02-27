@@ -23,7 +23,7 @@ for source=1:N
     t(source, switchEdge) = ind(1:nnz(switchEdge));
 end
 
-h = digraph(s,t);
+h = graph(s,t);
 
 Aa = full(adjacency(h));
 
