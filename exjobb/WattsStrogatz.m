@@ -27,7 +27,7 @@ h = graph(s,t);
 
 Aa = full(adjacency(h));
 
-for i = 1:size(Aa,1)
+for i = 1:size(Aa,1) % make graph directional
     for j = i+1 : size(Aa,1)
         if Aa(i,j) ~= 0
             if rand >= 0.5
