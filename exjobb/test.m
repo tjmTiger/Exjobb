@@ -1,8 +1,8 @@
 clear all;
 clear;
 clc;
-% G = ER_Graph(100, 0.1, 0, 100);
-G = WattsStrogatz(20, 4, 0);
+G = ER_Graph(10, 0.5, 0);
+% G = WattsStrogatz(10, 2, 0);
 % G = SFG_dir(100, 0.3, 0.5, 0.2, 0);
 
 figure(1);

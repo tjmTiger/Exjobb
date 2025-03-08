@@ -23,22 +23,24 @@ for source=1:N
     t(source, switchEdge) = ind(1:nnz(switchEdge));
 end
 
-h = graph(s,t);
+h = digraph(s,t);
 
-Aa = full(adjacency(h));
+% h = graph(s,t);
 
-for i = 1:size(Aa,1) % make graph directional
-    for j = i+1 : size(Aa,1)
-        if Aa(i,j) ~= 0
-            if rand >= 0.5
-                Aa(i,j) = 0;
-            else
-                Aa(j,i) = 0;
-            end
-        end
-    end
-end
-h = digraph(Aa');
+% Aa = full(adjacency(h));
+% 
+% for i = 1:size(Aa,1) % make graph directional
+%     for j = i+1 : size(Aa,1)
+%         if Aa(i,j) ~= 0
+%             if rand >= 0.5
+%                 Aa(i,j) = 0;
+%             else
+%                 Aa(j,i) = 0;
+%             end
+%         end
+%     end
+% end
+% h = digraph(Aa');
 
 
 end
