@@ -2,12 +2,12 @@ clear all;
 clear;
 clc;
 % G = ER_Graph(100, 0.1, 0, 100);
-% G = WattsStrogatz(20, 4, 0);
+G = WattsStrogatz(20, 4, 0);
 % G = SFG_dir(100, 0.3, 0.5, 0.2, 0);
 
-% figure(1);
-% plot(G)
-% plot(G,'NodeColor','k','Layout','circle');
+figure(1);
+%plot(G)
+plot(G,'NodeColor','k','Layout','circle');
 
 % load 'konect.mat';
 % for i = 1:10

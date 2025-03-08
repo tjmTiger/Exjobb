@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%% Best constrained optimal V_in-V_out pair when conditioning for V_in or for V_out %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% DDOF
 % Given the list of optimal lists of pairs V_in-V_out provided by
 % constrained_optimal_solution.m find min C = card(V_in)+card(V_out), conditioning over V_in or over V_out
 % Inputs: [V_in_opt cell, V_out cell, C1 cost function] once constrain

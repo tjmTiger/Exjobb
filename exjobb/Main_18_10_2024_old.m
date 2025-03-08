@@ -235,7 +235,6 @@ V_out = submincutDDSF_final2(G,D,T,'V_out');
 [V_out_cell4, G_cell4] = mincutDDSF_all(G,D,T,[V_out_cell, V_out_cell2, V_out_cell3],'V_out','all',G_cell3{end});
 [V_out_cell5, G_cell5] = mincutDDSF_all(G,D,T,[V_out_cell, V_out_cell2, V_out_cell3, V_out_cell4],'V_out','all',G_cell4{end});
 
-
 COM = compensator_ddp(G, D, T); % Note: correct usage on row 207
 
 a = 1;
