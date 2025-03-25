@@ -1,4 +1,4 @@
-function [cost, n_targ, n_dist] = decouple(G, fract_targ, fract_dist)
+function [cost, n_dist, n_targ] = decouple(G, magnitude_disturbance)
 
 % cleaned up
 set(groot,'defaultAxesTickLabelInterpreter','latex');
@@ -7,11 +7,11 @@ set(groot,'defaultLegendInterpreter','latex');
 
 N = numnodes(G);
 
-% fract_targ = 0.001;
-% fract_dist = 0.001;
+fract_targ = 0.001;
+fract_dist = 0.001;
 T = [];
 
-while isempty(T) % add targets and disturbances
+while isempty(T) % add targets and disturbances?
     n_dist = ceil(fract_dist*N);
     n_targ = ceil(fract_targ*N);
     D = sort(randsample(N, n_dist));

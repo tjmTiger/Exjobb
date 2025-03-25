@@ -75,5 +75,4 @@ for i = 1:size(Agg,1) % Makes Ag directional
 end
 
 Gg = digraph(Agg');
-
 end

@@ -2,54 +2,47 @@ clear;
 close all;
 clc;
 
-figure();
-hold on;
-
-n_graphs = 10;
+n_graphs = 2;
 fract_targ = 0.001;
-fract_dist = 0.05;
+fract_dist = 0.001;
 
 % Size: [50, 10 000]
-results = zeros(1, n_graphs);
+results = zeros(n_graphs, 1);
 for i = 1:n_graphs
-    [G, n, m] = ER_Graph(100, 0.5, 0);
+    G = ER_Graph(100, 0.5, 0);
     results(i) = decouple(G, fract_targ, fract_dist);
 end
 
-display_boxchart(results, "Erdos Renyi")
+display(results)
 
-results = [];
-load 'netzschleuder.mat';
-for j = 90:94
-    G = format_netz(data{j});
-    results(1, end+1) = decouple(G, fract_targ, fract_dist);
-end
+% results = [];
+% load 'netzschleuder.mat';
+% for j = 1:94
+%     G = format_netz(data{j});
+%     results(end+1) = decouple(G);
+% end
 
-display_boxchart(results, "Real graphs")
 
-hold off;
+
+
+
+
+
+
+
+
 
 %-------------%
 %  Functions  %
 %-------------%
 
-function display_boxchart(results, test_name)
-    boxchart(categorical(results, 1:1, test_name), results)
-    xlabel('Test')
-    ylabel('Result')
-end
-
-function display_bar(results)
-    figure();
-    hold on;
+function display(results)
     elements = unique(results);
-    for x = elements
-        y = sum(ismember(results, x));
-        bar(x, y, 'FaceColor',[0.3 0.6 0.6],'EdgeColor',[0 0 0],'LineWidth',0.5)
+    for i = elements
+        sum(inmember)
     end
-    hold off;
-    xlabel("Cost");
-    ylabel("Num. of graphs")
+    figure();
+    plot(results)
 end
 
 function G = format_konect(G)
