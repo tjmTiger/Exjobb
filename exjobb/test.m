@@ -1,13 +1,13 @@
 clear all;
 clear;
 clc;
-G = ER_Graph(10, 0.5, 0);
-% G = WattsStrogatz(10, 2, 0);
+% G = ER_Graph(10, 0.5, 0);
+% G = WattsStrogatz_old(10, 2, 0.1);
 % G = SFG_dir(100, 0.3, 0.5, 0.2, 0);
 
-figure(1);
+% figure(1);
 %plot(G)
-plot(G,'NodeColor','k','Layout','circle');
+% plot(G,'NodeColor','k','Layout','circle');
 
 % load 'konect.mat';
 % for i = 1:10
@@ -15,13 +15,13 @@ plot(G,'NodeColor','k','Layout','circle');
 %     figure(i);
 %     plot(G)
 % end
-% 
-% load 'netzschleuder.mat';
-% for j = 1:10
-%     G = format_netz(data{j});
-%     figure(i+j);
-%     plot(G)
-% end
+
+load 'netzschleuder.mat';
+for j = 1:10
+    G = format_netz(data{j});
+    figure(j);
+    plot(G)
+end
 
 
 %-------------%

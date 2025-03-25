@@ -28,12 +28,12 @@ function varargout = mincutDDSF_all(G,D,T,V_in_out,varargin)
     if nargin > 4
         if strcmp(varargin{1}, 'V_in')
             a = 1; % for switch
-            disp('Search for min V_in');
-            disp('')
+            %disp('Search for min V_in');
+            %disp('')
         elseif strcmp(varargin{1}, 'V_out')
             a = 2;
-            disp('Search for min V_out');
-            disp('')
+            %disp('Search for min V_out');
+            %disp('')
         else
             disp('Varargin typing error: choose ''V_in'' or ''V_out'' as first additional input and ''all'' or ''partial'' as second additional input');
             return
@@ -41,12 +41,12 @@ function varargout = mincutDDSF_all(G,D,T,V_in_out,varargin)
         if nargin > 5
             if strcmp(varargin{2}, 'all')
                 b = 2; % for switch
-                disp('Search for ''all'' optimal solutions');
-                disp('')
+                %disp('Search for ''all'' optimal solutions');
+                %disp('')
             elseif strcmp(varargin{2}, 'partial')
                 b = 1;
-                disp('Search for some optimal solutions');
-                disp('')
+                %disp('Search for some optimal solutions');
+                %disp('')
             else
                 disp('Varargin typing error: choose ''V_in'' or ''V_out'' as first additional input and ''all'' or ''partial'' as second additional input');
                 return
@@ -176,7 +176,7 @@ function varargout = mincutDDSF_all(G,D,T,V_in_out,varargin)
                         disp('V_out is the unique optimal solution provided by the algorithm')
                         disp('')
                     end
-                    return
+                    break % maybe return?
                 end
     
                 if ~ismember(2*n+1,cs) % make sure that cs set is from the disturbance side
@@ -363,7 +363,7 @@ function varargout = mincutDDSF_all(G,D,T,V_in_out,varargin)
                     maxFlow = maxFlow_n;
 %                     varargout{1} = [];
 %                     varargout{2} = [];
-                    break
+                    return
                 end
             end
 

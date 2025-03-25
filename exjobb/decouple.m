@@ -1,0 +1,54 @@
+function [cost] = decouple(G)
+
+% cleaned up
+set(groot,'defaultAxesTickLabelInterpreter','latex');
+set(groot,'defaulttextinterpreter','latex');
+set(groot,'defaultLegendInterpreter','latex');
+
+N = numnodes(G);
+
+fract_targ = 0.001;
+fract_dist = 0.001;
+T = [];
+
+while isempty(T) % add targets and disturbances?
+    n_dist = ceil(fract_dist*N);
+    n_targ = ceil(fract_targ*N);
+    D = sort(randsample(N, n_dist));
+    T = sort(setdiff(randsample(N, n_targ),D));
+end
+
+n_dist = length(D);
+n_targ = length(T);
+
+V_in_initial = []; % control on targets if those are directly connected to a disturbance
+population = setdiff(setdiff(1:N, T), D);
+
+for i = 1:n_targ % decouple targets from disturbances and other targets
+    a = 0;
+    [sout, ~] = findedge(G,inedges(G,T(i))); % find nodes with outgoing edges onto targets§
+    if ~isempty(intersect(sout,D)) % check if those are disturbance nodes
+        DT = intersect(sout,D);
+        L1 = length(DT);
+        V_in_initial = [V_in_initial, T(i)]; % if yes put the control on the target nodes
+        G = rmedge(G,DT,T(i)); % remove incoming edges of targets
+    end
+    if a
+        [sout_2, ~] = findedge(G,inedges(G,T(i)));
+        if isempty(sout_2)
+            s = randsample(population, min(length(population),ceil(L1)));
+            G = addedge(G, s, T(i), 1);
+        end
+    end
+end
+
+A = full(adjacency(G))';
+% A = A.*randn(N,N); % random weights
+G = digraph(A');
+
+V_out = submincutDDSF_final2(G,D,T,'V_out');
+V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
+V_in = submincutDDSF_final2(G,D,T,'V_in');
+V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
+
+cost = numel(V_in) + numel(V_out);
