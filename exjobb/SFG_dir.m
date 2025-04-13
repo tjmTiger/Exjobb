@@ -56,13 +56,23 @@ delta_out=1;
 seed=false;
 
 
-if isempty(create_using)
-    % start with 10-cycle
-    G = speye(9);
-    G = [[sparse(1,9) 1];[G sparse(9,1)]];
-else
-    % keep existing graph
-    G = create_using;
+% if isempty(create_using)
+%     % start with 10-cycle
+%     G = speye(9);
+%     G = [[sparse(1,9) 1];[G sparse(9,1)]];
+% else
+%     % keep existing graph
+%     G = create_using;
+% end
+
+switch nargin
+    case 4
+        G = speye(9);
+        G = [[sparse(1,9) 1];[G sparse(9,1)]];
+    case 5
+        G = create_using;
+    otherwise
+        disp('input argument invalid')
 end
 
 if alpha <= 0
@@ -119,9 +129,8 @@ for i = 1:n
     G(i,i) = 0;
 end
 
+G = digraph(G); % matrix form
 end
-    
-    
 
 function i = choose_node(G,distribution,delta)
     cumsum_ = cumsum(distribution+delta);

@@ -5,52 +5,74 @@ clc;
 figure();
 hold on;
 
-n_graphs = 10;
+n_graphs = 30;
 fract_targ = 0.001;
 fract_dist = 0.05;
 
 % Size: [50, 10 000]
 results = zeros(1, n_graphs);
 for i = 1:n_graphs
-    [G, n, m] = ER_Graph(100, 0.5, 0);
+    G = ER_Graph(50, 0.5, 0);
     results(i) = decouple(G, fract_targ, fract_dist);
 end
+add2boxchart(results, "Erdos Renyi")
 
-display_boxchart(results, "Erdos Renyi")
+results = zeros(1, n_graphs);
+for i = 1:n_graphs
+    G = WattsStrogatz(50, 2, 0.2);
+    results(i) = decouple(G, fract_targ, fract_dist);
+end
+add2boxchart(results, "Watts Strogatz")
+
+results = zeros(1, n_graphs);
+for i = 1:n_graphs
+    G = SFG_dir(50, 0.2, 0.2, 0.6);
+    results(i) = decouple(G, fract_targ, fract_dist);
+end
+add2boxchart(results, "SFG")
 
 results = [];
 load 'netzschleuder.mat';
-for j = 90:94
+tag = "None";
+for j = 70:94
+    new_tag = convertCharsToStrings(info{j}.tag);
+    disp(new_tag)
+    if ~strcmp(new_tag, tag) && ~strcmp(tag, "None")
+        add2boxchart(results, tag);
+        results = [];
+    end
+    tag = new_tag;
     G = format_netz(data{j});
     results(1, end+1) = decouple(G, fract_targ, fract_dist);
 end
-
-display_boxchart(results, "Real graphs")
+add2boxchart(results, tag);
 
 hold off;
 
-%-------------%
-%  Functions  %
-%-------------%
+%-----------------------------------------------%
+%                                               %
+%                   Functions                   %
+%                                               %
+%-----------------------------------------------%
 
-function display_boxchart(results, test_name)
-    boxchart(categorical(results, 1:1, test_name), results)
-    xlabel('Test')
-    ylabel('Result')
+function add2boxchart(results, test_name)
+    boxchart(categorical(1:numel(results), 1:numel(results), repmat(test_name, 1, numel(results))), results)
+    xlabel('Tests')
+    ylabel('Results')
 end
 
-function display_bar(results)
-    figure();
-    hold on;
-    elements = unique(results);
-    for x = elements
-        y = sum(ismember(results, x));
-        bar(x, y, 'FaceColor',[0.3 0.6 0.6],'EdgeColor',[0 0 0],'LineWidth',0.5)
-    end
-    hold off;
-    xlabel("Cost");
-    ylabel("Num. of graphs")
-end
+% function add2bar(results)
+%     figure();
+%     hold on;
+%     elements = unique(results);
+%     for x = elements
+%         y = sum(ismember(results, x));
+%         bar(x, y, 'FaceColor',[0.3 0.6 0.6],'EdgeColor',[0 0 0],'LineWidth',0.5)
+%     end
+%     hold off;
+%     xlabel("Cost");
+%     ylabel("Num. of graphs")
+% end
 
 function G = format_konect(G)
     if ~is_directed(G)
