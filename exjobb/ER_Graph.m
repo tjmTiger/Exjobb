@@ -59,6 +59,12 @@ end
 
 [~,ind_sort_com] = sort(binsize,'descend'); 
 
+
+if(numel(A_dir_com)>1)
+    disp("Warning: graph disconnected, largest component was used instead")
+end
+
+
 Agg = A_dir_com{ind_sort_com(1)};% Get largest graph according to ind_sort_com created earlier
 n = size(Agg,1);
 

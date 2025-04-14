@@ -55,6 +55,12 @@ for files in dir_list:
                 this_data.append(row)
         relevant_tag = ""
         file_name = (file.name).split("out.")[1]
+        
+        # format name
+        separator = "_"
+        file_name = list(dict.fromkeys(file_name.rsplit(separator)))
+        file_name = separator.join(file_name)
+        
         for tags in tags_dict:
             if file_name in tags_dict[tags]:
                 relevant_tag = tags

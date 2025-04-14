@@ -1,4 +1,4 @@
-function [cost, n_targ, n_dist] = decouple(G, fract_targ, fract_dist)
+function [cost] = decouple(G, fract_targ, fract_dist)
 
 % cleaned up
 set(groot,'defaultAxesTickLabelInterpreter','latex');
@@ -50,5 +50,11 @@ V_out = submincutDDSF_final2(G,D,T,'V_out');
 V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
 V_in = submincutDDSF_final2(G,D,T,'V_in');
 V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
-
-cost = numel(V_in) + numel(V_out);
+% disp("n_dist = " + n_dist)
+% disp("n_targ = " + n_targ)
+% disp("numebr of V_in = " + numel(V_in))
+% disp("number of V_out = " + numel(V_out))
+% disp("number of V_in + V_out = " + (numel(V_in) + numel(V_out)))
+% disp("-----------------")
+cost = ( numel(V_out)) / ( n_targ + n_dist );
+% cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );

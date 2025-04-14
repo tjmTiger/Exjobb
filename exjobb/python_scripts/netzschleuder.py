@@ -27,11 +27,11 @@ tags_dict = {
     "Economic netowrk": ["fao_trade", "product_space/HS", "product_space/SITC"],
     "Ecological network": ["foodweb_baywet", "foodweb_little_rock", "messal_shale"],
 
-    "Interaction network": ["reality_mining", "football_tsevans", "football", "dom/Strauss_2019d", "dom/Franz_2015a", "dom/Franz_2015e", "dom/Franz_2015d", "dom/Shimoji_2014c", "contact", "kidnappings", "blumenau_drug", "copenhagen/sms", "copenhagen/fb_friends", "copenhagen/calls", "copenhagen/bt"],
+    "Interaction network": ["reality_mining", "football_tsevans", "football", "dom/Strauss_2019d", "dom/Franz_2015a", "dom/Franz_2015e", "dom/Franz_2015d", "dom/Shimoji_2014c", "contact", "kidnappings", "blumenau_drug", "copenhagen/sms", "copenhagen/fb_friends", "copenhagen/calls"], #, "copenhagen/bt"],
 
     "Online communitie": ["revolution"],
-    "Electrical network": [], # power grid, etc.
-    "Scientific computing": [],
+    #"Electrical network": [], # power grid, etc.
+    #"Scientific computing": [],
     "Social network": ["moreno_sociograms/grade_8", "cs_department", "terrorists_911", "train_terrorists", "highschool", "law_firm", "baseball/player-player", "swingers", "student_cooperation", "jazz_collab", "residence_hall", "facebook_friends", "spanish_highschools/1", "spanish_highschools/2", "spanish_highschools/6", "spanish_highschools/11_1", "spanish_highschools/11_2", "spanish_highschools/11_4", "spanish_highschools/11_5", "spanish_highschools/11_6", "spanish_highschools/11_7", "spanish_highschools/11_9", "spanish_highschools/11_10"],
 
     "Traffic network": ["london_transport", "eu_airlines"], # roads, airports etc.
