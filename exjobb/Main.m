@@ -2,19 +2,65 @@ clear;
 close all;
 clc;
 
+n_graphs = 100; % number of graphs
+% fract_targ = 0.1;
+% fract_dist = 0.1;
+
+%-----------------------------------------------%
+%                                               %
+%                  Erdos Renyi                  %
+%                                               %
+%-----------------------------------------------%
+
+% Distrubance and target node fractions
+
+results_all = [];
+results_time_all = [];
+fract_T_D = 0.05:0.05:0.95;
+for j = fract_T_D
+    fract_targ = j;
+    fract_dist = j;
+    results = zeros(1, n_graphs);
+    results_time = zeros(1, n_graphs);
+    for i = 1:n_graphs
+        n = 100;
+        p = 2*(log10(n)/n);
+        G = ER_Graph(n, p, 1, i);
+        t_start = tic;
+        results(i) = decouple(G, fract_targ, fract_dist);
+        results_time(i) = toc(t_start);
+    end
+    results_all(end+1,:) = results;
+    results_time_all(end+1,:) = results_time;
+end
+
 figure();
 hold on;
 
-n_graphs = 100; % number of graphs
+for r = 1:size(results_all, 1)
+    add2boxchart(results_all(r,:), "frac: " + fract_T_D(r), "Erdos Renyi, T & D fractions")
+end
 
-fract_targ = 0.1;
-fract_dist = 0.1;
-% results = zeros(1, n_graphs);
-% for i = 1:n_graphs
-%     G = ER_Graph(50, 0.5, 0);
-%     results(i) = decouple(G, fract_targ, fract_dist);
-% end
-% add2boxchart(results, "Erdos Renyi")
+hold off;
+
+figure();
+hold on;
+
+for r = 1:size(results_time_all, 1)
+    add2boxchart(results_time_all(r,:), "frac: " + fract_T_D(r), "Erdos Renyi, T & D fractions, elapsed time", "time [s]")
+end
+
+hold off;
+
+% Size
+
+% Edge probability
+
+%-----------------------------------------------%
+%                                               %
+%                 Watts Strogatz                %
+%                                               %
+%-----------------------------------------------%
 %
 % results = zeros(1, n_graphs);
 % for i = 1:n_graphs
@@ -23,47 +69,66 @@ fract_dist = 0.1;
 % end
 % add2boxchart(results, "Watts Strogatz")
 % 
+%-----------------------------------------------%
+%                                               %
+%                   Scale Free                  %
+%                                               %
+%-----------------------------------------------%
+%
 % results = zeros(1, n_graphs);
 % for i = 1:n_graphs
 %     G = SFG_dir(50, 0.2, 0.2, 0.6);
 %     results(i) = decouple(G, fract_targ, fract_dist);
 % end
 % add2boxchart(results, "SFG")
-
+% 
+%-----------------------------------------------%
+%                                               %
+%                  Real Networks                %
+%                                               %
+%-----------------------------------------------%
+%
 % results = [];
 % load 'netzschleuder.mat';
 % tag = "None";
 % for j = 1:numel(info)
 %     new_tag = convertCharsToStrings(info{j}.tag);
-%     disp(new_tag)
 %     if ~strcmp(new_tag, tag) && ~strcmp(tag, "None")
 %         add2boxchart(results, tag);
 %         results = [];
 %     end
 %     tag = new_tag;
 %     G = format_netz(data{j});
-%     results(1, end+1) = decouple(G, fract_targ, fract_dist);
-% end
-% add2boxchart(results, tag);
-
-% results = [];
-% load 'konect.mat';
-% tag = "None";
-% for j = 1:numel(info)
-%     new_tag = convertCharsToStrings(info{j}.tag);
-%     disp(new_tag)
-%     if ~strcmp(new_tag, tag) && ~strcmp(tag, "None")
-%         add2boxchart(results, tag);
-%         results = [];
-%     end
-%     tag = new_tag;
-%     G = format_konect(data{j});
 %     disp(size(G.Nodes));
 %     results(1, end+1) = decouple(G, fract_targ, fract_dist);
 % end
 % add2boxchart(results, tag);
-
-hold off;
+%
+% results = [];
+% load 'konect.mat';
+% tag = "None";s
+% j = 1;
+% while numel(info) >= j
+%     tag  = convertCharsToStrings(info{j}.tag);
+%     disp(tag)
+%     i = 1;
+%     while numel(info) >= i
+%         if tag == convertCharsToStrings(info{i}.tag)
+%             G = format_konect(data{i});
+%             % G = rmedge(G, 1:numnodes(G), 1:numnodes(G)); %     remove self loops
+%             disp(size(G.Nodes));
+%             results(1, end+1) = decouple(G, fract_targ, fract_dist);
+%             data(i) = [];
+%             info(i) = [];
+%         else
+%             i=i+1;
+%         end
+%     end
+%     add2boxchart(results, tag);
+%     results = [];
+%     tag = "None";
+%     j = j+1;
+% end
 
 %-----------------------------------------------%
 %                                               %
@@ -71,11 +136,17 @@ hold off;
 %                                               %
 %-----------------------------------------------%
 
-function add2boxchart(results, test_name)
+function add2boxchart(results, test_name, title_name, ylabel_name)
     boxchart(categorical(1:numel(results), 1:numel(results), repmat(test_name, 1, numel(results))), results)
+    if nargin >= 3
+        title(title_name)
+    end
+    if nargin >= 4
+        ylabel(ylabel_name)
+    else
+        ylabel('Cost')
+    end
     xlabel('Tests')
-    ylabel('Cost')
-    title('title')
 end
 
 % function add2bar(results)

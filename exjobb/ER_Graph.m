@@ -1,4 +1,4 @@
-function [Gg,n,m] = ER_Graph(n,p,s,seed,format,opt) % cleaned up version
+function [Gg,n,m] = ER_Graph(n,p,s,seed) % cleaned up version
 %    Description:
 %        this function create Erdos-Renyi random Graph*
 %        *This code only generate approximately Erdos-Renyi Random Graph. 
@@ -18,23 +18,24 @@ function [Gg,n,m] = ER_Graph(n,p,s,seed,format,opt) % cleaned up version
 %        p : the probability p of the second definition of Erdos-Renyi model.
 %        s : 1 or 0 (if connceted component graph has nn=n or nn <= n)
 %        seed: seed of the function. 
-%        format:
-%        opt:
+
 switch nargin
     case 2
-        seed = 0;
         format = 1;
         verbose = false;
     case 3
+        seed = 0;
+        rng(seed);
         format = 1;
         verbose = false;
     case 4
+        rng(seed)
+        format = 1;
         verbose = false;
     otherwise
         disp('input argument invalid')
     
 end
-% rng(seed);
 G = spones(triu(sprand(n,n,p),1)); % Note: random upper triangle of a binary (sparse) matrix (with density p). middle and lower triangles are zeros
 if nargout>2
     m = nnz(G); % Note: number of non zero elements
@@ -60,13 +61,12 @@ end
 [~,ind_sort_com] = sort(binsize,'descend'); 
 
 
-if(numel(A_dir_com)>1)
-    disp("Warning: graph disconnected, largest component was used instead")
-end
-
-
 Agg = A_dir_com{ind_sort_com(1)};% Get largest graph according to ind_sort_com created earlier
 n = size(Agg,1);
+
+if(numel(A_dir_com)>1)
+    disp("WARNING: graph disconnected, largest component was used instead, with size: " + n)
+end
 
 for i = 1:size(Agg,1) % Makes Ag directional
     for j = i+1 : size(Agg,1)

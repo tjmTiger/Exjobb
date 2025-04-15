@@ -46,15 +46,44 @@ A = full(adjacency(G))';
 % A = A.*randn(N,N); % random weights
 G = digraph(A');
 
-V_out = submincutDDSF_final2(G,D,T,'V_out');
-V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
+% V_out = submincutDDSF_final2(G,D,T,'V_out');
+% V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
 V_in = submincutDDSF_final2(G,D,T,'V_in');
 V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
 % disp("n_dist = " + n_dist)
 % disp("n_targ = " + n_targ)
+% disp(V_in)
+% disp(V_out)
+% disp(D)
+% disp(T)
+
+%check and display how many control nodes are placed on target nodes
+v_in_on_T = numel(V_in);
+for v_in = V_in_all
+    v_in = v_in{1};
+    [C,~,ic] = unique([v_in T']);
+    a_counts = accumarray(ic,1);
+    v_in_on_T_next = sum(a_counts(:,1)~=1);
+
+    if v_in_on_T > v_in_on_T_next
+            v_in_on_T = v_in_on_T_next;
+    end
+end
+
+if v_in_on_T ~= 0
+    disp("WARNING: There are " + v_in_on_T + " (out of " + numel(V_in) + ") measured nodes placed on target nodes.")
+end
+
+% [C,~,ic] = unique([V_in T']);
+% a_counts = accumarray(ic,1);
+% 
+% if ~isequal(a_counts, ones(size(a_counts)))
+%     disp("WARNING: There are " + sum(a_counts(:,1)~=1) + " (out of " + numel(V_in) + ") measured nodes placed on target nodes.")
+% end
+
 % disp("numebr of V_in = " + numel(V_in))
 % disp("number of V_out = " + numel(V_out))
 % disp("number of V_in + V_out = " + (numel(V_in) + numel(V_out)))
 % disp("-----------------")
-cost = ( numel(V_out)) / ( n_targ + n_dist );
+cost = ( numel(V_in)) / ( n_targ + n_dist );
 % cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
