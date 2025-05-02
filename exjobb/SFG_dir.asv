@@ -1,4 +1,4 @@
-function  G = SFG_dir(n, alpha, beta, gamma, delta_in, delta_out, seed, create_using)
+function  G = SFG_dir(n, alpha, beta, gamma, seed, create_using)
 %     Gustav: This implementation is based on a python implementaion from 
 %     https://networkx.github.io/documentation/latest/reference/generators.html
 %
@@ -50,8 +50,8 @@ function  G = SFG_dir(n, alpha, beta, gamma, delta_in, delta_out, seed, create_u
 %------------------------------------------------------------------%
 % Default parameters:
 
-% delta_in=1;
-% delta_out=1;
+delta_in=1;
+delta_out=1;
 % create_using=false;
 % seed=false;
 
@@ -69,32 +69,24 @@ switch nargin
     case 4
         G = speye(9);
         G = [[sparse(1,9) 1];[G sparse(9,1)]];
-        delta_in = 1;
-        delta_out = 1;
     case 5
-        G = speye(9);
-        G = [[sparse(1,9) 1];[G sparse(9,1)]];
-    case 6
-        G = speye(9);
-        G = [[sparse(1,9) 1];[G sparse(9,1)]];
-    case 7
         rng(seed);
         G = speye(9);
         G = [[sparse(1,9) 1];[G sparse(9,1)]];
-    case 8
+    case 6
         G = create_using;
     otherwise
         disp('input argument invalid')
 end
 
-if alpha < 0
+if alpha <= 0
     disp('alpha must be >= 0.')
 end
-if beta < 0
+if beta <= 0
     disp('beta must be >= 0.')
 end
-if gamma < 0
-    disp('gamma must be >= 0.')
+if gamma <= 0
+    disp('beta must be >= 0.')
 end
 
 if abs(alpha+beta+gamma - 1)>1e-10

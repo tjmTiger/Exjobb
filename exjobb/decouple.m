@@ -1,4 +1,9 @@
-function [cost] = decouple(G, fract_targ, fract_dist)
+function [cost, results_time, trivial_solutions] = decouple(G, fract_targ, fract_dist)
+% Note: frac_targ + frac_dist <= 1
+
+if fract_targ + fract_dist > 1
+    error('input argument invalid, fract_targ + fract_dist must be lesst than 1')
+end
 
 % cleaned up
 set(groot,'defaultAxesTickLabelInterpreter','latex');
@@ -15,7 +20,8 @@ while isempty(T) % add targets and disturbances
     n_dist = ceil(fract_dist*N);
     n_targ = ceil(fract_targ*N);
     D = sort(randsample(N, n_dist));
-    T = sort(setdiff(randsample(N, n_targ),D));
+    T = sort(randsample(setdiff(1:N', D), n_targ))';
+    % T = sort(setdiff(randsample(N, n_targ),D));
 end
 
 n_dist = length(D);
@@ -48,7 +54,9 @@ G = digraph(A');
 
 % V_out = submincutDDSF_final2(G,D,T,'V_out');
 % V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
+t_start = tic;
 V_in = submincutDDSF_final2(G,D,T,'V_in');
+results_time = toc(t_start);
 V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
 % disp("n_dist = " + n_dist)
 % disp("n_targ = " + n_targ)
@@ -64,15 +72,15 @@ for v_in = V_in_all
     [C,~,ic] = unique([v_in T']);
     a_counts = accumarray(ic,1);
     v_in_on_T_next = sum(a_counts(:,1)~=1);
-
     if v_in_on_T > v_in_on_T_next
             v_in_on_T = v_in_on_T_next;
     end
 end
 
-if v_in_on_T ~= 0
-    disp("WARNING: There are " + v_in_on_T + " (out of " + numel(V_in) + ") measured nodes placed on target nodes.")
-end
+trivial_solutions = v_in_on_T/numel(V_in);
+% if v_in_on_T ~= 0
+%     disp("WARNING: There are " + v_in_on_T + " (out of " + numel(V_in) + ") measured nodes placed on target nodes.")
+% end
 
 % [C,~,ic] = unique([V_in T']);
 % a_counts = accumarray(ic,1);

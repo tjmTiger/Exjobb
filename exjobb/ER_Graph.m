@@ -34,8 +34,8 @@ switch nargin
         verbose = false;
     otherwise
         disp('input argument invalid')
-    
 end
+
 G = spones(triu(sprand(n,n,p),1)); % Note: random upper triangle of a binary (sparse) matrix (with density p). middle and lower triangles are zeros
 if nargout>2
     m = nnz(G); % Note: number of non zero elements

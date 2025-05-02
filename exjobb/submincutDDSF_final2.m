@@ -22,7 +22,7 @@ function V_in_out = submincutDDSF_final2(G,D,T,varargin)
         elseif strcmp(varargin{1}, 'V_out')
             a = 2;
         else
-            disp('Varargin typing error: choose ''V_in'' or ''V_out''');
+            % disp('Varargin typing error: choose ''V_in'' or ''V_out''');
             return
         end
     else
@@ -91,7 +91,7 @@ function V_in_out = submincutDDSF_final2(G,D,T,varargin)
         
             else
                  V_in_out = [];
-                 disp('Error: Target or Disturbance set is empty')
+                 % disp('Error: Target or Disturbance set is empty')
                  return
             end
 
@@ -149,7 +149,7 @@ function V_in_out = submincutDDSF_final2(G,D,T,varargin)
         
             else
                  V_in_out = [];
-                 disp('Error: Target or Disturbance set is empty')
+                 % disp('Error: Target or Disturbance set is empty')
                  return
             end
 

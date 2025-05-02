@@ -1,8 +1,17 @@
-function h = WattsStrogatz(N,K,beta)
+function h = WattsStrogatz(N,K,beta, seed)
 % H = WattsStrogatz(N,K,beta) returns a Watts-Strogatz model graph with N
 % nodes, N*K edges, mean node degree 2*K, and rewiring probability beta.
 %
 % beta = 0 is a ring lattice, and beta = 1 is a random graph.
+
+switch nargin
+    case 3
+        disp("no seed")
+    case 4
+        rng(seed);
+    otherwise
+        disp('input argument invalid')
+end
 
 % Connect each node to its K next and previous neighbors. This constructs
 % indices for a ring lattice.
