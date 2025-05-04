@@ -308,6 +308,9 @@ load formated_data.mat;
 tags = keys(formated_data);
 val = values(formated_data);
 figure();
+results_all = [];
+results_time_all = [];
+results_trivial_all = [];
 for tag = 1:length(tags)
     disp(tags{tag})
 
