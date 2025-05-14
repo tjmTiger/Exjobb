@@ -299,44 +299,115 @@ clc;
 %                  Real Networks                %
 %                                               %
 %-----------------------------------------------%
+% 
+% fract_targ = 0.1;
+% fract_dist = 0.1;
+% 
+% load formated_data.mat;
+% 
+% tags = keys(formated_data);
+% val = values(formated_data);
+% figure();
+% results_all = [];
+% results_time_all = [];
+% results_trivial_all = [];
+% for tag = 1:length(tags)
+%     disp(tags{tag})
+% 
+%     n_graphs = length(val{tag});
+%     results = zeros(1, n_graphs);
+%     results_time = zeros(1, n_graphs);
+%     results_trivial = zeros(1, n_graphs);
+% 
+%     for i = 1:length(val{tag})
+%         G = val{tag}{i}{1};
+%         disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
+%         [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+%     end
+%     graph_name = convertCharsToStrings(tags{tag});
+%     subplot(1,3,1);
+%     hold on
+%     add2boxchart(results, graph_name, "Cost", "Cost [-]", "Graph category")
+%     hold off
+%     subplot(1,3,2);
+%     hold on
+%     add2boxchart(results_time, graph_name, "Runtime", "Time [s]", "Graph category")
+%     hold off
+%     subplot(1,3,3);
+%     hold on
+%     add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Graph category")
+%     hold off
+% end
 
-fract_targ = 0.1;
-fract_dist = 0.1;
+% load formated_data.mat;
+% 
+% tags = keys(formated_data);
+% val = values(formated_data);
+% figure();
+% for tag = 1:length(tags)
+%     disp(tags{tag})
+% 
+%     n_graphs = length(val{tag});
+%     results = zeros(1, n_graphs);
+%     results_time = zeros(1, n_graphs);
+%     results_trivial = zeros(1, n_graphs);
+% 
+%     for i = 1:length(val{tag})
+%         G = val{tag}{i}{1};
+%         disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
+%         results(i) = size(G.Nodes, 1);
+%     end
+%     graph_name = convertCharsToStrings(tags{tag});
+%     hold on
+%     add2boxchart(results, graph_name, "Real Networks, Sizes", "Size [psc]", "Graph category")
+%     hold off
+% end
+
+% load formated_data.mat;
+% 
+% tags = keys(formated_data);
+% val = values(formated_data);
+% % figure();
+% for tag = 1:length(tags)
+%     disp(tags{tag})
+% 
+%     n_graphs = length(val{tag});
+%     results = zeros(1, n_graphs);
+%     results_time = zeros(1, n_graphs);
+%     results_trivial = zeros(1, n_graphs);
+% 
+%     for i = 1:length(val{tag})
+%         G = val{tag}{i}{1};
+%         disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
+%     end
+%     % graph_name = convertCharsToStrings(tags{tag});
+%     % hold on
+%     % add2boxchart(results, graph_name, "Real Networks, Sizes", "Size [psc]", "Graph category")
+%     % hold off
+% end
+
 
 load formated_data.mat;
 
 tags = keys(formated_data);
 val = values(formated_data);
-figure();
-results_all = [];
-results_time_all = [];
-results_trivial_all = [];
 for tag = 1:length(tags)
     disp(tags{tag})
-
     n_graphs = length(val{tag});
-    results = zeros(1, n_graphs);
-    results_time = zeros(1, n_graphs);
-    results_trivial = zeros(1, n_graphs);
 
+    graph_name = convertCharsToStrings(tags{tag});
+    x = ceil(sqrt(n_graphs));
+    figure();
     for i = 1:length(val{tag})
         G = val{tag}{i}{1};
         disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
-        [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+        subplot(x,x,i)
+        plot(G)
     end
-    graph_name = convertCharsToStrings(tags{tag});
-    subplot(1,3,1);
-    hold on
-    add2boxchart(results, graph_name, "Cost", "Cost [-]", "Graph category")
-    hold off
-    subplot(1,3,2);
-    hold on
-    add2boxchart(results_time, graph_name, "Runtime", "Time [s]", "Graph category")
-    hold off
-    subplot(1,3,3);
-    hold on
-    add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Graph category")
-    hold off
+    sgtitle(graph_name)
+    % hold on
+    % add2boxchart(results, graph_name, "Real Networks, Sizes", "Size [psc]", "Graph category")
+    % hold off
 end
 
 %-----------------------------------------------%
