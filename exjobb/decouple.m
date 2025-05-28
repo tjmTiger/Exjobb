@@ -58,20 +58,24 @@ t_start = tic;
 V_in = submincutDDSF_final2(G,D,T,'V_in');
 results_time = toc(t_start);
 % V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
-% 
-% %check and display how many control nodes are placed on target nodes
+
+% check and display how many control nodes are placed on target nodes
 % v_in_on_T = numel(V_in);
 % for v_in = V_in_all
 %     v_in = v_in{1};
-%     [C,~,ic] = unique([v_in T']);
+%     [~,~,ic] = unique([v_in T']);
 %     a_counts = accumarray(ic,1);
 %     v_in_on_T_next = sum(a_counts(:,1)~=1);
 %     if v_in_on_T > v_in_on_T_next
 %             v_in_on_T = v_in_on_T_next;
 %     end
 % end
-% 
-% trivial_solutions = v_in_on_T/numel(V_in);
-trivial_solutions = -1;
+
+[~,~,ic] = unique([V_in T']);
+a_counts = accumarray(ic,1);
+v_in_on_T = sum(a_counts(:,1)~=1);
+
+trivial_solutions = v_in_on_T/numel(V_in);
+
 cost = ( numel(V_in)) / ( n_targ + n_dist );
 % cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );

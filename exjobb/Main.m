@@ -2,234 +2,234 @@ clear;
 close all;
 clc;
 
+n_graphs = 100; % sample size of graphs
 %-----------------------------------------------%
 %                                               %
 %     Distrubance and target node fractions     %
 %                                               %
 %-----------------------------------------------%
-%
+
 % n_graphs = 100; % number of graphs
-% for graph_name = ["Erdos Renyi", "Watts Strogatz", "Scale Free"]
-%     results_all = [];
-%     results_time_all = [];
-%     results_trivial_all = [];
-%     fract_T_D = 0.05:0.05:0.3;
-%     for j = fract_T_D
-%         fract_targ = j;
-%         fract_dist = j;
-%         results = zeros(1, n_graphs);
-%         results_time = zeros(1, n_graphs);
-%         results_trivial = zeros(1, n_graphs);
-%         for i = 1:n_graphs
-%             if graph_name == "Erdos Renyi"
-%                 n = 100;
-%                 p = 1.5*(log10(n)/n);
-%                 G = ER_Graph(n, p, 1, i);
-%                 [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
-%                 disp("Erdos: " + i)
-%             elseif graph_name == "Watts Strogatz"
-%                 n = 100;
-%                 k = 2;
-%                 beta = 0.2;
-%                 G = WattsStrogatz(n, k, beta, i);
-%                 [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
-%                 disp("Strogatz: " + i)
-%             else
-%                 n = 100;
-%                 alpha = 0.2;
-%                 beta = 0.2;
-%                 gamma = 0.6;
-%                 G = SFG_dir(n, alpha, beta, gamma, 1, 1, i);
-%                 [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
-%                 isp("SFG: " + i)
-%             end
-%         end
-%         results_all(end+1,:) = results;
-%         results_time_all(end+1,:) = results_time;
-%         results_trivial_all(end+1,:) = results_trivial;
-%     end
-% 
-%     figure();
-%     subplot(1,3,1);
-%     hold on;
-% 
-%     for r = 1:size(results_all, 1)
-%         add2boxchart(results_all(r,:), "frac: " + fract_T_D(r), graph_name + ", T & D fractions")
-%     end
-% 
-%     hold off;
-% 
-%     subplot(1,3,2);
-%     hold on;
-% 
-%     for r = 1:size(results_time_all, 1)
-%         add2boxchart(results_time_all(r,:), "frac: " + fract_T_D(r), graph_name + ", T & D fractions, runtime", "Time [s]")
-%     end
-% 
-%     hold off;
-% 
-%     subplot(1,3,3);
-%     hold on;
-% 
-%     for r = 1:size(results_trivial_all, 1)
-%         add2boxchart(results_trivial_all(r,:), "frac: " + fract_T_D(r), graph_name + ", T & D fractions, trivial solutions", "Index [-]")
-%     end
-%     ylim([0 1])
-%     hold off;
-% end
-%
+for graph_name = ["Erdos Renyi", "Watts Strogatz", "Scale Free"]
+    results_all = [];
+    results_time_all = [];
+    results_trivial_all = [];
+    fract_T_D = 0.05:0.05:0.3;
+    for j = fract_T_D
+        n = 100;
+        fract_targ = j;
+        fract_dist = j;
+        results = zeros(1, n_graphs);
+        results_time = zeros(1, n_graphs);
+        results_trivial = zeros(1, n_graphs);
+        for i = 1:n_graphs
+            if graph_name == "Erdos Renyi"
+                p = 1.5*(log10(n)/n);
+                G = ER_Graph(n, p, 1, i);
+                [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+                disp("Erdos: " + i)
+            elseif graph_name == "Watts Strogatz"
+                k = 2;
+                beta = 0.2;
+                G = WattsStrogatz(n, k, beta, i);
+                [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+                disp("Strogatz: " + i)
+            else
+                alpha = 0.2;
+                beta = 0.2;
+                gamma = 0.6;
+                G = SFG_dir(n, alpha, beta, gamma, 1, 1, i);
+                [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+                disp("SFG: " + i)
+            end
+        end
+        results_all(end+1,:) = results;
+        results_time_all(end+1,:) = results_time;
+        results_trivial_all(end+1,:) = results_trivial;
+    end
+
+    figure();
+    subplot(1,3,1);
+    hold on;
+
+    for r = 1:size(results_all, 1)
+        add2boxchart(results_all(r,:), string(fract_T_D(r)), "Cost", "Cost [-]", "Fractions")
+    end
+
+    hold off;
+
+    subplot(1,3,2);
+    hold on;
+
+    for r = 1:size(results_time_all, 1)
+        add2boxchart(results_time_all(r,:), string(fract_T_D(r)), graph_name + newline + "Runtime", "Time [s]", "Fractions")
+    end
+
+    hold off;
+
+    subplot(1,3,3);
+    hold on;
+
+    for r = 1:size(results_trivial_all, 1)
+        add2boxchart(results_trivial_all(r,:), string(fract_T_D(r)), "Trivial solutions", "Index [-]", "Fractions")
+    end
+    ylim([0 1])
+    hold off;
+end
+
 %-----------------------------------------------%
 %                                               %
 %                   Graph Size                  %
 %                                               %
 %-----------------------------------------------%
-% 
+
 % n_graphs = 100; % number of graphs
-% fract_targ = 0.1;
-% fract_dist = 0.1;
-% 
-% for graph_name = ["Erdos Renyi", "Watts Strogatz", "Scale Free"]
-%     results_all = [];
-%     results_time_all = [];
-%     results_trivial_all = [];
-%     graph_size = 30:30:180;
-%     for j = graph_size
-%         n = j;
-%         results = zeros(1, n_graphs);
-%         results_time = zeros(1, n_graphs);
-%         results_trivial = zeros(1, n_graphs);
-%         for i = 1:n_graphs
-%             if graph_name == "Erdos Renyi"
-%                 p = 0.03; % 1.5*(log10(n)/n);
-%                 G = ER_Graph(n, p, 1, i);
-%                 [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
-%                 disp("Erdos: " + i)
-%             elseif graph_name == "Watts Strogatz"
-%                 k = 2;
-%                 beta = 0.2;
-%                 G = WattsStrogatz(n, k, beta, i);
-%                 [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
-%                 disp("Strogatz: " + i)
-%             else
-%                 alpha = 0.2;
-%                 beta = 0.2;
-%                 gamma = 0.6;
-%                 G = SFG_dir(n, alpha, beta, gamma, 1, 1, i);
-%                 [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
-%                 disp("SFG: " + i)
-%             end
-%         end
-%         results_all(end+1,:) = results;
-%         results_time_all(end+1,:) = results_time;
-%         results_trivial_all(end+1,:) = results_trivial;
-%     end
-% 
-%     figure();
-%     subplot(1,3,1);
-%     hold on;
-% 
-%     for r = 1:size(results_all, 1)
-%         add2boxchart(results_all(r,:), "n: " + graph_size(r), graph_name + ", graph size")
-%     end
-% 
-%     hold off;
-% 
-%     subplot(1,3,2);
-%     hold on;
-% 
-%     for r = 1:size(results_time_all, 1)
-%         add2boxchart(results_time_all(r,:), "n: " + graph_size(r), graph_name + ", graph size, runtime", "Time [s]")
-%     end
-% 
-%     hold off;
-% 
-%     subplot(1,3,3);
-%     hold on;
-% 
-%     for r = 1:size(results_trivial_all, 1)
-%         add2boxchart(results_trivial_all(r,:), "n: " + graph_size(r), graph_name + ", graph size, trivial solutions", "Index [-]")
-%     end
-%     ylim([0 1])
-%     hold off;
-% end
-%
+fract_targ = 0.1;
+fract_dist = 0.1;
+
+for graph_name = ["Erdos Renyi", "Watts Strogatz", "Scale Free"]
+    results_all = [];
+    results_time_all = [];
+    results_trivial_all = [];
+    graph_size = 30:30:180;
+    for j = graph_size
+        n = j;
+        results = zeros(1, n_graphs);
+        results_time = zeros(1, n_graphs);
+        results_trivial = zeros(1, n_graphs);
+        for i = 1:n_graphs
+            if graph_name == "Erdos Renyi"
+                p = 0.03; % 1.5*(log10(n)/n);
+                G = ER_Graph(n, p, 1, i);
+                [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+                disp("Erdos: " + i)
+            elseif graph_name == "Watts Strogatz"
+                k = 2;
+                beta = 0.2;
+                G = WattsStrogatz(n, k, beta, i);
+                [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+                disp("Strogatz: " + i)
+            else
+                alpha = 0.2;
+                beta = 0.2;
+                gamma = 0.6;
+                G = SFG_dir(n, alpha, beta, gamma, 1, 1, i);
+                [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+                disp("SFG: " + i)
+            end
+        end
+        results_all(end+1,:) = results;
+        results_time_all(end+1,:) = results_time;
+        results_trivial_all(end+1,:) = results_trivial;
+    end
+
+    figure();
+    subplot(1,3,1);
+    hold on;
+
+    for r = 1:size(results_all, 1)
+        add2boxchart(results_all(r,:), string(graph_size(r)), "Cost", "Cost [-]", "Size")
+    end
+
+    hold off;
+
+    subplot(1,3,2);
+    hold on;
+
+    for r = 1:size(results_time_all, 1)
+        add2boxchart(results_time_all(r,:), string(graph_size(r)), graph_name + newline + "Runtime", "Time [s]", "Size")
+    end
+
+    hold off;
+
+    subplot(1,3,3);
+    hold on;
+
+    for r = 1:size(results_trivial_all, 1)
+        add2boxchart(results_trivial_all(r,:), string(graph_size(r)), "Trivial solutions", "Index [-]", "Size")
+    end
+    ylim([0 1])
+    hold off;
+end
+
 %-----------------------------------------------%
 %                                               %
 %                 Connectivity                  %
 %                                               %
 %-----------------------------------------------%
-% 
-% n_graphs = 10; % number of graphs
-% fract_targ = 0.1;
-% fract_dist = 0.1;
-% n = 300;
-% error = 0;
-% for graph_name = ["Erdos Renyi"]%, "Watts Strogatz"] %, "Scale Free"]
-%     results_all = [];
-%     results_time_all = [];
-%     results_trivial_all = [];
-%     node_degree = 2:2:12;
-%     for j = node_degree
-%         results = zeros(1, n_graphs);
-%         results_time = zeros(1, n_graphs);
-%         results_trivial = zeros(1, n_graphs);
-%         for i = 1:n_graphs
-%             if graph_name == "Erdos Renyi"
-%                 p = 2.2*j/(n-1); % 1.5*(log10(n)/n);
-%                 G = ER_Graph(n, p, 1, i);
-%                 error = error + (numedges(G)/numnodes(G)-j);
-%                 [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
-%                 disp("Erdos: " + i)
-%             elseif graph_name == "Watts Strogatz"
-%                 k = j;
-%                 beta = 0.2;
-%                 G = WattsStrogatz(n, k, beta, i);
-%                 [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
-%                 disp("Strogatz: " + i)
-%             else
-%                 alpha = 0.2;
-%                 beta = 0.2;
-%                 gamma = 0.6;
-%                 G = SFG_dir(n, alpha, beta, gamma, 1, 1, i);
-%                 [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
-%                 disp("SFG: " + i)
-%             end
-%         end
-%         results_all(end+1,:) = results;
-%         results_time_all(end+1,:) = results_time;
-%         results_trivial_all(end+1,:) = results_trivial;
-%     end
-%     figure();
-%     subplot(1,3,1);
-%     hold on;
-% 
-%     for r = 1:size(results_all, 1)
-%         add2boxchart(results_all(r,:), "k: " + node_degree(r), graph_name + ", node degree")
-%     end
-% 
-%     hold off;
-% 
-%     subplot(1,3,2);
-%     hold on;
-% 
-%     for r = 1:size(results_time_all, 1)
-%         add2boxchart(results_time_all(r,:), "k: " + node_degree(r), graph_name + ", node degree, runtime", "Time [s]")
-%     end
-% 
-%     hold off;
-% 
-%     subplot(1,3,3);
-%     hold on;
-% 
-%     for r = 1:size(results_trivial_all, 1)
-%         add2boxchart(results_trivial_all(r,:), "k: " + node_degree(r), graph_name + ", node degree, trivial solutions", "Index [-]")
-%     end
-%     ylim([0 1])
-%     hold off;
-% end
-% 
-% disp("Mean node degree error in Erdos Renyi: " + error/(n_graphs*numel(node_degree))) % -0.0096
-%
+
+% n_graphs = 100; % number of graphs
+fract_targ = 0.1;
+fract_dist = 0.1;
+n = 100;
+error = 0;
+for graph_name = ["Erdos Renyi", "Watts Strogatz", "Scale Free"]
+    results_all = [];
+    results_time_all = [];
+    results_trivial_all = [];
+    node_degree = 2:2:12;
+    for j = node_degree
+        results = zeros(1, n_graphs);
+        results_time = zeros(1, n_graphs);
+        results_trivial = zeros(1, n_graphs);
+        for i = 1:n_graphs
+            if graph_name == "Erdos Renyi"
+                p = 2.2*j/(n-1); % 1.5*(log10(n)/n);
+                G = ER_Graph(n, p, 1, i);
+                error = error + (numedges(G)/numnodes(G)-j);
+                [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+                disp("Erdos: " + i)
+            elseif graph_name == "Watts Strogatz"
+                k = j;
+                beta = 0.2;
+                G = WattsStrogatz(n, k, beta, i);
+                [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+                disp("Strogatz: " + i)
+            else
+                alpha = 0.2;
+                beta = 0.2;
+                gamma = 0.6;
+                G = SFG_dir(n, alpha, beta, gamma, 1, 1, i);
+                [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+                disp("SFG: " + i)
+            end
+        end
+        results_all(end+1,:) = results;
+        results_time_all(end+1,:) = results_time;
+        results_trivial_all(end+1,:) = results_trivial;
+    end
+
+    figure();
+    subplot(1,3,1);
+    hold on;
+
+    for r = 1:size(results_all, 1)
+        add2boxchart(results_all(r,:), string(node_degree(r)), "Cost", "Cost [-]", "Average degree")
+    end
+
+    hold off;
+
+    subplot(1,3,2);
+    hold on;
+
+    for r = 1:size(results_time_all, 1)
+        add2boxchart(results_time_all(r,:), string(node_degree(r)), graph_name + newline + "Runtime", "Time [s]", "Average degree")
+    end
+
+    hold off;
+
+    subplot(1,3,3);
+    hold on;
+
+    for r = 1:size(results_trivial_all, 1)
+        add2boxchart(results_trivial_all(r,:), string(node_degree(r)), "Trivial solutions", "Index [-]", "Average degree")
+    end
+    ylim([0 1])
+    hold off;
+end
+
+disp("Mean node degree error in Erdos Renyi: " + error/(n_graphs*numel(node_degree))) % -0.0096
+
 %-----------------------------------------------%
 %                                               %
 %                  Extra tests                  %
@@ -385,31 +385,31 @@ clc;
 %     % add2boxchart(results, graph_name, "Real Networks, Sizes", "Size [psc]", "Graph category")
 %     % hold off
 % end
-
-
-load formated_data.mat;
-
-tags = keys(formated_data);
-val = values(formated_data);
-for tag = 1:length(tags)
-    disp(tags{tag})
-    n_graphs = length(val{tag});
-
-    graph_name = convertCharsToStrings(tags{tag});
-    x = ceil(sqrt(n_graphs));
-    figure();
-    for i = 1:length(val{tag})
-        G = val{tag}{i}{1};
-        disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
-        subplot(x,x,i)
-        plot(G)
-    end
-    sgtitle(graph_name)
-    % hold on
-    % add2boxchart(results, graph_name, "Real Networks, Sizes", "Size [psc]", "Graph category")
-    % hold off
-end
-
+%
+%
+% load formated_data.mat;
+% 
+% tags = keys(formated_data);
+% val = values(formated_data);
+% for tag = 1:length(tags)
+%     disp(tags{tag})
+%     n_graphs = length(val{tag});
+% 
+%     graph_name = convertCharsToStrings(tags{tag});
+%     x = ceil(sqrt(n_graphs));
+%     figure();
+%     for i = 1:length(val{tag})
+%         G = val{tag}{i}{1};
+%         disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
+%         subplot(x,x,i)
+%         plot(G)
+%     end
+%     sgtitle(graph_name)
+%     % hold on
+%     % add2boxchart(results, graph_name, "Real Networks, Sizes", "Size [psc]", "Graph category")
+%     % hold off
+% end
+%
 %-----------------------------------------------%
 %                                               %
 %                   Functions                   %
@@ -417,6 +417,9 @@ end
 %-----------------------------------------------%
 
 function add2boxchart(results, test_name, title_name, ylabel_name, xlabel_name)
+    fontsize(12,"points")
+    position = get(gcf, 'Position');
+    position = [100, 100, 600, 600];
     boxchart(categorical(1:numel(results), 1:numel(results), repmat(test_name, 1, numel(results))), results)
     if nargin >= 3
         title(title_name)
