@@ -2,7 +2,7 @@ clear;
 close all;
 clc;
 
-n_graphs = 100; % sample size of graphs
+n_graphs = 2; % sample size of graphs
 %-----------------------------------------------%
 %                                               %
 %     Distrubance and target node fractions     %
@@ -47,14 +47,16 @@ for graph_name = ["Erdos Renyi", "Watts Strogatz", "Scale Free"]
         results_time_all(end+1,:) = results_time;
         results_trivial_all(end+1,:) = results_trivial;
     end
-
     figure();
     subplot(1,3,1);
     hold on;
-
+    
+    mean_list = [];
     for r = 1:size(results_all, 1)
         add2boxchart(results_all(r,:), string(fract_T_D(r)), "Cost", "Cost [-]", "Fractions")
+        % mean_list(:,end+1) = mean(results_all(r,:));
     end
+    % plot(mean_list, "-o")
 
     hold off;
 
@@ -76,7 +78,7 @@ for graph_name = ["Erdos Renyi", "Watts Strogatz", "Scale Free"]
     ylim([0 1])
     hold off;
 end
-
+%%
 %-----------------------------------------------%
 %                                               %
 %                   Graph Size                  %

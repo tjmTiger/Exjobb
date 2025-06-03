@@ -1,4 +1,4 @@
-function [cost, results_time, trivial_solutions] = decouple(G, fract_targ, fract_dist)
+function [cost, results_time, trivial_solutions] = decouple(G, fract_targ, fract_dist, list_targ, list_dist)
 % Note: frac_targ + frac_dist <= 1
 
 if fract_targ + fract_dist > 1
@@ -16,12 +16,37 @@ N = numnodes(G);
 % fract_dist = 0.001;
 T = [];
 
-while isempty(T) % add targets and disturbances
-    n_dist = ceil(fract_dist*N);
-    n_targ = ceil(fract_targ*N);
-    D = sort(randsample(N, n_dist));
-    T = sort(randsample(setdiff(1:N', D), n_targ))';
-    % T = sort(setdiff(randsample(N, n_targ),D));
+switch nargin
+    case 3
+        while isempty(T) % add targets and disturbances
+            n_dist = ceil(fract_dist*N);
+            n_targ = ceil(fract_targ*N);
+            D = sort(randsample(N, n_dist));
+            T = sort(randsample(setdiff(1:N', D), n_targ))';
+            % T = sort(setdiff(randsample(N, n_targ),D));
+        end
+    case 5
+        % if length(list_targ) > length(list_dist)
+        %     list_targ = setdiff(list_targ, list_dist);
+        % else
+        %     list_dist = setdiff(list_dist, list_targ);
+        % end
+
+        while isempty(T) % add targets and disturbances
+            n_dist = ceil(fract_dist*N);
+            n_targ = ceil(fract_targ*N);
+            if n_dist > length(list_dist)
+                disp("WARNING: Request " + n_dist + " distubances, but only " + length(list_dist) + " provided!")
+                n_dist = length(list_dist);
+            elseif n_targ > length(list_targ)
+                disp("WARNING: Request " + n_targ + " targets, but only " + length(list_targ) + " provided!")
+                n_targ = length(list_targ);
+            end
+            D = sort(randsample(list_dist, n_dist));
+            T = sort(setdiff(randsample(N, n_targ),D));
+        end
+    otherwise
+        disp('input argument invalid')
 end
 
 n_dist = length(D);
@@ -76,6 +101,9 @@ a_counts = accumarray(ic,1);
 v_in_on_T = sum(a_counts(:,1)~=1);
 
 trivial_solutions = v_in_on_T/numel(V_in);
+if (v_in_on_T == 0) & (numel(V_in) == 0)
+        trivial_solutions = 0;
+end
 
-cost = ( numel(V_in)) / ( n_targ + n_dist );
+cost = (2*numel(V_in)) / ( n_targ + n_dist );
 % cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
