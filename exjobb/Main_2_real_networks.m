@@ -147,92 +147,65 @@ fig.MarkerSize = 5;
 % fig.NodeLabel = 1:numnodes(G);
 
 
-large_nodes = [];
-for i = 1:length(hub_ranks)
-    if hub_ranks(i) > max(hub_ranks)*0.7
-        large_nodes(end+1,:) = [i,hub_ranks(i)];
-    end
-end
-% disp(large_nodes)
+% [a, b] = find( distances(G) == max(max(distances(G))) );
+% disp([a,b])
 
-color_n = 'r';
-color_e = '#ff5555';
-hub1 = [];
-i_list = 482; % 650; % 482;
-for j = 1:1
-    for i = i_list
-        p = predecessors(G,i);
-        s = successors(G,i);
-        highlight(fig,p,'NodeColor',color_n)
-        highlight(fig,s,'NodeColor',color_n)
-        highlight(fig,i,p,'EdgeColor',color_e)
-        highlight(fig,i,s,'EdgeColor',color_e)
-    end
-    i_list = [p',s'];
-    hub1 = [hub1, i_list];
-end
+req_size = 140;
+hubs = [];
+start_nodes = [340, 80, 359];
+colors = ['r', 'b', 'g'];
 
-color_n = 'b';
-color_e = '#5577ff';
-hub2 = [];
-i_list = 445; % 292;
-for j = 1:3
-    for i = i_list
-        p = predecessors(G,i);
-        s = successors(G,i);
-        highlight(fig,p,'NodeColor',color_n)
-        highlight(fig,s,'NodeColor',color_n)
-        highlight(fig,i,p,'EdgeColor',color_e)
-        highlight(fig,i,s,'EdgeColor',color_e)
+for j = 1:length(start_nodes)
+    color = colors(j);
+    hub = start_nodes(j);
+    while length(hub) < req_size
+        temp_hub = hub;
+        for i = temp_hub
+            p = predecessors(G,i);
+            s = successors(G,i);
+            highlight(fig,p,'NodeColor',color)
+            highlight(fig,s,'NodeColor',color)
+            highlight(fig,i,p,'EdgeColor',color)
+            highlight(fig,i,s,'EdgeColor',color)
+            hub = unique([hub, p',s']);
+            if length(hub) >= req_size
+                break
+            end
+        end
     end
-    i_list = [p',s'];
-    hub2 = [hub2, i_list];
+    hubs = [hubs; hub(1,1:req_size)];
 end
 
-color_n = 'g';
-color_e = '#5aff55';
-hub3 = [];
-i_list = 347; % 99; % 445;
-for j = 1:4
-    for i = i_list
-        p = predecessors(G,i);
-        s = successors(G,i);
-        highlight(fig,p,'NodeColor',color_n)
-        highlight(fig,s,'NodeColor',color_n)
-        highlight(fig,i,p,'EdgeColor',color_e)
-        highlight(fig,i,s,'EdgeColor',color_e)
-    end
-    i_list = [p',s'];
-    hub3 = [hub3, i_list];
-end
-
+annotation('textbox',[.78 .9 0 0],'String','\bullet hub1','FitBoxToText','on','Color','r'); % dim: [x y w h]
+annotation('textbox',[.78 .835 0 0],'String','\bullet hub2','FitBoxToText','on','Color','b');
+annotation('textbox',[.78 .77 0 0],'String','\bullet hub3','FitBoxToText','on','Color','g');
 
 
 figure();
 fract_targ = 0.2;
 fract_dist = 0.2;
 
-n_graphs = 2;
+n_graphs = 10;
 results = zeros(1, n_graphs);
 results_time = zeros(1, n_graphs);
 results_trivial = zeros(1, n_graphs);
 
 for i = 1:n_graphs
     disp("Left: " + (n_graphs-i) + ", Size: " + size(G.Nodes, 1))
-    [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hub1, hub2);
+    [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hubs(1,:), hubs(2,:));
 end
-graph_name = "hub1-2"; % convertCharsToStrings(tags{tag});
+graph_name = "1-2"; % convertCharsToStrings(tags{tag});
 subplot(1,3,1);
 hold on
-add2boxchart(results, graph_name, "Cost", "Cost [-]", "Graph category")
+add2boxchart(results, graph_name)
 hold off
 subplot(1,3,2);
 hold on
-add2boxchart(results_time, graph_name, "Runtime", "Time [s]", "Graph category")
+add2boxchart(results_time, graph_name)
 hold off
 subplot(1,3,3);
 hold on
-add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Graph category")
+add2boxchart(results_trivial, graph_name)
 hold off
 ylim([0 1])
 
@@ -244,20 +217,20 @@ results_trivial = zeros(1, n_graphs);
 
 for i = 1:n_graphs
     disp("Left: " + (n_graphs-i) + ", Size: " + size(G.Nodes, 1))
-    [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hub2, hub3);
+    [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hubs(2,:), hubs(3,:));
 end
-graph_name = "hub2-3";% convertCharsToStrings(tags{tag});
+graph_name = "2-3";% convertCharsToStrings(tags{tag});
 subplot(1,3,1);
 hold on
-add2boxchart(results, graph_name, "Cost", "Cost [-]", "Graph category")
+add2boxchart(results, graph_name)
 hold off
 subplot(1,3,2);
 hold on
-add2boxchart(results_time, graph_name, "Runtime", "Time [s]", "Graph category")
+add2boxchart(results_time, graph_name)
 hold off
 subplot(1,3,3);
 hold on
-add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Graph category")
+add2boxchart(results_trivial, graph_name)
 hold off
 ylim([0 1])
 
@@ -269,22 +242,27 @@ results_trivial = zeros(1, n_graphs);
 
 for i = 1:n_graphs
     disp("Left: " + (n_graphs-i) + ", Size: " + size(G.Nodes, 1))
-    [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hub1, hub3);
+    [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hubs(1,:), hubs(3,:));
 end
-graph_name = "hub1-3";% convertCharsToStrings(tags{tag});
+graph_name = "1-3";% convertCharsToStrings(tags{tag});
 subplot(1,3,1);
 hold on
-add2boxchart(results, graph_name, "Cost", "Cost [-]", "Graph category")
+add2boxchart(results, graph_name, "Cost", "Cost [-]", "Hubs")
 hold off
 subplot(1,3,2);
 hold on
-add2boxchart(results_time, graph_name, "Runtime", "Time [s]", "Graph category")
+add2boxchart(results_time, graph_name, "Technological network" + newline + "Runtime", "Time [s]", "Hubs")
 hold off
 subplot(1,3,3);
 hold on
-add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Graph category")
+add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Hubs")
 hold off
 ylim([0 1])
+
+fontsize(12,"points")
+position = get(gcf, 'Position');
+position = [100, 100, 600, 600];
+saveas(gcf, "figures_new/Technological network hubs.jpg")
 
 %%
 %-----------------------------------------------%
