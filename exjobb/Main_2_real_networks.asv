@@ -190,80 +190,33 @@ fract_targ = 0.1;
 fract_dist = 0.1;
 
 n_graphs = 100;
-results = zeros(1, n_graphs);
-results_time = zeros(1, n_graphs);
-results_trivial = zeros(1, n_graphs);
 
-for i = 1:n_graphs
-    disp("Left: " + (n_graphs-i) + ", Size: " + size(G.Nodes, 1))
-    [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hubs(1,:), hubs(2,:));
+for t = 1:numel(hubs(:,1))
+for d = setdiff(1:numel(hubs(:,1)),t)
+    results = zeros(1, n_graphs);
+    results_time = zeros(1, n_graphs);
+    results_trivial = zeros(1, n_graphs);
+    
+    for i = 1:n_graphs
+        disp("Left: " + (n_graphs-i) + ", Size: " + size(G.Nodes, 1))
+        [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hubs(t,:), hubs(d,:));
+    end
+    graph_name = t + "-" + d;% convertCharsToStrings(tags{tag});
+    subplot(1,3,1);
+    hold on
+    add2boxchart(results, graph_name, "Cost", "Cost [-]", "Hubs")
+    hold off
+    subplot(1,3,2);
+    hold on
+    add2boxchart(results_time, graph_name, "Technological network" + newline + "Runtime", "Time [s]", "Hubs")
+    hold off
+    subplot(1,3,3);
+    hold on
+    add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Hubs")
+    hold off
+    ylim([0 1])
 end
-graph_name = "1-2"; % convertCharsToStrings(tags{tag});
-subplot(1,3,1);
-hold on
-add2boxchart(results, graph_name)
-hold off
-subplot(1,3,2);
-hold on
-add2boxchart(results_time, graph_name)
-hold off
-subplot(1,3,3);
-hold on
-add2boxchart(results_trivial, graph_name)
-hold off
-ylim([0 1])
-
-% ---------------------------------------- % 
-
-results = zeros(1, n_graphs);
-results_time = zeros(1, n_graphs);
-results_trivial = zeros(1, n_graphs);
-
-for i = 1:n_graphs
-    disp("Left: " + (n_graphs-i) + ", Size: " + size(G.Nodes, 1))
-    [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hubs(2,:), hubs(3,:));
 end
-graph_name = "2-3";% convertCharsToStrings(tags{tag});
-subplot(1,3,1);
-hold on
-add2boxchart(results, graph_name)
-hold off
-subplot(1,3,2);
-hold on
-add2boxchart(results_time, graph_name)
-hold off
-subplot(1,3,3);
-hold on
-add2boxchart(results_trivial, graph_name)
-hold off
-ylim([0 1])
-
-% ---------------------------------------- % 
-tests = [];
-test_names = [];
-
-results = zeros(1, n_graphs);
-results_time = zeros(1, n_graphs);
-results_trivial = zeros(1, n_graphs);
-
-for i = 1:n_graphs
-    disp("Left: " + (n_graphs-i) + ", Size: " + size(G.Nodes, 1))
-    [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hubs(1,:), hubs(3,:));
-end
-graph_name = "1-3";% convertCharsToStrings(tags{tag});
-subplot(1,3,1);
-hold on
-add2boxchart(results, graph_name, "Cost", "Cost [-]", "Hubs")
-hold off
-subplot(1,3,2);
-hold on
-add2boxchart(results_time, graph_name, "Technological network" + newline + "Runtime", "Time [s]", "Hubs")
-hold off
-subplot(1,3,3);
-hold on
-add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Hubs")
-hold off
-ylim([0 1])
 
 fontsize(12,"points")
 position = get(gcf, 'Position');
@@ -276,7 +229,107 @@ saveas(gcf, "figures_new/Technological network hubs.jpg")
 %                Electrical network             %
 %                                               %
 %-----------------------------------------------%
-% tag = 12
+clear;
+close all;
+clc;
+
+load formated_data.mat;
+tags = keys(formated_data);
+val = values(formated_data);
+tag = 12; % Electrical network
+
+
+disp(tags{tag})
+G = val{tag}{1}{1};
+hub_ranks = centrality(G,'hubs');
+% G.Nodes.Hubs = hub_ranks;
+
+figure();
+fig = plot(G,'Layout','subspace');
+fig.NodeColor = '#757575';
+fig.EdgeColor = '#a1a1a1';
+fig.MarkerSize = 5;
+% fig.NodeLabel = 1:numnodes(G);
+
+
+% [a, b] = find( distances(G) == max(max(distances(G))) );
+% disp([a,b])
+
+req_size = 1000;
+hubs = [];
+start_nodes = [1406, 3743]%, 2539, 97]; % 4463
+colors = ['r', 'b', 'g','k'];
+
+for j = 1:length(start_nodes)
+    color = colors(j);
+    hub = start_nodes(j);
+    while length(hub) < req_size
+        %temp_hub = hub;
+        for i = hub
+            p = predecessors(G,i);
+            s = successors(G,i);
+            highlight(fig,p,'NodeColor',color)
+            highlight(fig,s,'NodeColor',color)
+            highlight(fig,i,p,'EdgeColor',color)
+            highlight(fig,i,s,'EdgeColor',color)
+            hub = unique([hub, p',s']);
+            if length(hub) >= req_size
+                break
+            end
+        end
+    end
+    hubs = [hubs; hub(1,1:req_size)];
+end
+
+annotation('textbox',[.78 .9 0 0],'String','\bullet hub1','FitBoxToText','on','Color','r'); % dim: [x y w h]
+annotation('textbox',[.78 .835 0 0],'String','\bullet hub2','FitBoxToText','on','Color','b');
+annotation('textbox',[.78 .77 0 0],'String','\bullet hub3','FitBoxToText','on','Color','g');
+annotation('textbox',[.78 .705 0 0],'String','\bullet hub4','FitBoxToText','on','Color','k');
+
+fontsize(12,"points")
+position = get(gcf, 'Position');
+position = [100, 100, 600, 600];
+saveas(gcf, "figures_new/Electrical network hubs_graph.jpg")
+
+%%
+
+figure();
+fract_targ = 0.1;
+fract_dist = 0.1;
+
+n_graphs = 1;
+
+for t = 1:numel(hubs(:,1))
+for d = setdiff(1:numel(hubs(:,1)),t)
+    results = zeros(1, n_graphs);
+    results_time = zeros(1, n_graphs);
+    results_trivial = zeros(1, n_graphs);
+    
+    for i = 1:n_graphs
+        disp("Left: " + (n_graphs-i) + ", Size: " + size(G.Nodes, 1))
+        [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hubs(t,:), hubs(d,:));
+    end
+    graph_name = t + "-" + d;% convertCharsToStrings(tags{tag});
+    subplot(1,3,1);
+    hold on
+    add2boxchart(results, graph_name, "Cost", "Cost [-]", "Hubs")
+    hold off
+    subplot(1,3,2);
+    hold on
+    add2boxchart(results_time, graph_name, "Electrical network" + newline + "Runtime", "Time [s]", "Hubs")
+    hold off
+    subplot(1,3,3);
+    hold on
+    add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Hubs")
+    hold off
+    ylim([0 1])
+end
+end
+
+fontsize(12,"points")
+position = get(gcf, 'Position');
+position = [100, 100, 600, 600];
+saveas(gcf, "figures_new/Electrical network hubs.jpg")
 
 %-----------------------------------------------%
 %                                               %
