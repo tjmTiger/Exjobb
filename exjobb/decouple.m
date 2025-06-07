@@ -74,16 +74,19 @@ for i = 1:n_targ % decouple targets from disturbances and other targets
 end
 
 A = full(adjacency(G))';
-% A = A.*randn(N,N); % random weights
 G = digraph(A');
 
-% V_out = submincutDDSF_final2(G,D,T,'V_out');
-% V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
+%-----------------------------------------------%
+%                                               %
+%                 State Feedback                %
+%                                               %
+%-----------------------------------------------%
+
 t_start = tic;
 V_in = submincutDDSF_final2(G,D,T,'V_in');
 results_time = toc(t_start);
-% V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
 
+% V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
 % check and display how many control nodes are placed on target nodes
 % v_in_on_T = numel(V_in);
 % for v_in = V_in_all
@@ -106,4 +109,42 @@ if (v_in_on_T == 0) & (numel(V_in) == 0)
 end
 
 cost = (2*numel(V_in)) / ( n_targ + n_dist );
+
+%-----------------------------------------------%
+%                                               %
+%                Output Feedback                %
+%                                               %
+%-----------------------------------------------%
+% 
+% t_start = tic; % dubbelkolla vila av de nedan ska man mäta tid på.
+% 
+% V_in = submincutDDSF_final2(G,D,T,'V_in');
+% V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
+% [Vin_opt, Vout, C1] = constrained_optimal_solution(G,D,T,V_in_all,'V_out');
+% V_out = submincutDDSF_final2(G,D,T,'V_out');
+% V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
+% [Vin, Vout_opt, C2] = constrained_optimal_solution(G,D,T,V_out_all,'V_in');
+% [V_in_best, V_out_best, C, S] = global_constrained_optimal_solution(Vin_opt, Vout, C1, Vin, Vout_opt, C2);
+% 
+% results_time = toc(t_start);
+% V_in = cell2mat(V_in_best);
+% V_out = cell2mat(V_out_best);
+% 
+% [~,~,ic] = unique([V_in T']);
+% a_counts = accumarray(ic,1);
+% v_in_on_T = sum(a_counts(:,1)~=1);
+% 
+% trivial_solutions = v_in_on_T/numel(V_in);
+% if (v_in_on_T == 0) & (numel(V_in) == 0)
+%         trivial_solutions = 0;
+% end
+% 
+% cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
+%
+%-----------------------------------------------%
+%                                               %
+%               Dynamical Feedback              %
+%                                               %
+%-----------------------------------------------%
+
 % cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );

@@ -16,12 +16,12 @@ function [V_in, V_out, C] = constrained_optimal_solution(G,D,T,V,varargin)
     if nargin > 4
         if strcmp(varargin{1}, 'V_in')
             a = 1; % for switch
-            disp('Search for min V_in, given V_out');
-            disp('')
+            % disp('Search for min V_in, given V_out');
+            % disp('')
         elseif strcmp(varargin{1}, 'V_out')
             a = 2;
-            disp('Search for min V_out, given V_in');
-            disp('')
+            % disp('Search for min V_out, given V_in');
+            % disp('')
         else
             disp('Varargin typing error: choose ''V_in'' or ''V_out'' as additional input');
             return

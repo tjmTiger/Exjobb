@@ -11,7 +11,7 @@ mycolors = [
 175,56,255;
 ]./255;
 
-n_graphs = 200; % sample size of graphs
+n_graphs = 200; % sample size of graph
 %-----------------------------------------------%
 %                                               %
 %     Distrubance and target node fractions     %
@@ -502,7 +502,7 @@ position = get(gcf, 'Position');
 position = [100, 100, 600, 600];
 saveas(gcf, "figures_new/" + graph_name + " alpha_fract.jpg")
 
-% fractions beta
+%% fractions beta
 graph_name = "Scale Free";
 figure();
 n = 100;

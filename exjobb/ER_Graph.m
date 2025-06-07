@@ -33,7 +33,7 @@ switch nargin
         format = 1;
         verbose = false;
     otherwise
-        disp('input argument invalid')
+        % disp('input argument invalid')
 end
 
 G = spones(triu(sprand(n,n,p),1)); % Note: random upper triangle of a binary (sparse) matrix (with density p). middle and lower triangles are zeros
@@ -65,7 +65,7 @@ Agg = A_dir_com{ind_sort_com(1)};% Get largest graph according to ind_sort_com c
 n = size(Agg,1);
 
 if(numel(A_dir_com)>1)
-    disp("WARNING: graph disconnected, largest component was used instead, with size: " + n)
+    % disp("WARNING: graph disconnected, largest component was used instead, with size: " + n)
 end
 
 for i = 1:size(Agg,1) % Makes Ag directional

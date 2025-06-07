@@ -63,7 +63,7 @@ function [V_in_best, V_out_best, C, S] = global_constrained_optimal_solution(V_i
         end
     
         T = table(V_in_best', V_out_best', cellfun(@numel, V_in_best)', cellfun(@numel, V_out_best)',  C.*ones(numel(S),1), S, 'VariableNames', {'V_in_best', 'V_out_best','# of Inputs','# of Outputs', 'Minimal Cost C', 'Constraint w.r.t.'});
-        disp(T);
+        % disp(T);
     
     else
     
