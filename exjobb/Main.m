@@ -409,14 +409,189 @@ for beta = [0.55 0.70 0.79 0.845 0.871 0.893]
 end
 saveas(gcf, "figures_new/" + "Scale Free" + " node_degree.jpg")
 
+%-----------------------------------------------%
+%                                               %
+%                  Extra tests                  %
+%                 Watts Strogatz                %
+%                                               %
+%-----------------------------------------------%
+%% Fractions beta
+graph_name = "Watts Strogatz";
+figure();
+n = 100;
+for beta = 0:0.2:1
+    display_name = string(beta);
+    results_all = [];
+    results_time_all = [];
+    results_trivial_all = [];
+    fract_T_D = 0.05:0.05:0.3;
+    for j = fract_T_D
+        fract_targ = j;
+        fract_dist = j;
+        results = zeros(1, n_graphs);
+        results_time = zeros(1, n_graphs);
+        results_trivial = zeros(1, n_graphs);
+        for i = 1:n_graphs
+            k = 2;
+            G = WattsStrogatz(n, k, beta, i);
+            [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+            disp("Strogatz: " + i)
+        end
+        results_all(end+1,:) = results;
+        results_time_all(end+1,:) = results_time;
+        results_trivial_all(end+1,:) = results_trivial;
+    end
+    subplot(1,3,1);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_all, 1)
+        mean_list(:,end+1) = mean(results_all(r,:));
+    end
+    plot(fract_T_D, mean_list, "-o", 'DisplayName', display_name)
+    title("Cost")
+    ylabel("Cost [-]")
+    xlabel("Fractions")
+    xlim([min(fract_T_D) max(fract_T_D)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+    
+    hold off;
+
+    subplot(1,3,2);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_time_all, 1)
+        mean_list(:,end+1) = mean(results_time_all(r,:));
+    end
+    plot(fract_T_D, mean_list, "-o", 'DisplayName', display_name)
+    title(graph_name + newline + "Runtime")
+    ylabel("Time [s]")
+    xlabel("Fractions")
+    xlim([min(fract_T_D) max(fract_T_D)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+
+    hold off;
+
+    subplot(1,3,3);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_trivial_all, 1)
+        mean_list(:,end+1) = mean(results_trivial_all(r,:)); 
+    end
+    plot(fract_T_D, mean_list, "-o", 'DisplayName', display_name)
+    title("Trivial solutions")
+    ylabel("Index [-]")
+    xlabel("Fractions")
+    ylim([0 1])
+    xlim([min(fract_T_D) max(fract_T_D)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+    lgd = legend;
+    title(lgd,'beta')
+    hold off;
+end
+fontsize(12,"points")
+position = get(gcf, 'Position');
+position = [100, 100, 600, 600];
+saveas(gcf, "figures_new/" + graph_name + " beta_fract.jpg")
+
+%% Size beta
+graph_name = "Watts Strogatz";
+figure();
+fract_targ = 0.1;
+fract_dist = 0.1;
+for beta = 0:0.2:1
+    display_name = string(beta);
+    results_all = [];
+    results_time_all = [];
+    results_trivial_all = [];
+    graph_size = 30:30:180;
+    for j = graph_size
+        n = j;
+        results = zeros(1, n_graphs);
+        results_time = zeros(1, n_graphs);
+        results_trivial = zeros(1, n_graphs);
+        for i = 1:n_graphs
+            k = 2;
+            G = WattsStrogatz(n, k, beta, i);
+            [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+            disp("Strogatz: " + i)
+        end
+        results_all(end+1,:) = results;
+        results_time_all(end+1,:) = results_time;
+        results_trivial_all(end+1,:) = results_trivial;
+    end
+    subplot(1,3,1);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_all, 1)
+        mean_list(:,end+1) = mean(results_all(r,:));
+    end
+    plot(graph_size, mean_list, "-o", 'DisplayName', display_name)
+    title("Cost")
+    ylabel("Cost [-]")
+    xlabel("Size")
+    xlim([min(graph_size) max(graph_size)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+    
+    hold off;
+
+    subplot(1,3,2);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_time_all, 1)
+        mean_list(:,end+1) = mean(results_time_all(r,:));
+    end
+    plot(graph_size, mean_list, "-o", 'DisplayName', display_name)
+    title(graph_name + newline + "Runtime")
+    ylabel("Time [s]")
+    xlabel("Size")
+    xlim([min(graph_size) max(graph_size)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+
+    hold off;
+
+    subplot(1,3,3);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_trivial_all, 1)
+        mean_list(:,end+1) = mean(results_trivial_all(r,:)); 
+    end
+    plot(graph_size, mean_list, "-o", 'DisplayName', display_name)
+    title("Trivial solutions")
+    ylabel("Index [-]")
+    xlabel("Size")
+    ylim([0 1])
+    xlim([min(graph_size) max(graph_size)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+    lgd = legend;
+    title(lgd,'beta')
+    hold off;
+end
+fontsize(12,"points")
+position = get(gcf, 'Position');
+position = [100, 100, 600, 600];
+saveas(gcf, "figures_new/" + graph_name + " beta_size.jpg")
+
+
 %%
 %-----------------------------------------------%
 %                                               %
 %                  Extra tests                  %
-%                   Scale Free                  %
+%                  Scale  Free                  %
 %                                               %
 %-----------------------------------------------%
-%% fractions alpha - gamma
+%% Fractions alpha - gamma
 
 graph_name = "Scale Free";
 figure();
@@ -502,7 +677,7 @@ position = get(gcf, 'Position');
 position = [100, 100, 600, 600];
 saveas(gcf, "figures_new/" + graph_name + " alpha_fract.jpg")
 
-%% fractions beta
+%% Fractions beta
 graph_name = "Scale Free";
 figure();
 n = 100;
@@ -587,6 +762,175 @@ position = get(gcf, 'Position');
 position = [100, 100, 600, 600];
 saveas(gcf, "figures_new/" + graph_name + " beta_fract.jpg")
 
+%% Size alpha - gamma
+graph_name = "Scale Free";
+figure();
+fract_targ = 0.1;
+fract_dist = 0.1;
+for alpha = 0.2:0.2:0.8
+    display_name = string(alpha);
+    results_all = [];
+    results_time_all = [];
+    results_trivial_all = [];
+    graph_size = 30:30:180;
+    for j = graph_size
+        n = j;
+        results = zeros(1, n_graphs);
+        results_time = zeros(1, n_graphs);
+        results_trivial = zeros(1, n_graphs);
+        for i = 1:n_graphs     
+            beta = 0.2;
+            gamma = 0.8-alpha;
+            G = SFG_dir(n, alpha, beta, gamma, 1, 1, i);
+            [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+            disp("SFG: " + i)
+        end
+        results_all(end+1,:) = results;
+        results_time_all(end+1,:) = results_time;
+        results_trivial_all(end+1,:) = results_trivial;
+    end
+    subplot(1,3,1);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_all, 1)
+        mean_list(:,end+1) = mean(results_all(r,:));
+    end
+    plot(graph_size, mean_list, "-o", 'DisplayName', display_name)
+    title("Cost")
+    ylabel("Cost [-]")
+    xlabel("Size")
+    xlim([min(graph_size) max(graph_size)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+    
+    hold off;
+
+    subplot(1,3,2);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_time_all, 1)
+        mean_list(:,end+1) = mean(results_time_all(r,:));
+    end
+    plot(graph_size, mean_list, "-o", 'DisplayName', display_name)
+    title(graph_name + newline + "Runtime")
+    ylabel("Time [s]")
+    xlabel("Size")
+    xlim([min(graph_size) max(graph_size)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+
+    hold off;
+
+    subplot(1,3,3);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_trivial_all, 1)
+        mean_list(:,end+1) = mean(results_trivial_all(r,:)); 
+    end
+    plot(graph_size, mean_list, "-o", 'DisplayName', display_name)
+    title("Trivial solutions")
+    ylabel("Index [-]")
+    xlabel("Size")
+    ylim([0 1])
+    xlim([min(graph_size) max(graph_size)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+    lgd = legend;
+    title(lgd,'alpha')
+    hold off;
+end
+fontsize(12,"points")
+position = get(gcf, 'Position');
+position = [100, 100, 600, 600];
+saveas(gcf, "figures_new/" + graph_name + " alpha_size.jpg")
+
+%% Size beta
+graph_name = "Scale Free";
+figure();
+fract_targ = 0.1;
+fract_dist = 0.1;
+for beta = 0.2:0.2:0.8
+    display_name = string(beta);
+    results_all = [];
+    results_time_all = [];
+    results_trivial_all = [];
+    graph_size = 30:30:180;
+    for j = graph_size
+        n = j;
+        results = zeros(1, n_graphs);
+        results_time = zeros(1, n_graphs);
+        results_trivial = zeros(1, n_graphs);
+        for i = 1:n_graphs     
+            alpha = (1-beta)/2;
+            gamma = 1-beta-alpha;
+            G = SFG_dir(n, alpha, beta, gamma, 1, 1, i);
+            [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
+            disp("SFG: " + i)
+        end
+        results_all(end+1,:) = results;
+        results_time_all(end+1,:) = results_time;
+        results_trivial_all(end+1,:) = results_trivial;
+    end
+    subplot(1,3,1);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_all, 1)
+        mean_list(:,end+1) = mean(results_all(r,:));
+    end
+    plot(graph_size, mean_list, "-o", 'DisplayName', display_name)
+    title("Cost")
+    ylabel("Cost [-]")
+    xlabel("Size")
+    xlim([min(graph_size) max(graph_size)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+    
+    hold off;
+
+    subplot(1,3,2);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_time_all, 1)
+        mean_list(:,end+1) = mean(results_time_all(r,:));
+    end
+    plot(graph_size, mean_list, "-o", 'DisplayName', display_name)
+    title(graph_name + newline + "Runtime")
+    ylabel("Time [s]")
+    xlabel("Size")
+    xlim([min(graph_size) max(graph_size)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+
+    hold off;
+
+    subplot(1,3,3);
+    hold on;
+    
+    mean_list = [];
+    for r = 1:size(results_trivial_all, 1)
+        mean_list(:,end+1) = mean(results_trivial_all(r,:)); 
+    end
+    plot(graph_size, mean_list, "-o", 'DisplayName', display_name)
+    title("Trivial solutions")
+    ylabel("Index [-]")
+    xlabel("Size")
+    ylim([0 1])
+    xlim([min(graph_size) max(graph_size)])
+    ax = gca; 
+    ax.ColorOrder = mycolors;
+    lgd = legend;
+    title(lgd,'beta')
+    hold off;
+end
+fontsize(12,"points")
+position = get(gcf, 'Position');
+position = [100, 100, 600, 600];
+saveas(gcf, "figures_new/" + graph_name + " beta_size.jpg")
 %-----------------------------------------------%
 %                                               %
 %                   Functions                   %
