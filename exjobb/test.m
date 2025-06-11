@@ -58,7 +58,7 @@ function G = get_largest(G)
     [bin, binsize] = conncomp(graph(sparse(abs(G+G')), 'upper'));
     n_comp = length(binsize);
     ind_comp = bin;
-    
+
     if n_comp > 1
         for i = 1:n_comp % Make array of graphs in out graph
             A_dir_com{i} = G(ind_comp==i,ind_comp==i);
@@ -66,8 +66,8 @@ function G = get_largest(G)
     else
         A_dir_com{1} = G;
     end
-    
+
     [~,ind_sort_com] = sort(binsize,'descend'); 
-    
+
     G = A_dir_com{ind_sort_com(1)};% Get largest graph according to ind_sort_com created earlier
 end
