@@ -23,9 +23,9 @@ for tag = 1:length(tags)
     disp(tags{tag})
 
     n_graphs = length(val{tag});
-    results = [];
-    results_time = [];
-    results_trivial = [];
+    results = zeros(1, n_graphs);
+    results_time = zeros(1, n_graphs);
+    results_trivial = zeros(1, n_graphs);
 
     for i = 1:length(val{tag})
         G = val{tag}{i}{1};
@@ -33,7 +33,7 @@ for tag = 1:length(tags)
         test2do = n_tests(size(G.Nodes, 1), fract_targ, fract_dist);
         disp("test2do: " + test2do)
         for j = 1:test2do
-            [results(end+1), results_time(end+1), results_trivial(end+1)] = decouple(G, fract_targ, fract_dist);
+            [results(i), results_time(i), results_trivial(i)] = [1,1,1];%decouple(G, fract_targ, fract_dist);
         end
     end
     graph_name = convertCharsToStrings(tags{tag});
@@ -177,16 +177,16 @@ n_graphs = 100;
 
 for t = 1:numel(hubs(:,1))
 for d = setdiff(1:numel(hubs(:,1)),t)
-    results = [];
-    results_time = [];
-    results_trivial = [];
+    results = zeros(1, n_graphs);
+    results_time = zeros(1, n_graphs);
+    results_trivial = zeros(1, n_graphs);
     
     for i = 1:n_graphs
         disp("Left: " + (n_graphs-i) + ", Size: " + size(G.Nodes, 1))
         test2do = n_tests(size(G.Nodes, 1), fract_targ, fract_dist, cluster_size, cluster_size);
         disp("test2do: " + test2do)
         for j = 1:test2do
-            [results(end+1), results_time(end+1), results_trivial(end+1)] = decouple(G, fract_targ, fract_dist, hubs(t,:), hubs(d,:));
+            [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hubs(t,:), hubs(d,:));
         end
     end
     graph_name = t + "-" + d;% convertCharsToStrings(tags{tag});
@@ -289,16 +289,16 @@ n_graphs = 10;
 
 for t = 1:numel(hubs(:,1))
 for d = setdiff(1:numel(hubs(:,1)),t)
-    results = [];
-    results_time = [];
-    results_trivial = [];
+    results = zeros(1, n_graphs);
+    results_time = zeros(1, n_graphs);
+    results_trivial = zeros(1, n_graphs);
     
     for i = 1:n_graphs
         disp("Left: " + (n_graphs-i) + ", Size: " + size(G.Nodes, 1))
         test2do = n_tests(size(G.Nodes, 1), fract_targ, fract_dist, cluster_size, cluster_size);
         disp("test2do: " + test2do)
         for j = 1:test2do
-            [results(end+1), results_time(end+1), results_trivial(edn+1)] = decouple(G, fract_targ, fract_dist, hubs(t,:), hubs(d,:));
+            [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist, hubs(t,:), hubs(d,:));
         end
     end
     graph_name = t + "-" + d;% convertCharsToStrings(tags{tag});
@@ -360,8 +360,4 @@ function n_tests = n_tests(n, fracT, fracD, hubT, hubD)
             disp('input argument invalid')
     end
     n_tests = min(100, max(10,floor(n_tests)));
-end
-
-function [a,b,c] = test()
-    a = 1; b = 1; c = 1;
 end
