@@ -111,6 +111,7 @@ clc;
 clear;
 clc;
 
+% get hubs
 load formated_data.mat;
 tags = keys(formated_data);
 val = values(formated_data);
@@ -168,6 +169,25 @@ position = get(gcf, 'Position');
 position = [100, 100, 600, 600];
 saveas(gcf, "figures_new/Technological network hubs_graph.fig")
 
+% %% shortest path
+% shortest_paths = [];
+% for hub_a = 1:numel(hubs(:,1))
+% for hub_b = setdiff(1:numel(hubs(:,1)),hub_a)
+%     path_len = 100;
+%     for node_a = hub_a
+%     for node_b = hub_b
+%         path_len_temp = length(shortestpath(G,node_a, node_b));
+%         if path_len_temp < path_len
+%             path_len = path_len_temp;
+%         end
+%     end
+%     end
+%     shortest_paths(end+1) = path_len;
+% end
+% end
+% % shortest_paths: [4,5,4,5,5,5]
+
+% Solve
 figure();
 fract_targ = 0.1;
 fract_dist = 0.1;
@@ -218,6 +238,8 @@ saveas(gcf, "figures_new/Technological network hubs.fig")
 %-----------------------------------------------%
 clear;
 clc;
+
+% get hubs
 
 load formated_data.mat;
 tags = keys(formated_data);
@@ -278,7 +300,26 @@ position = get(gcf, 'Position');
 position = [100, 100, 600, 600];
 saveas(gcf, "figures_new/Electrical network hubs_graph.fig")
 
-%%
+%% shortest path
+shortest_paths = [];
+for hub_a = 1:numel(hubs(:,1))
+for hub_b = setdiff(1:numel(hubs(:,1)),hub_a)
+    path_len = 100;
+    for node_a = hubs(hub_a,:)
+    for node_b = hubs(hub_b,:)
+        path_len_temp = length(shortestpath(G,node_a, node_b));
+        if path_len_temp < path_len
+            path_len = path_len_temp;
+        end
+    end
+    end
+    shortest_paths(end+1) = path_len;
+end
+end
+% shortest_paths: 2	2	2	2	3	3	2	3	3	2	3	3
+% isempty(intersect(hubs(1,:), hubs(3,:)))
+
+%% solve
 
 figure();
 fract_targ = 0.1;
