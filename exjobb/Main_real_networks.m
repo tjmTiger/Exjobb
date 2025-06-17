@@ -1,60 +1,59 @@
 clear;
 close all;
 clc;
-
 %-----------------------------------------------%
 %                                               %
 %                  Real Networks                %
 %                                               %
 %-----------------------------------------------%
-
-fract_targ = 0.1;
-fract_dist = 0.1;
-
-load formated_data.mat;
-
-tags = keys(formated_data);
-val = values(formated_data);
-figure();
-results_all = [];
-results_time_all = [];
-results_trivial_all = [];
-for tag = 1:length(tags)
-    disp(tags{tag})
-
-    n_graphs = length(val{tag});
-    results = [];
-    results_time = [];
-    results_trivial = [];
-
-    for i = 1:length(val{tag})
-        G = val{tag}{i}{1};
-        disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
-        test2do = n_tests(size(G.Nodes, 1), fract_targ, fract_dist);
-        disp("test2do: " + test2do)
-        for j = 1:test2do
-            [results(end+1), results_time(end+1), results_trivial(end+1)] = decouple(G, fract_targ, fract_dist);
-        end
-    end
-    graph_name = convertCharsToStrings(tags{tag});
-    subplot(1,3,1);
-    hold on
-    add2boxchart(results, graph_name, "Cost", "Cost [-]", "Graph category")
-    hold off
-    subplot(1,3,2);
-    hold on
-    add2boxchart(results_time, graph_name, "Runtime", "Time [s]", "Graph category")
-    hold off
-    subplot(1,3,3);
-    hold on
-    add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Graph category")
-    hold off
-end
-
-fontsize(12,"points")
-position = get(gcf, 'Position');
-position = [100, 100, 600, 600];
-saveas(gcf, "figures_new/Real Networks.jpg")
+% 
+% fract_targ = 0.1;
+% fract_dist = 0.1;
+% 
+% load formated_data.mat;
+% 
+% tags = keys(formated_data);
+% val = values(formated_data);
+% figure();
+% results_all = [];
+% results_time_all = [];
+% results_trivial_all = [];
+% for tag = 1:length(tags)
+%     disp(tags{tag})
+% 
+%     n_graphs = length(val{tag});
+%     results = [];
+%     results_time = [];
+%     results_trivial = [];
+% 
+%     for i = 1:length(val{tag})
+%         G = val{tag}{i}{1};
+%         disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
+%         test2do = n_tests(size(G.Nodes, 1), fract_targ, fract_dist);
+%         disp("test2do: " + test2do)
+%         for j = 1:test2do
+%             [results(end+1), results_time(end+1), results_trivial(end+1)] = decouple(G, fract_targ, fract_dist);
+%         end
+%     end
+%     graph_name = convertCharsToStrings(tags{tag});
+%     subplot(1,3,1);
+%     hold on
+%     add2boxchart(results, graph_name, "Cost", "Cost [-]", "Graph category")
+%     hold off
+%     subplot(1,3,2);
+%     hold on
+%     add2boxchart(results_time, graph_name, "Runtime", "Time [s]", "Graph category")
+%     hold off
+%     subplot(1,3,3);
+%     hold on
+%     add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Graph category")
+%     hold off
+% end
+% 
+% fontsize(12,"points")
+% position = get(gcf, 'Position');
+% position = [100, 100, 600, 600];
+% saveas(gcf, "figures_new/Real Networks.fig")
 
 % %% Sizes of networks
 % load formated_data.mat;
@@ -167,7 +166,7 @@ annotation('textbox',[.78 .77 0 0],'String','\bullet hub3','FitBoxToText','on','
 fontsize(12,"points")
 position = get(gcf, 'Position');
 position = [100, 100, 600, 600];
-saveas(gcf, "figures_new/Technological network hubs_graph.jpg")
+saveas(gcf, "figures_new/Technological network hubs_graph.fig")
 
 figure();
 fract_targ = 0.1;
@@ -209,7 +208,7 @@ end
 fontsize(12,"points")
 position = get(gcf, 'Position');
 position = [100, 100, 600, 600];
-saveas(gcf, "figures_new/Technological network hubs.jpg")
+saveas(gcf, "figures_new/Technological network hubs.fig")
 
 %%
 %-----------------------------------------------%
@@ -277,7 +276,7 @@ annotation('textbox',[.78 .705 0 0],'String','\bullet hub4','FitBoxToText','on',
 fontsize(12,"points")
 position = get(gcf, 'Position');
 position = [100, 100, 600, 600];
-saveas(gcf, "figures_new/Electrical network hubs_graph.jpg")
+saveas(gcf, "figures_new/Electrical network hubs_graph.fig")
 
 %%
 
@@ -321,7 +320,7 @@ end
 fontsize(12,"points")
 position = get(gcf, 'Position');
 position = [100, 100, 600, 600];
-saveas(gcf, "figures_new/Electrical network hubs.jpg")
+saveas(gcf, "figures_new/Electrical network hubs.fig")
 
 %-----------------------------------------------%
 %                                               %
