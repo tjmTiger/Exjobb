@@ -1,0 +1,15 @@
+clear; clc;
+
+
+sample_size = 200; % sample size of graph
+%-----------------------------------------------%
+%                                               %
+%     Distrubance and target node fractions     %
+%                                               %
+%-----------------------------------------------%
+
+t = Test(@WattsStrogatz, [100, 2, 0.2], "number_of_tests", sample_size);
+
+for graph_generating_algorithm = [@erdos_renyi, @watts_strogatz, @sfg]
+    for n = 100:50:200
+end

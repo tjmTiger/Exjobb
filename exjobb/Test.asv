@@ -43,8 +43,8 @@ methods
         end
     end
 
-    function add_to_plot(self)
-        % pass
+    function add_to_plot(self,)
+        % todo
     end
 end
 end
