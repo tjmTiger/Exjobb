@@ -1,5 +1,5 @@
 classdef Test < handle
-%TEST Stores properties and results of a test with given parameters including cost,
+%TEST Stores properties and results of a test with given parameters, including cost,
 %runtime and ammount of trivial solutions.
 %   Detailed explanation goes here
 
@@ -64,11 +64,7 @@ end
 %-----------------------------------------------%
 
 function [cost, runtime, trivial_solutions] = decouple(G, fract_targ, fract_dist, list_targ, list_dist)
-    %DECOUPLE Add targets and ditrubances to a graph and run alorithm to
-    %decouple them.
-    %   Number of targets and disturbances is chosen according to frac_targ
-    %   and frac_dist.
-    %   Note: frac_targ + frac_dist <= 1
+    % Note: frac_targ + frac_dist <= 1
     
     if fract_targ + fract_dist > 1
         error('input argument invalid, fract_targ + fract_dist must be lesst than 1')
