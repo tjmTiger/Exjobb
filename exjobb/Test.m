@@ -46,8 +46,12 @@ methods
         %   Detailed explanation goes here
         
         for i = 1:self.number_of_tests
+            t_start = tic;
             G = self.graph_algorithm(self.graph_parameters{:},self.graph_seed + i);
+            disp("new graph time: " + toc(t_start))
+            t_start = tic;
             [self.results_cost(end+1), self.results_time(end+1), self.results_trivial(end+1)] = decouple(G, self.fraction_targets, self.fraction_disturbances);
+            disp("decoupling time: " + toc(t_start))
         end
     end
 
