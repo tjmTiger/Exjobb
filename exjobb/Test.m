@@ -10,7 +10,7 @@ properties
     graph_seed {mustBeNumeric} = 0
 
     % test properties
-    number_of_tests {mustBeNumeric} = 200
+    sample_size {mustBeNumeric} = 200
     fraction_targets {mustBeFloat} = 0.1
     fraction_disturbances {mustBeFloat} = 0.1
 
@@ -18,8 +18,6 @@ properties
     results_cost
     results_time
     results_trivial
-
-    decouple
 end
 methods
     function self = Test(graph_algorithm, graph_parameters, varargin)
@@ -30,8 +28,8 @@ methods
         self.graph_parameters = num2cell(graph_parameters);
         while ~isempty(varargin)
             switch lower(varargin{1})
-                case 'number_of_tests'
-                    self.number_of_tests = varargin{2};
+                case 'sample_size'
+                    self.sample_size = varargin{2};
                 case 'fraction_targets'
                     self.fraction_targets = varargin{2};
                 case 'fraction_disturbances'
@@ -46,11 +44,21 @@ methods
     function run(self)
         %METHOD Perform a test according to object properties
         %   Detailed explanation goes here
-        
-        for i = 1:self.number_of_tests
-            G = self.graph_algorithm(self.graph_parameters{:},self.graph_seed + i);
-            [self.results_cost(end+1), self.results_time(end+1), self.results_trivial(end+1)] = decouple(G, self.fraction_targets, self.fraction_disturbances);
+
+        % parfor does not like self, change all variables we use to local
+        graph_algorithm = self.graph_algorithm;
+        graph_parameters = self.graph_parameters;
+        graph_seed = self.graph_seed;
+        results_cost = zeros(1,self.sample_size);
+        results_time = zeros(1,self.sample_size);
+        results_trivial = zeros(1,self.sample_size);
+        parfor i = 1:self.sample_size
+            G = graph_algorithm(graph_parameters{:},graph_seed + i);
+            [results_cost(i), results_time(i), results_trivial(i)] = decouple(G, self.fraction_targets, self.fraction_disturbances);
         end
+        self.results_cost = results_cost;
+        self.results_time = results_time;
+        self.results_trivial = results_trivial;
     end
 
     function add_to_plot(self)

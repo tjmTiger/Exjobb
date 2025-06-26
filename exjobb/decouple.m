@@ -85,7 +85,6 @@ G = digraph(A');
 t_start = tic;
 V_in = submincutDDSF_final2(G,D,T,'V_in');
 results_time = toc(t_start);
-disp("decouple time: " + results_time)
 
 % V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
 % check and display how many control nodes are placed on target nodes
