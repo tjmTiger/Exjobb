@@ -21,6 +21,12 @@ methods
         t.run()
         self.tests{end+1} = t;
     end
+
+    function plot(self)
+        %METHOD2 Summary of this method goes here
+        %   Detailed explanation goes here
+        disp("todo: implement plotting")
+    end
 end
 end
 

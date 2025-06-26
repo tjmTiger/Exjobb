@@ -18,6 +18,8 @@ properties
     results_cost
     results_time
     results_trivial
+
+    decouple
 end
 methods
     function self = Test(graph_algorithm, graph_parameters, varargin)
