@@ -4,7 +4,7 @@ clear; clc;
 p = gcp("nocreate");
 if isempty(p) % If no pool, create new one.
     parpool(6)
-else % If there is a pool, but its too small, delete it and create new one.
+else % If there is a pool, but its small, delete it and create new one.
     if p.NumWorkers < 6
         delete(gcp('nocreate'))
         parpool(6)
