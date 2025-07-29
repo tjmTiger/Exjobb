@@ -1,7 +1,7 @@
 clear; clc;
 
 graph_sizes = 100:100:400;
-sample_size = 10; % 200
+sample_size = 100; % 200
 
 for graph_gen_alg = ["erdos renyi"]%, "watts strogatz", "sfg"]
     results = [];
@@ -42,15 +42,12 @@ for graph_gen_alg = ["erdos renyi"]%, "watts strogatz", "sfg"]
         switch graph_gen_alg
             case "erdos renyi"
                 k = 0:nchoosek(n, 2); % n-1;      % Possible degree values (from 0 to n-1)
-
-                P_k = binopdf(k, n, p);  % Binomial degree distribution
-                yyaxis right
-                plot(k, n.*P_k);
-
-                lambda = (n-1)*p;
+                % P_k = binopdf(k, n, p);  % Binomial degree distribution
+                % plot(k, P_k);
+                lambda = p * (n - 1);
                 P_poisson = poisspdf(k, lambda);
                 yyaxis right
-                plot(k, n.*P_poisson);
+                plot(k, P_poisson);
             case "watts strogatz"
                 % pass
             case "sfg"
