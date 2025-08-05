@@ -1,50 +1,26 @@
-classdef Tests < handle
-%TESTS Summary of this class goes here
+function plot_tests(tests, x, options)
+%PLOT_TEST Summary of this function goes here
 %   Detailed explanation goes here
-
-properties
-    % number_of_tests {mustBeNumeric} = 200 => fix so that all tasts have
-    % same sample size !!!!
-    tests {mustBeCell} = {};
-end
-
-methods
-    function self = Tests()
-        %TESTS Construct an instance of this class
-        %   Detailed explanation goes here
-    end
-    
-    function run(self,varargin)
-        %METHOD1 Summary of this method goes here
-        %   Detailed explanation goes here
-        t = Test(varargin{:});
-        t.run()
-        self.tests{end+1} = t;
+    arguments
+        tests {mustBeCell}
+        x
+        options.display_name {mustBeText} = "display_name"
+        options.graph_name {mustBeText} = "graph_name"
     end
 
-    function plot(self, x)
-        %METHOD2 Summary of this method goes here
-        %   Detailed explanation goes here
-        results_all = [];
-        results_time_all = [];
-        results_trivial_all = [];
-        for t = self.tests
-            results_all(end+1,:) = t{1}.results_cost;
-            results_time_all(end+1,:) = t{1}.results_time;
-            results_trivial_all(end+1,:) = t{1}.results_trivial;
-        end
-        tests_plot(results_all, results_time_all, results_trivial_all, x)
-        self.tests = {};
+    results_all = [];
+    results_time_all = [];
+    results_trivial_all = [];
+    for t = tests
+        results_all(end+1,:) = t{1}.results_cost;
+        results_time_all(end+1,:) = t{1}.results_time;
+        results_trivial_all(end+1,:) = t{1}.results_trivial;
     end
-end
+    tests_plot(results_all, results_time_all, results_trivial_all, x, options.display_name, options.graph_name)
 end
 
 
-
-
-function tests_plot(results_all, results_time_all, results_trivial_all, x)
-    display_name = "display_name";
-    graph_name = "graph_name";
+function tests_plot(results_all, results_time_all, results_trivial_all, x, display_name, graph_name)
 
     mycolors = [
     238,64,53;
@@ -65,16 +41,16 @@ function tests_plot(results_all, results_time_all, results_trivial_all, x)
     title("Cost")
     ylabel("Cost [-]")
     xlabel("Fractions")
-    ylim([0 1])
+    % ylim([0 1])
     xlim([min(x) max(x)])
     ax = gca; 
     ax.ColorOrder = mycolors;
-    
+
     hold off;
 
     subplot(1,3,2);
     hold on;
-    
+
     mean_list = [];
     for r = 1:size(results_time_all, 1)
         mean_list(:,end+1) = mean(results_time_all(r,:));
@@ -91,7 +67,7 @@ function tests_plot(results_all, results_time_all, results_trivial_all, x)
 
     subplot(1,3,3);
     hold on;
-    
+
     mean_list = [];
     for r = 1:size(results_trivial_all, 1)
         mean_list(:,end+1) = mean(results_trivial_all(r,:)); 

@@ -18,7 +18,7 @@ n_graphs = 200; % sample size of graph
 %                                               %
 %-----------------------------------------------%
 
-for graph_name = ["Erdos Renyi", "Watts Strogatz", "Scale Free"]
+for graph_name = ["Erdos Renyi"]%, "Watts Strogatz", "Scale Free"]
     figure();
     for n = 100:50:200
         display_name = string(n);
@@ -35,6 +35,8 @@ for graph_name = ["Erdos Renyi", "Watts Strogatz", "Scale Free"]
             for i = 1:n_graphs
                 if graph_name == "Erdos Renyi"
                     p = 1.5*(log10(n)/n);
+                    disp(p)
+                    disp(p)
                     G = ER_Graph(n, p, 1, i);
                     [results(i), results_time(i), results_trivial(i)] = decouple(G, fract_targ, fract_dist);
                     disp("Erdos: " + i)

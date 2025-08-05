@@ -1,4 +1,4 @@
-function  G = sfg(n, alpha, beta, gamma, delta_in, delta_out, seed, create_using)
+function  G = sfg(n, alpha, beta, gamma, delta_in, delta_out, seed)
 %     Gustav: This implementation is based on a python implementaion from 
 %     https://networkx.github.io/documentation/latest/reference/generators.html
 %
@@ -48,44 +48,8 @@ function  G = sfg(n, alpha, beta, gamma, delta_in, delta_out, seed, create_using
 
 
 %------------------------------------------------------------------%
-% Default parameters:
-
-% delta_in=1;
-% delta_out=1;
-% create_using=false;
-% seed=false;
-
-
-% if isempty(create_using)
-%     % start with 10-cycle
-%     G = speye(9);
-%     G = [[sparse(1,9) 1];[G sparse(9,1)]];
-% else
-%     % keep existing graph
-%     G = create_using;
-% end
-
-switch nargin
-    case 4
-        G = speye(9);
-        G = [[sparse(1,9) 1];[G sparse(9,1)]];
-        delta_in = 1;
-        delta_out = 1;
-    case 5
-        G = speye(9);
-        G = [[sparse(1,9) 1];[G sparse(9,1)]];
-    case 6
-        G = speye(9);
-        G = [[sparse(1,9) 1];[G sparse(9,1)]];
-    case 7
-        rng(seed);
-        G = speye(9);
-        G = [[sparse(1,9) 1];[G sparse(9,1)]];
-    case 8
-        G = create_using;
-    otherwise
-        disp('input argument invalid')
-end
+G = speye(9);
+G = [[sparse(1,9) 1];[G sparse(9,1)]];
 
 if alpha < 0
     disp('alpha must be >= 0.')

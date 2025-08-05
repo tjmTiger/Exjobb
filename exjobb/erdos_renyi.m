@@ -1,4 +1,4 @@
-function [Gg,n,m] = erdos_renyi(n,p,s,seed) % cleaned up version
+function [Gg,n,m] = erdos_renyi(n,p,seed) % cleaned up version
 %    Description:
 %        this function create Erdos-Renyi random Graph*
 %        *This code only generate approximately Erdos-Renyi Random Graph. 
@@ -15,37 +15,15 @@ function [Gg,n,m] = erdos_renyi(n,p,s,seed) % cleaned up version
 %        m : graph size, number of edges, |E|
 %    Input Arguments:
 %        n : graph size, number of vertexes, |V|
-%        p : the probability p of the second definition of Erdos-Renyi model.
+%        p : the probability p of the second definition of Erdos-Renyi
+%        model. Note: this algorithm works only well for p << 1!!!
 %        s : 1 or 0 (if connceted component graph has nn=n or nn <= n)
 %        seed: seed of the function. 
 
-switch nargin
-    case 2
-        format = 1;
-        verbose = false;
-    case 3
-        seed = 0;
-        rng(seed);
-        format = 1;
-        verbose = false;
-    case 4
-        rng(seed)
-        format = 1;
-        verbose = false;
-    otherwise
-        % disp('input argument invalid')
-end
+G = triu(spones(sprand(n,n,p)),1); % Note: random upper triangle of a binary (sparse) matrix (with density p). middle and lower triangles are zeros
+Ag = full(G + G'); % Note: converts to normal matrix)
 
-G = spones(triu(sprand(n,n,p),1)); % Note: random upper triangle of a binary (sparse) matrix (with density p). middle and lower triangles are zeros
-if nargout>2
-    m = nnz(G); % Note: number of non zero elements
-end
-if format==1
-    G = G + G'; % Note: symetrical matrix  
-end
-
-Ag = full(G); % Note: converts to normal matrix
-
+% Get largest connected element
 [bin, binsize] = conncomp(graph(sparse(abs(Ag))));
 n_comp = length(binsize);
 ind_comp = bin;
@@ -80,5 +58,8 @@ for i = 1:size(Agg,1) % Makes Ag directional
     end
 end
 
+if nargout>2
+    m = nnz(G); % Note: number of non zero elements
+end
 Gg = digraph(Agg');
 end

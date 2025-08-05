@@ -4,14 +4,6 @@ function h = watts_strogatz(N,K,beta, seed)
 %
 % beta = 0 is a ring lattice, and beta = 1 is a random graph.
 
-switch nargin
-    case 3
-        disp("no seed")
-    case 4
-        rng(seed);
-    otherwise
-        disp('input argument invalid')
-end
 
 % Connect each node to its K next and previous neighbors. This constructs
 % indices for a ring lattice.
