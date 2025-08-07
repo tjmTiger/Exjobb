@@ -18,7 +18,7 @@ n_graphs = 200; % sample size of graph
 %                                               %
 %-----------------------------------------------%
 
-for graph_name = ["Erdos Renyi"]%, "Watts Strogatz", "Scale Free"]
+for graph_name = ["Erdos Renyi", "Watts Strogatz", "Scale Free"]
     figure();
     for n = 100:50:200
         display_name = string(n);
