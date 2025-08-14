@@ -1,30 +1,45 @@
-function test_strogatz_fraction_beta(options)
-    arguments
-        options.sample_size {mustBeNumeric} = 200
-        options.n {mustBeNumeric} = 100
-    end
-    [options.n, 2, 0.2]
-    graph_algorithm = @watts_strogatz;
-    tests = {};
-    figure();
-    params = num2cell(graph_generating_algorithm{1}{2});
-    for fraction = 0.05:0.05:0.3
-        for beta = 0.05:0.05:0.3
-            [test.results_cost, test.results_time, test.results_trivial] = run_test( ...
-                graph_algorithm, ...
-                params, ...
-                "sample_size", options.sample_size, ...
-                "fraction_targets", fraction, ...
-                "fraction_disturbances", fraction ...
-                );
-            tests{end+1} = test;
-        end
-        plot_tests(tests, 0.05:0.05:0.3,"legend_title", "Dist.Frac", "legend_entries", string(fract_targ), "graph_name", "Watts Strogratz", "x_label", "Targ.Frac.");
-        tests = {};
-    end
-    fontsize(12,"points")
-    position = get(gcf, 'Position');
-    position = [100, 100, 600, 600];
-    print(gcf, "figures_new/fraction_beta_" + erase("Watts Strogratz"," ") + ".eps", "-depsc")
-end
+function result = test_strogatz_fraction_beta(~, beta, fraction, options)
+    params = num2cell([options.size, 2, beta]);
+    [result.results_cost, result.results_time, result.results_trivial] = run_test( ...
+        @watts_strogatz, ...
+        params, ...
+        "sample_size", options.sample_size, ...
+        "fraction_targets", fraction, ...
+        "fraction_disturbances", fraction, ...
+        "ddp", options.ddp ...
+        );
 
+
+% 
+% 
+% function test_strogatz_fraction_beta(options)
+%     arguments
+%         options.sample_size {mustBeNumeric} = 200
+%         options.n {mustBeNumeric} = 100 % graph size
+%         options.ddp {mustBeText}  = "state_feedback"
+%     end
+%     graph_algorithm = @watts_strogatz;
+%     tests = {};
+%     figure();
+%     for beta = 0:0.2:1
+%         for fraction = 0.05:0.05:0.3
+%             params = num2cell([options.n, 2, beta]);
+%             [test.results_cost, test.results_time, test.results_trivial] = run_test( ...
+%                 graph_algorithm, ...
+%                 params, ...
+%                 "sample_size", options.sample_size, ...
+%                 "fraction_targets", fraction, ...
+%                 "fraction_disturbances", fraction, ...
+%                 "ddp", options.ddp ...
+%                 );
+%             tests{end+1} = test;
+%         end
+%         plot_tests(tests, 0.05:0.05:0.3,"legend_title", "Beta", "legend_entries", string(beta), "graph_name", "Watts Strogratz", "x_label", "Frac.");
+%         tests = {};
+%     end
+%     fontsize(12,"points")
+%     position = get(gcf, 'Position');
+%     position = [100, 100, 600, 600];
+%     print(gcf, "figures_new/fraction_beta_" + erase("Watts Strogratz"," ") + ".eps", "-depsc")
+% end
+% 

@@ -1,8 +1,20 @@
-function [cost, results_time, trivial_solutions] = decouple(G, fract_targ, fract_dist, list_targ, list_dist)
+function [cost, results_time, trivial_solutions] = decouple(G, fract_targ, fract_dist, options)
 % Note: frac_targ + frac_dist <= 1
+% Choices for ddp: 
+%   state_feedback
+%   output_feedback
+%   dynamical_feedback
+arguments
+    G 
+    fract_targ 
+    fract_dist
+    options.ddp {mustBeText} = "state_feedback"
+    options.list_targ = 'Null'
+    options.list_dist = 'Null'
+end
 
 if fract_targ + fract_dist > 1
-    error('input argument invalid, fract_targ + fract_dist must be lesst than 1')
+    error('Invalid argument list. fract_targ + fract_dist must be lesst than 1')
 end
 
 % cleaned up
@@ -16,8 +28,8 @@ N = numnodes(G);
 % fract_dist = 0.001;
 T = [];
 
-switch nargin
-    case 3
+switch options.list_targ
+    case 'Null'
         while isempty(T) % add targets and disturbances
             n_dist = ceil(fract_dist*N);
             n_targ = ceil(fract_targ*N);
@@ -25,7 +37,11 @@ switch nargin
             T = sort(randsample(setdiff(1:N', D), n_targ))';
             % T = sort(setdiff(randsample(N, n_targ),D));
         end
-    case 5
+    otherwise
+        if options.list_dist == 'Null'
+            disp("ERROR, Invalid input, list_dist cant be null if list_targ is not null.")
+            return
+        end
         % if length(list_targ) > length(list_dist)
         %     list_targ = setdiff(list_targ, list_dist);
         % else
@@ -45,8 +61,6 @@ switch nargin
             D = sort(randsample(list_dist, n_dist));
             T = sort(setdiff(randsample(N, n_targ),D));
         end
-    otherwise
-        disp('input argument invalid')
 end
 
 n_dist = length(D);
@@ -76,75 +90,63 @@ end
 A = full(adjacency(G))';
 G = digraph(A');
 
-%-----------------------------------------------%
-%                                               %
-%                 State Feedback                %
-%                                               %
-%-----------------------------------------------%
+switch options.ddp
+    case "state_feedback"
+        t_start = tic;
+        V_in = submincutDDSF_final2(G,D,T,'V_in');
+        results_time = toc(t_start);
+        
+        % V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
+        % check and display how many control nodes are placed on target nodes
+        % v_in_on_T = numel(V_in);
+        % for v_in = V_in_all
+        %     v_in = v_in{1};
+        %     [~,~,ic] = unique([v_in T']);
+        %     a_counts = accumarray(ic,1);
+        %     v_in_on_T_next = sum(a_counts(:,1)~=1);
+        %     if v_in_on_T > v_in_on_T_next
+        %             v_in_on_T = v_in_on_T_next;
+        %     end
+        % end
+        
+        [~,~,ic] = unique([V_in T']);
+        a_counts = accumarray(ic,1);
+        v_in_on_T = sum(a_counts(:,1)~=1);
+        
+        trivial_solutions = v_in_on_T/numel(V_in);
+        if (v_in_on_T == 0) & (numel(V_in) == 0)
+                trivial_solutions = 0;
+        end
+        
+        cost = (2*numel(V_in)) / ( n_targ + n_dist );
 
-t_start = tic;
-V_in = submincutDDSF_final2(G,D,T,'V_in');
-results_time = toc(t_start);
+    case "output_feedback"
+        t_start = tic; % dubbelkolla vila av de nedan ska man mäta tid på.
 
-% V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
-% check and display how many control nodes are placed on target nodes
-% v_in_on_T = numel(V_in);
-% for v_in = V_in_all
-%     v_in = v_in{1};
-%     [~,~,ic] = unique([v_in T']);
-%     a_counts = accumarray(ic,1);
-%     v_in_on_T_next = sum(a_counts(:,1)~=1);
-%     if v_in_on_T > v_in_on_T_next
-%             v_in_on_T = v_in_on_T_next;
-%     end
-% end
+        V_in = submincutDDSF_final2(G,D,T,'V_in');
+        V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
+        [Vin_opt, Vout, C1] = constrained_optimal_solution(G,D,T,V_in_all,'V_out');
+        V_out = submincutDDSF_final2(G,D,T,'V_out');
+        V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
+        [Vin, Vout_opt, C2] = constrained_optimal_solution(G,D,T,V_out_all,'V_in');
+        [V_in_best, V_out_best, C, S] = global_constrained_optimal_solution(Vin_opt, Vout, C1, Vin, Vout_opt, C2);
 
-[~,~,ic] = unique([V_in T']);
-a_counts = accumarray(ic,1);
-v_in_on_T = sum(a_counts(:,1)~=1);
+        results_time = toc(t_start);
+        V_in = cell2mat(V_in_best);
+        V_out = cell2mat(V_out_best);
 
-trivial_solutions = v_in_on_T/numel(V_in);
-if (v_in_on_T == 0) & (numel(V_in) == 0)
-        trivial_solutions = 0;
+        [~,~,ic] = unique([V_in T']);
+        a_counts = accumarray(ic,1);
+        v_in_on_T = sum(a_counts(:,1)~=1);
+
+        trivial_solutions = v_in_on_T/numel(V_in);
+        if (v_in_on_T == 0) & (numel(V_in) == 0)
+                trivial_solutions = 0;
+        end
+        cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
+    case "dynamical_feedback"
+        % todo: write code for dynamical feedback
+        % cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
+    otherwise
+        disp("ERROR: Invalid type of ddp. Possible options are: state_feedback, output_feedback or dynamical_feedback")
 end
-
-cost = (2*numel(V_in)) / ( n_targ + n_dist );
-
-%-----------------------------------------------%
-%                                               %
-%                Output Feedback                %
-%                                               %
-%-----------------------------------------------%
-% 
-% t_start = tic; % dubbelkolla vila av de nedan ska man mäta tid på.
-% 
-% V_in = submincutDDSF_final2(G,D,T,'V_in');
-% V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
-% [Vin_opt, Vout, C1] = constrained_optimal_solution(G,D,T,V_in_all,'V_out');
-% V_out = submincutDDSF_final2(G,D,T,'V_out');
-% V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
-% [Vin, Vout_opt, C2] = constrained_optimal_solution(G,D,T,V_out_all,'V_in');
-% [V_in_best, V_out_best, C, S] = global_constrained_optimal_solution(Vin_opt, Vout, C1, Vin, Vout_opt, C2);
-% 
-% results_time = toc(t_start);
-% V_in = cell2mat(V_in_best);
-% V_out = cell2mat(V_out_best);
-% 
-% [~,~,ic] = unique([V_in T']);
-% a_counts = accumarray(ic,1);
-% v_in_on_T = sum(a_counts(:,1)~=1);
-% 
-% trivial_solutions = v_in_on_T/numel(V_in);
-% if (v_in_on_T == 0) & (numel(V_in) == 0)
-%         trivial_solutions = 0;
-% end
-% 
-% cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
-%
-%-----------------------------------------------%
-%                                               %
-%               Dynamical Feedback              %
-%                                               %
-%-----------------------------------------------%
-
-% cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
