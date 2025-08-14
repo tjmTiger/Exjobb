@@ -19,6 +19,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
         
         options.graph_generating_algorithm = ["Erdos Renyi", "Watts Strogratz", "Scale Free"]
         options.ddp string  = "state_feedback"
+        options.boxchart {mustBeNumericOrLogical} = false
     end
 
 
@@ -30,7 +31,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
                 for v2 = variable2
                     results{end+1} = test_function(graph_generating_algorithm, v1, v2, options);
                 end
-                plot_results(results, variable2, "legend_title", variable1_name, "legend_entries", string(v1), "graph_name", graph_generating_algorithm{1}{1}, "x_label", variable2_name);
+                plot_results(results, variable2, "legend_title", variable1_name, "legend_entries", string(v1), "graph_name", graph_generating_algorithm{1}{1}, "x_label", variable2_name, "boxchart", options.boxchart);
                 results = {};
             end
             fontsize(12,"points")
@@ -52,11 +53,11 @@ function plot_results(tests, x_axis, options)
     arguments
         tests cell
         x_axis {mustBeRow}
-        options.legend_entries string = "Null"
-        options.legend_title string = "Null"
-        options.graph_name string = "Null"
-        options.x_label string = "Null"
-        options.boxchart {mustBeNumericOrLogical} = false
+        options.legend_entries string
+        options.legend_title string
+        options.graph_name string
+        options.x_label string
+        options.boxchart {mustBeNumericOrLogical}
     end
 
     mycolors = [
@@ -81,7 +82,7 @@ function plot_results(tests, x_axis, options)
     hold on;
     if options.boxchart
         for r = 1:size(results_all, 1)
-            add2options.boxchart(results_all(r,:), string(x_axis(r)))
+            add2boxchart(results_all(r,:), string(x_axis(r)))
         end
     else
         mean_list = [];
@@ -102,7 +103,7 @@ function plot_results(tests, x_axis, options)
     hold on;
     if options.boxchart
         for r = 1:size(results_time_all, 1)
-            add2options.boxchart(results_time_all(r,:), string(x_axis(r)))
+            add2boxchart(results_time_all(r,:), string(x_axis(r)))
         end
     else
         mean_list = [];
@@ -123,7 +124,7 @@ function plot_results(tests, x_axis, options)
     hold on;
     if options.boxchart
         for r = 1:size(results_trivial_all, 1)
-            add2options.boxchart(results_trivial_all(r,:), string(x_axis(r)))
+            add2boxchart(results_trivial_all(r,:), string(x_axis(r)))
         end
     else
         mean_list = [];
