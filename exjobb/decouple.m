@@ -121,8 +121,7 @@ switch options.ddp
         cost = (2*numel(V_in)) / ( n_targ + n_dist );
 
     case "output_feedback"
-        t_start = tic; % dubbelkolla vila av de nedan ska man mäta tid på.
-
+        t_start = tic; % dubbelkolla vilka av de nedan ska man mäta tid på.
         V_in = submincutDDSF_final2(G,D,T,'V_in');
         V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
         [Vin_opt, Vout, C1] = constrained_optimal_solution(G,D,T,V_in_all,'V_out');
@@ -130,8 +129,8 @@ switch options.ddp
         V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
         [Vin, Vout_opt, C2] = constrained_optimal_solution(G,D,T,V_out_all,'V_in');
         [V_in_best, V_out_best, C, S] = global_constrained_optimal_solution(Vin_opt, Vout, C1, Vin, Vout_opt, C2);
-
         results_time = toc(t_start);
+
         V_in = cell2mat(V_in_best);
         V_out = cell2mat(V_out_best);
 

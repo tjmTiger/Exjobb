@@ -17,7 +17,7 @@ function [results_cost, results_time, results_trivial] = run_test(algorithm, par
     arguments
         algorithm
         parameters {mustBeCell}
-        options.sample_size {mustBeNumeric} = 200
+        options.sample_size {mustBeNumeric}
         options.seed {mustBeNumeric} = 0
         options.fraction_targets {mustBeNumeric} = 0.1
         options.fraction_disturbances {mustBeNumeric} = 0.1
