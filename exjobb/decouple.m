@@ -8,7 +8,7 @@ arguments
     G 
     fract_targ 
     fract_dist
-    options.ddp {mustBeText} = "state_feedback"
+    options.ddp {mustBeText}
     options.list_targ = 'Null'
     options.list_dist = 'Null'
 end
