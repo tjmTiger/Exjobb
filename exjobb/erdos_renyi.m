@@ -19,6 +19,7 @@ function [Gg,n,m] = erdos_renyi(n,p,seed) % cleaned up version
 %        model. Note: this algorithm works only well for p << 1!!!
 %        s : 1 or 0 (if connceted component graph has nn=n or nn <= n)
 %        seed: seed of the function. 
+rng(seed);
 
 G = triu(spones(sprand(n,n,p)),1); % Note: random upper triangle of a binary (sparse) matrix (with density p). middle and lower triangles are zeros
 Ag = full(G + G'); % Note: converts to normal matrix)

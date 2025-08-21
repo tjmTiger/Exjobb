@@ -7,6 +7,7 @@ function h = watts_strogatz(N,K,beta, seed)
 
 % Connect each node to its K next and previous neighbors. This constructs
 % indices for a ring lattice.
+rng(seed);
 s = repelem((1:N)',1,K); % Note: array with once in first row, copunting up on every next row
 t = s + repmat(1:K,N,1); % Note: s made into diagonal matrix instead, 2 in left upper corner, counting up diagonally
 t = mod(t-1,N)+1; % Note: mod returns remainder after division of t-1 by N => makes N to largest number in the matrix, after that reapeating from 1

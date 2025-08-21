@@ -62,13 +62,14 @@ if gamma < 0
 end
 
 if abs(alpha+beta+gamma - 1)>1e-10
-    disp('alpha+beta+gamma must equal 1.')
+    beta = beta - (alpha+beta+gamma - 1);
+    disp("alpha+beta+gamma must equal 1. Beta is set to " + beta + " to compensate.")
 end
         
 % G.name="directed_scale_free_graph(%s,alpha=%s,beta=%s,gamma=%s,delta_in=%s,delta_out=%s)"%(n,alpha,beta,gamma,delta_in,delta_out)
 
 % seed random number generated (uses None as default)
-% random.seed(seed)
+rng(seed);
 
 while size(G,1) < n
     r = rand();
