@@ -4,7 +4,7 @@ function h = watts_strogatz(N,K,beta, seed)
 %
 % beta = 0 is a ring lattice, and beta = 1 is a random graph.
 
-
+rng(seed)
 % Connect each node to its K next and previous neighbors. This constructs
 % indices for a ring lattice.
 s = repelem((1:N)',1,K); % Note: array with once in first row, copunting up on every next row

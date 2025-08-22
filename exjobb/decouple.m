@@ -9,6 +9,7 @@ arguments
     fract_targ 
     fract_dist
     options.ddp {mustBeText} = "state_feedback"
+    options.seed
     options.list_targ = 'Null'
     options.list_dist = 'Null'
 end
@@ -16,6 +17,7 @@ end
 if fract_targ + fract_dist > 1
     error('Invalid argument list. fract_targ + fract_dist must be lesst than 1')
 end
+rng(options.seed)
 
 % cleaned up
 set(groot,'defaultAxesTickLabelInterpreter','latex');

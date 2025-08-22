@@ -48,6 +48,7 @@ function  G = sfg(n, alpha, beta, gamma, delta_in, delta_out, seed)
 
 
 %------------------------------------------------------------------%
+rng(seed)
 G = speye(9);
 G = [[sparse(1,9) 1];[G sparse(9,1)]];
 
