@@ -8,16 +8,16 @@ arguments
     G 
     fract_targ 
     fract_dist
-    options.ddp {mustBeText}
+    options.ddp {mustBeText} = "state_feedback"
+    options.seed
     options.list_targ = 'Null'
     options.list_dist = 'Null'
-    options.seed {mustBeNumeric}
 end
-rng(options.seed);
 
 if fract_targ + fract_dist > 1
     error('Invalid argument list. fract_targ + fract_dist must be lesst than 1')
 end
+rng(options.seed)
 
 % cleaned up
 set(groot,'defaultAxesTickLabelInterpreter','latex');
@@ -36,13 +36,6 @@ switch options.list_targ
             n_dist = ceil(fract_dist*N);
             n_targ = ceil(fract_targ*N);
             D = sort(randsample(N, n_dist));
-            if n_targ > numel(setdiff(1:N', D))
-                disp("wtf, n_targ = " + n_targ + ", max = " + numel(setdiff(1:N', D)))
-                cost = 100;
-                results_time = 100;
-                trivial_solutions = 100;
-                return
-            end
             T = sort(randsample(setdiff(1:N', D), n_targ))';
             % T = sort(setdiff(randsample(N, n_targ),D));
         end
@@ -95,23 +88,6 @@ for i = 1:n_targ % decouple targets from disturbances and other targets
         end
     end
 end
-
-figure; % After edge removal by action of V_in_initial on targets directly connected to disturbances
-p = plot(G,'b');
-title('$\mathcal{G}$')
-nodeColors = 1 * ones(N, 1); % Default to value 3 (Yellow)
-nodeColors(T) = 2;
-nodeColors(D) = 3;
-p.NodeCData = nodeColors;
-colormap(jet); % Use the 'jet' colormap
-p.MarkerSize = 8; % Increase or decrease the size of the nodes
-hold on; % Hold on to the current plot
-legendEntries = {'Disturbance', 'Target', 'Other nodes'};
-hRed = scatter(nan, nan, 100, 'r', 'filled'); % Placeholder for red nodes
-hGreen = scatter(nan, nan, 100, 'g', 'filled'); % Placeholder for green nodes
-hYellow = scatter(nan, nan, 100, 'b', 'filled'); % Placeholder for yellow nodes
-legend([hRed, hGreen, hYellow], legendEntries, 'Location', 'best');
-hold off; % Release the hold on the current plot
 
 A = full(adjacency(G))';
 G = digraph(A');

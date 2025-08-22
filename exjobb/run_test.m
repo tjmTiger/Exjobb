@@ -1,4 +1,4 @@
-function [results_cost, results_time, results_trivial, results_size] = run_test(algorithm, parameters, options)
+function [results_cost, results_time, results_trivial] = run_test(algorithm, parameters, options)
 %   Description:
 %       Run DDP on a random graph created according to algorithm provided,
 %       with parameters passed in.
@@ -23,14 +23,12 @@ function [results_cost, results_time, results_trivial, results_size] = run_test(
         options.fraction_disturbances {mustBeNumeric} = 0.1
         options.ddp {mustBeText}
     end
-    results_size = zeros(1,options.sample_size);
+    
     results_cost = zeros(1,options.sample_size);
     results_time = zeros(1,options.sample_size);
     results_trivial = zeros(1,options.sample_size);
-    parfor i = 1:options.sample_size %parfor
-        seed_i = options.seed + i;
-        G = algorithm(parameters{:}, seed_i);
-        results_size(i) = numnodes(G);
-        [results_cost(i), results_time(i), results_trivial(i)] = decouple(G, options.fraction_targets, options.fraction_disturbances, "ddp", options.ddp, "seed", seed_i);
+    parfor i = 1:options.sample_size
+        G = algorithm(parameters{:}, options.seed + i);
+        [results_cost(i), results_time(i), results_trivial(i)] = decouple(G, options.fraction_targets, options.fraction_disturbances, "ddp", options.ddp, "seed", options.seed+i);
     end
 end
