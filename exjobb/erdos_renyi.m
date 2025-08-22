@@ -42,6 +42,8 @@ end
 
 Agg = A_dir_com{ind_sort_com(1)};% Get largest graph according to ind_sort_com created earlier
 n = size(Agg,1);
+% figure();
+% plot(graph(Agg'))
 
 if(numel(A_dir_com)>1)
     % disp("WARNING: graph disconnected, largest component was used instead, with size: " + n)

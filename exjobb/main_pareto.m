@@ -2,6 +2,46 @@ clear; clc;
 multithreading()
 % todo: pareto optimization => use gamultiobj()
 
+% f = @(x)DDP_erods_renyi(x(1));
+% 
+% nvars = 1;
+% A = [];
+% b = [];
+% Aeq = [];
+% beq = [];
+% lb = [0.01];
+% ub = [1];
+% nonlcon = [];
+% intcon  = [];
+% % x = gamultiobj(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon,intcon);
+% x = paretosearch(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon);
+% % x = [0.011235];
+% 
+% figure();
+% for i = x'
+%     disp(i)
+%     subplot(2,1,1)
+%     hold on
+%     [cost, size] = DDP_erods_renyi(i(1), "sample_size", 100);
+%     plot(cost,size,'o')
+%     title('Pareto Points')
+%     xlabel("cost")
+%     ylabel("100-size")
+%     xlim([0 1])
+%     ylim([0 1])
+%     hold off
+% 
+%     subplot(2,1,2)
+%     hold on
+%     plot(i(1),i(1),'o')
+%     title('Parameters 1')
+%     xlabel("p")
+%     ylabel("p")
+%     xlim([0 1])
+%     ylim([0 1])
+%     hold off
+% end
+
 % f = @(x)DDP_watts_strogatz(x(1), x(2));
 % 
 % nvars = 2;
@@ -13,19 +53,18 @@ multithreading()
 % ub = [3 1];
 % nonlcon = [];
 % intcon  = [1];
-% % x = gamultiobj(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon,intcon);
-% x = paretosearch(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon);
+% x = gamultiobj(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon,intcon);
+% % x = paretosearch(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon);
 % x = [x(1) x(2)];
-% % x = [3, 0.1869; 3, 0.2185]
+% x = [1.0000 0.8872];
 % 
 % figure();
 % for i = x'
 %     disp(i)
-%     disp(sum(i))
-%     subplot(3,1,1)
+%     subplot(2,1,1)
 %     hold on
-%     [cost, triv] = DDP_sfg(i(1), i(2));
-%     plot(1-cost,1-triv,'o')
+%     [cost, triv] = DDP_watts_strogatz(i(1), i(2), "sample_size", 100);
+%     plot(cost,triv,'o')
 %     title('Pareto Points')
 %     xlabel("cost")
 %     ylabel("triv.")
@@ -33,7 +72,7 @@ multithreading()
 %     ylim([0 1])
 %     hold off
 % 
-%     subplot(3,1,2)
+%     subplot(2,1,2)
 %     hold on
 %     plot(i(1),i(2),'o')
 %     title('Parameters 1')
@@ -44,22 +83,22 @@ multithreading()
 %     hold off
 % end
 
-f = @(x)DDP_sfg(x(1), x(2), x(1));
+f = @(x)DDP_sfg(x(1), x(2), x(3));
 
-nvars = 2;
+nvars = 3;
 A = [];
 b = [];
-Aeq = [2 1];
+Aeq = [1 1 1];
 beq = 1;
-lb = [0.01 0.01];
-ub = [1 1];
+lb = [0.01 0.01 0.01];
+ub = [1 1 1];
 nonlcon = [];
 intcon  = [];
-x = gamultiobj(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon,intcon);
+% x = gamultiobj(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon,intcon);
 
 x = paretosearch(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon);
 x = [x(1) x(2) x(1)];
-% x = [0.3393    0.3214    0.3393];
+% x = [0.4950    0.0100    0.4950; 0.3816    0.2367    0.3816];
 
 figure();
 for i = x'
@@ -67,7 +106,7 @@ for i = x'
     disp(sum(i))
     subplot(3,1,1)
     hold on
-    [cost, triv] = DDP_sfg(i(1), i(2), i(3));
+    [cost, triv] = DDP_sfg(i(1), i(2), i(3), "sample_size", 100);
     plot(cost,triv,'o')
     title('Pareto Points')
     xlabel("cost")
@@ -98,23 +137,23 @@ for i = x'
 end
 
 
-function [cost, trivial] = DDP_erods_renyi(k, beta)
+function [cost, size] = DDP_erods_renyi(p)
     disp("p = " + p)
     fract_targ = 0.1;
     fract_dist = 0.1;
     n = 100;
     params = num2cell([n, p]);
-    [costs, ~, trivials] = run_test( ...
+    [costs, ~, ~, sizes] = run_test( ...
         @erdos_renyi, ...
         params, ...
-        "sample_size", 24, ...
+        "sample_size", 6, ...
         "fraction_targets", fract_targ, ...
         "fraction_disturbances", fract_dist, ...
         "ddp", "state_feedback" ...
         );
     cost = mean(costs);
-    trivial = mean(trivials);
-    disp("cost = " + cost + ", triv. = " + trivial)
+    size = mean(100-sizes);
+    disp("cost = " + cost + ", 100-size = " + size)
 end
 
 function [cost, trivial] = DDP_watts_strogatz(k, beta)
@@ -138,7 +177,7 @@ function [cost, trivial] = DDP_watts_strogatz(k, beta)
 end
 
 function [cost, trivial] = DDP_sfg(alpha, beta, gamma)
-    % disp("alpha = " + alpha + ", beta = " + beta + ", gamma = " + gamma)
+    disp("alpha = " + alpha + ", beta = " + beta + ", gamma = " + gamma)
     fract_targ = 0.1;
     fract_dist = 0.1;
     n = 100;
@@ -146,12 +185,12 @@ function [cost, trivial] = DDP_sfg(alpha, beta, gamma)
     [costs, ~, trivials] = run_test( ...
         @sfg, ...
         params, ...
-        "sample_size", 100, ...
+        "sample_size", 6, ...
         "fraction_targets", fract_targ, ...
         "fraction_disturbances", fract_dist, ...
         "ddp", "state_feedback" ...
         );
     cost = mean(costs);
     trivial = mean(trivials);
-    % disp("cost = " + cost + ", triv. = " + trivial)
+    disp("cost = " + cost + ", triv. = " + trivial)
 end
