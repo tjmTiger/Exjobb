@@ -42,32 +42,18 @@ multithreading()
 %     hold off
 % end
 
-% f = @(x)DDP_watts_strogatz(x(1), x(2));
-% 
-% nvars = 2;
-% A = [];
-% b = [];
-% Aeq = [];
-% beq = [];
-% lb = [1 0];
-% ub = [3 1];
-% nonlcon = [];
-% intcon  = 1;
-% options = optimoptions('gamultiobj', ...
-%     'PopulationSize', 200, ...
-%     'MaxGenerations', 300, ...
-%     'PlotFcn', {@gaplotpareto}, ...
-%     'Display', 'iter');
-% [x, fval] = gamultiobj(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon,intcon);
-% 
-% % Plot Pareto front
-% figure;
-% plot(fval(:,1), fval(:,2), 'ro', 'MarkerFaceColor','r');
-% xlabel('Objective 1');
-% ylabel('Objective 2');
-% title('Pareto Front with Integer Constraint on x2');
-% grid on;
+f = @(x)DDP_watts_strogatz(x(1), x(2));
 
+nvars = 2;
+A = [];
+b = [];
+Aeq = [];
+beq = [];
+lb = [1 0];
+ub = [3 1];
+nonlcon = [];
+intcon  = [1];
+x = gamultiobj(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon,intcon);
 % % x = paretosearch(f,nvars,A,b,Aeq,beq,lb,ub,nonlcon);
 % x = [x(1) x(2)];
 % x = [1.0000 0.8872];
