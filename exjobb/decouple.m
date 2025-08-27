@@ -9,60 +9,63 @@ arguments
     fract_targ 
     fract_dist
     options.ddp {mustBeText} = "state_feedback"
-    options.seed
-    options.list_targ = 'Null'
-    options.list_dist = 'Null'
+    options.seed {mustBeNumeric} = -1
+    options.list_targ = []
+    options.list_dist = []
 end
-
-if fract_targ + fract_dist > 1
-    error('Invalid argument list. fract_targ + fract_dist must be lesst than 1')
-end
-rng(options.seed)
 
 % cleaned up
 set(groot,'defaultAxesTickLabelInterpreter','latex');
 set(groot,'defaulttextinterpreter','latex');
 set(groot,'defaultLegendInterpreter','latex');
 
-N = numnodes(G);
+if fract_targ + fract_dist > 1
+    error('Invalid argument list. fract_targ + fract_dist must be lesst than 1')
+end
 
-% fract_targ = 0.001;
-% fract_dist = 0.001;
-T = [];
-
-switch options.list_targ
-    case 'Null'
-        while isempty(T) % add targets and disturbances
-            n_dist = ceil(fract_dist*N);
-            n_targ = ceil(fract_targ*N);
-            D = sort(randsample(N, n_dist));
-            T = sort(randsample(setdiff(1:N', D), n_targ))';
-            % T = sort(setdiff(randsample(N, n_targ),D));
-        end
+switch options.seed
+    case -1
+        % pass
     otherwise
-        if options.list_dist == 'Null'
-            disp("ERROR, Invalid input, list_dist cant be null if list_targ is not null.")
-            return
-        end
-        % if length(list_targ) > length(list_dist)
-        %     list_targ = setdiff(list_targ, list_dist);
-        % else
-        %     list_dist = setdiff(list_dist, list_targ);
-        % end
+        rng(options.seed)
+end
 
-        while isempty(T) % add targets and disturbances
-            n_dist = ceil(fract_dist*N);
-            n_targ = ceil(fract_targ*N);
-            if n_dist > length(list_dist)
-                disp("WARNING: Request " + n_dist + " distubances, but only " + length(list_dist) + " provided!")
-                n_dist = length(list_dist);
-            elseif n_targ > length(list_targ)
-                disp("WARNING: Request " + n_targ + " targets, but only " + length(list_targ) + " provided!")
-                n_targ = length(list_targ);
-            end
-            D = sort(randsample(list_dist, n_dist));
-            T = sort(setdiff(randsample(N, n_targ),D));
+N = numnodes(G);
+T = [];
+if isempty(options.list_targ)
+    while isempty(T) % add targets and disturbances
+        n_dist = ceil(fract_dist*N);
+        n_targ = ceil(fract_targ*N);
+        D = sort(randsample(N, n_dist));
+        T = sort(randsample(setdiff(1:N', D), n_targ))';
+        % T = sort(setdiff(randsample(N, n_targ),D));
+    end
+else
+    if isempty(options.list_dist)
+        disp("ERROR, Invalid input, list_dist cant be empty if list_targ is not empty.")
+        return
+    end
+    list_dist = options.list_dist;
+    list_targ = options.list_targ;
+    % if length(list_targ) > length(list_dist)
+    %     list_targ = setdiff(list_targ, list_dist);
+    % else
+    %     list_dist = setdiff(list_dist, list_targ);
+    % end
+
+    while isempty(T) % add targets and disturbances
+        n_dist = ceil(fract_dist*N);
+        n_targ = ceil(fract_targ*N);
+        if n_dist > length(list_dist)
+            disp("WARNING: Request " + n_dist + " distubances, but only " + length(list_dist) + " provided!")
+            n_dist = length(list_dist);
+        elseif n_targ > length(list_targ)
+            disp("WARNING: Request " + n_targ + " targets, but only " + length(list_targ) + " provided!")
+            n_targ = length(list_targ);
         end
+        D = sort(randsample(list_dist, n_dist));
+        T = sort(setdiff(randsample(N, n_targ),D));
+    end
 end
 
 n_dist = length(D);
