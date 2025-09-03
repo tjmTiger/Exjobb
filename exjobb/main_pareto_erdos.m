@@ -2,19 +2,16 @@ clear; clc;
 multithreading()
 
 % Ranges
-params1 = 1:3;                 % first argument
-params2 = linspace(0,1,101);  % second argument
+params1 = linspace(0.03,1,98);  % first argument
 
 results = [];
 
 % loop through parameters
 for p1 = params1
-    for p2 = params2
-        [f1, f2] = DDP_watts_strogatz(p1, p2);  % returns [f1, f2]
-        
-        % [param1, param2, f1, f2]
-        results = [results; p1, p2, f1, f2];
-    end
+    [f1, f2] = DDP_erods_renyi(p1);  % returns [f1, f2]
+    
+    % [param1, param2, f1, f2]
+    results = [results; p1, 0, f1, f2];
 end
 % extract objectives
 obj1 = results(:,3);
@@ -40,7 +37,6 @@ scatter(obj1, obj2, 20, 'b', 'filled', 'MarkerFaceAlpha',0.3);
 
 % pareto points big dark blue
 paretoPoints = results(is_pareto, :);  % [mode, param, f1, f2]
-
 for k = 1:size(paretoPoints,1)
     p1 = paretoPoints(k,1);
     p2 = paretoPoints(k,2);
@@ -49,6 +45,7 @@ for k = 1:size(paretoPoints,1)
     color = [0 0.4470 0.7410];
     scatter(f1, f2, 60, color, 'filled');
     text(f1+0.01, f2, sprintf('%.2f; %.2f', p1, p2), 'FontSize',8, 'Color', color);
+    fprintf('%.2f; %.2f\n', p1, p2)
 end
 
 xlabel('Objective 1');
@@ -57,15 +54,14 @@ legend('All Samples','Pareto','Location','best');
 title('Pareto Front for Watts Strogats');
 grid on;
 
-function [cost, trivial] = DDP_watts_strogatz(k, beta)
-    disp("k = " + k)
-    disp("beta = " + beta)
+function [cost, triv] = DDP_erods_renyi(p)
+    disp("p = " + p)
     fract_targ = 0.1;
     fract_dist = 0.1;
     n = 100;
-    params = num2cell([n, k, beta]);
-    [costs, ~, trivials] = run_test( ...
-        @watts_strogatz, ...
+    params = num2cell([n, p]);
+    [costs, ~, triv] = run_test( ...
+        @erdos_renyi, ...
         params, ...
         "sample_size", 100, ...
         "fraction_targets", fract_targ, ...
@@ -73,5 +69,5 @@ function [cost, trivial] = DDP_watts_strogatz(k, beta)
         "ddp", "state_feedback" ...
         );
     cost = mean(costs);
-    trivial = mean(trivials);
+    triv = mean(triv);
 end

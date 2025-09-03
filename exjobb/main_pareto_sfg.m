@@ -1,19 +1,21 @@
 clear; clc;
-multithreading()
+% multithreading()
 
 % Ranges
-params1 = 1:3;                 % first argument
-params2 = linspace(0,1,101);  % second argument
+params1 = 0.01; % linspace(0.01,0.05,10);  % first argument
+params2 = 0; %linspace(0,1,101);  % second argument
 
 results = [];
 
 % loop through parameters
 for p1 = params1
     for p2 = params2
-        [f1, f2] = DDP_watts_strogatz(p1, p2);  % returns [f1, f2]
-        
-        % [param1, param2, f1, f2]
-        results = [results; p1, p2, f1, f2];
+        if p1 + p2 <= 1
+            [f1, f2] = DDP_sfg(p1, p2);  % returns [f1, f2]
+            
+            % [param1, param2, f1, f2]
+            results = [results; p1, p2, f1, f2];
+        end
     end
 end
 % extract objectives
@@ -49,23 +51,32 @@ for k = 1:size(paretoPoints,1)
     color = [0 0.4470 0.7410];
     scatter(f1, f2, 60, color, 'filled');
     text(f1+0.01, f2, sprintf('%.2f; %.2f', p1, p2), 'FontSize',8, 'Color', color);
+    fprintf('%.2f; %.2f\n', p1, p2)
 end
 
 xlabel('Objective 1');
 ylabel('Objective 2');
 legend('All Samples','Pareto','Location','best');
-title('Pareto Front for Watts Strogats');
+title('Pareto Front for Scale Free');
 grid on;
 
-function [cost, trivial] = DDP_watts_strogatz(k, beta)
-    disp("k = " + k)
-    disp("beta = " + beta)
+% pareto front (alpha; beta)
+% 0.10; 0.00
+% 0.90; 0.00
+% 1.00; 0.00
+% more exact fixed beta = 0;
+% 0.01; 0.00
+
+function [cost, trivial] = DDP_sfg(alpha, beta)
+    disp("alpha: " + alpha + ", beta: " + beta)
+    gamma = 1 - alpha - beta;
+    % disp("alpha = " + alpha + ", beta = " + beta + ", gamma = " + gamma)
     fract_targ = 0.1;
     fract_dist = 0.1;
     n = 100;
-    params = num2cell([n, k, beta]);
+    params = num2cell([n, alpha, beta, gamma, 1, 1]);
     [costs, ~, trivials] = run_test( ...
-        @watts_strogatz, ...
+        @sfg, ...
         params, ...
         "sample_size", 100, ...
         "fraction_targets", fract_targ, ...

@@ -66,7 +66,7 @@ position = get(gcf, 'Position');
 position = [100, 100, 600, 600];
 saveas(gcf, "figures_new/" + graph_name + " network hubs_graph.fig")
 
-% % shortest path
+% shortest path
 % shortest_paths = [];
 % for hub_a = 1:numel(hubs(:,1))
 % for hub_b = setdiff(1:numel(hubs(:,1)),hub_a)
