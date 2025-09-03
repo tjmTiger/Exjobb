@@ -18,7 +18,7 @@ function [results_cost, results_time, results_trivial] = run_test(algorithm, par
         algorithm
         parameters {mustBeCell}
         options.sample_size {mustBeNumeric}
-        options.seed {mustBeNumeric} = 0
+        options.seed {mustBeNumeric} = 1000
         options.fraction_targets {mustBeNumeric} = 0.1
         options.fraction_disturbances {mustBeNumeric} = 0.1
         options.ddp {mustBeText}
@@ -27,7 +27,7 @@ function [results_cost, results_time, results_trivial] = run_test(algorithm, par
     results_cost = zeros(1,options.sample_size);
     results_time = zeros(1,options.sample_size);
     results_trivial = zeros(1,options.sample_size);
-    for i = 1:options.sample_size
+    parfor i = 1:options.sample_size
         G = algorithm(parameters{:}, options.seed + i);
         [results_cost(i), results_time(i), results_trivial(i)] = decouple(G, options.fraction_targets, options.fraction_disturbances, "ddp", options.ddp, "seed", options.seed+i);
     end

@@ -20,6 +20,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
         options.graph_generating_algorithm = ["Erdos Renyi", "Watts Strogratz", "Scale Free"]
         options.ddp string  = "state_feedback"
         options.boxchart {mustBeNumericOrLogical} = false
+        options.seed {mustBeNumeric} = 0
     end
 
 
@@ -37,6 +38,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
             fontsize(12,"points")
             position = get(gcf, 'Position');
             position = [100, 100, 600, 600];
+            savefig(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," "))
             print(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," ") + ".eps", "-depsc")
         end
     end
