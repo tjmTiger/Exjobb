@@ -24,7 +24,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
     end
 
 
-    for graph_generating_algorithm = {{"Erdos Renyi", [options.size, 0.03]}, {"Watts Strogratz", [options.size, 2, 0.9]}, {"Scale Free", [options.size, 0.495, 0.01, 0.495, 1, 1]}}
+    for graph_generating_algorithm = {{"Erdos Renyi", [options.size, 0.03]}, {"Watts Strogratz", [options.size, 2, 0.9]}, {"Scale Free", [options.size, 0.02, 0, 0.98, 1, 1]}}
         if ismember(graph_generating_algorithm{1}{1}, options.graph_generating_algorithm)
             results = {};
             figure();
