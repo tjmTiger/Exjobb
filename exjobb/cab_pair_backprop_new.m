@@ -54,7 +54,7 @@ function [V_out, V_in, TotalCost, S_Min, Z_Max] = cab_pair_backprop_new(G, D, T)
         cond1 = 1;
         L2 = 0;
 
-        while cond1 && L2 <= max(length(D),length(T))+5 % second condition in order to faster the search
+        while cond1 && L2 <= max(length(D),length(T)) % second condition in order to faster the search
 %         while cond1
     
             xx = zeros(numel(V_out_cell),1);

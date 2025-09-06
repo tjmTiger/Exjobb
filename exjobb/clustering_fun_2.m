@@ -57,62 +57,68 @@ G = digraph(A');       % note: digraph(A')
 % --- all-pairs shortest paths ---
 D = distances(G);      % n x n matrix, Inf if unreachable
 
-% --- ILP variables ---
-% x(1:n) : node in A
-% y(1:n) : node in B
+%% ----------------- Build constraints efficiently -----------------
+rows = []; cols = []; vals = [];
+bineq = [];
+
+rowIdx = 1;
+
+% 1) disjointness: x_i + y_i <= 1
+for i=1:n
+    rows = [rows rowIdx rowIdx];
+    cols = [cols i n+i];
+    vals = [vals 1 1];
+    bineq(rowIdx,1) = 1;
+    rowIdx = rowIdx + 1;
+end
+
+% 2) intra-cluster (strong ε): forbid if not mutually ≤ ε
+for i=1:n-1
+    for j=i+1:n
+        dij = D(i,j); dji = D(j,i);
+        if ~((dij <= epsilon) && (dji <= epsilon))
+            % forbid both in A
+            rows = [rows rowIdx rowIdx];
+            cols = [cols i j];
+            vals = [vals 1 1];
+            bineq(rowIdx,1) = 1;
+            rowIdx = rowIdx + 1;
+
+            % forbid both in B
+            rows = [rows rowIdx rowIdx];
+            cols = [cols n+i n+j];
+            vals = [vals 1 1];
+            bineq(rowIdx,1) = 1;
+            rowIdx = rowIdx + 1;
+        end
+    end
+end
+
+% 3) asymmetric inter-cluster separation: require d(i->j) >= gamma
+for i=1:n
+    for j=1:n
+        if i~=j && D(i,j) < gamma
+            rows = [rows rowIdx rowIdx];
+            cols = [cols i n+j];
+            vals = [vals 1 1];
+            bineq(rowIdx,1) = 1;
+            rowIdx = rowIdx + 1;
+        end
+    end
+end
+
+% build sparse Aineq
+nConstr = rowIdx-1;
+Aineq = sparse(rows, cols, vals, nConstr, 2*n);
+
+%% ----------------- Solve ILP -----------------
 Nvars = 2*n;
 intcon = 1:Nvars;
 lb = zeros(Nvars,1);
 ub = ones(Nvars,1);
 
-Aineq = [];
-bineq = [];
+f = -ones(Nvars,1);   % maximize |A|+|B|
 
-% 1) disjointness: x_i + y_i <= 1
-for i = 1:n
-    row = zeros(1,Nvars);
-    row(i) = 1; row(n+i) = 1;
-    Aineq = [Aineq; row];
-    bineq = [bineq; 1];
-end
-
-% 2) intra-cluster constraints (strong): forbid i,j both in A if either direction > epsilon
-for i = 1:n-1
-    for j = i+1:n
-        dij = D(i,j); dji = D(j,i);
-        if ~( (dij <= epsilon) && (dji <= epsilon) )
-            % forbid both in A
-            row = zeros(1,Nvars);
-            row(i) = 1; row(j) = 1;
-            Aineq = [Aineq; row];
-            bineq = [bineq; 1];
-            % forbid both in B
-            row = zeros(1,Nvars);
-            row(n+i) = 1; row(n+j) = 1;
-            Aineq = [Aineq; row];
-            bineq = [bineq; 1];
-        end
-    end
-end
-
-% 3) asymmetric inter-cluster separation:
-%    only require d(i->j) >= gamma for all i in A, j in B
-for i = 1:n
-    for j = 1:n
-        if i==j, continue; end
-        if D(i,j) < gamma   % too close from i->j
-            row = zeros(1,Nvars);
-            row(i) = 1; row(n+j) = 1;
-            Aineq = [Aineq; row];
-            bineq = [bineq; 1];
-        end
-    end
-end
-
-% --- objective: maximize |A|+|B| ---
-f = -ones(Nvars,1);
-
-% --- solve ILP ---
 opts = optimoptions('intlinprog','Display','off');
 [z,fval,exitflag,output] = intlinprog(f,intcon,Aineq,bineq,[],[],lb,ub,opts);
 
@@ -122,8 +128,9 @@ y = round(z(n+1:2*n));
 Aset = find(x==1);
 Bset = find(y==1);
 
+%% ----------------- Report results -----------------
 fprintf('n = %d, epsilon = %d, gamma = %d\n', n, epsilon, gamma);
-fprintf('Found solution: |A| = %d, |B| = %d, total = %d\n', numel(Aset), numel(Bset), numel(Aset)+numel(Bset));
+fprintf('Solution: |A|=%d, |B|=%d, total=%d\n', numel(Aset), numel(Bset), numel(Aset)+numel(Bset));
 fprintf('A nodes: '); fprintf('%d ', Aset); fprintf('\n');
 fprintf('B nodes: '); fprintf('%d ', Bset); fprintf('\n');
 

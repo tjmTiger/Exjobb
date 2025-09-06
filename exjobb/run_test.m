@@ -23,12 +23,13 @@ function [results_cost, results_time, results_trivial] = run_test(algorithm, par
         options.fraction_disturbances {mustBeNumeric} = 0.1
         options.ddp {mustBeText}
     end
+    seed = options.seed;
     
     results_cost = zeros(1,options.sample_size);
     results_time = zeros(1,options.sample_size);
     results_trivial = zeros(1,options.sample_size);
     parfor i = 1:options.sample_size
-        G = algorithm(parameters{:}, options.seed + i);
-        [results_cost(i), results_time(i), results_trivial(i)] = decouple(G, options.fraction_targets, options.fraction_disturbances, "ddp", options.ddp, "seed", options.seed+i);
+        G = algorithm(parameters{:}, seed + i);
+        [results_cost(i), results_time(i), results_trivial(i)] = decouple(G, options.fraction_targets, options.fraction_disturbances, "ddp", options.ddp, "seed", seed+i);
     end
 end

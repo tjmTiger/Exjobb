@@ -36,9 +36,9 @@ if isempty(options.list_targ)
     while isempty(T) % add targets and disturbances
         n_dist = ceil(fract_dist*N);
         n_targ = ceil(fract_targ*N);
-        D = sort(randsample(N, n_dist));
-        T = sort(randsample(setdiff(1:N', D), n_targ))';
-        % T = sort(setdiff(randsample(N, n_targ),D));
+        T = sort(randsample(N, n_dist));
+        D = sort(randsample(setdiff(1:N', T), n_targ))';
+        T = sort(setdiff(randsample(N, n_targ),D));
     end
 else
     if isempty(options.list_dist)
@@ -113,19 +113,11 @@ switch options.ddp
         %     end
         % end
         
-        [~,~,ic] = unique([V_in T']);
-        a_counts = accumarray(ic,1);
-        v_in_on_T = sum(a_counts(:,1)~=1);
-        
-        trivial_solutions = v_in_on_T/numel(V_in);
-        if (v_in_on_T == 0) & (numel(V_in) == 0)
-                trivial_solutions = 0;
-        end
-        
+        trivial_solutions = calc_trivial_solutions(V_in, T);
         cost = (2*numel(V_in)) / ( n_targ + n_dist );
 
     case "output_feedback"
-        t_start = tic; % dubbelkolla vilka av de nedan ska man mäta tid på.
+        t_start = tic;
         V_in = submincutDDSF_final2(G,D,T,'V_in');
         V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
         [Vin_opt, Vout, C1] = constrained_optimal_solution(G,D,T,V_in_all,'V_out');
@@ -138,18 +130,29 @@ switch options.ddp
         V_in = cell2mat(V_in_best);
         V_out = cell2mat(V_out_best);
 
-        [~,~,ic] = unique([V_in T']);
-        a_counts = accumarray(ic,1);
-        v_in_on_T = sum(a_counts(:,1)~=1);
-
-        trivial_solutions = v_in_on_T/numel(V_in);
-        if (v_in_on_T == 0) & (numel(V_in) == 0)
-                trivial_solutions = 0;
-        end
+        trivial_solutions = calc_trivial_solutions(V_in, T);
         cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
+
     case "dynamical_feedback"
-        % todo: write code for dynamical feedback
-        % cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
+        t_start = tic;
+        [V_out, V_in, TotalCost, S_Min, Z_Max] = cab_pair_backprop_new(G, D, T);
+        results_time = toc(t_start);
+        V_in = cell2mat(V_in)';
+        V_out = cell2mat(V_out)';
+        trivial_solutions = calc_trivial_solutions(V_in, T);
+        cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
     otherwise
         disp("ERROR: Invalid type of ddp. Possible options are: state_feedback, output_feedback or dynamical_feedback")
+end
+end
+
+function trivial_solutions = calc_trivial_solutions(V_in, T)
+    [~,~,ic] = unique([V_in T']);
+    a_counts = accumarray(ic,1);
+    v_in_on_T = sum(a_counts(:,1)~=1);
+
+    trivial_solutions = v_in_on_T/numel(V_in);
+    if (v_in_on_T == 0) & (numel(V_in) == 0)
+            trivial_solutions = 0;
+    end
 end

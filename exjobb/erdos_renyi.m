@@ -49,7 +49,7 @@ end
 for i = 1:size(Agg,1) % Makes Ag directional
     for j = i+1 : size(Agg,1)
         if Agg(i,j) ~= 0
-            if rand >= 0.5
+            if randi([0,1]) >= 0.5
                 Agg(i,j) = 0;
             else
                 Agg(j,i) = 0;
