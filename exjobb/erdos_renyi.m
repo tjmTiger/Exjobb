@@ -19,12 +19,14 @@ function [Gg,n,m] = erdos_renyi(n,p,seed) % cleaned up version
 %        model. Note: this algorithm works only well for p << 1!!!
 %        s : 1 or 0 (if connceted component graph has nn=n or nn <= n)
 %        seed: seed of the function. 
-rng(seed)
-G = triu(spones(sprand(n,n,p)),1); % Note: random upper triangle of a binary (sparse) matrix (with density p). middle and lower triangles are zeros
-Ag = full(G + G'); % Note: converts to normal matrix)
+rng(seed);
+G = spones(sprand(n, n, p));  % sparse matrix with edges probability p, spones makes it unweighted
+G = G - diag(diag(G));        % remove self-loops (set diagonal to zeros)
+Ag = full(G);
+
 
 % Get largest connected element
-[bin, binsize] = conncomp(graph(sparse(abs(Ag))));
+[bin, binsize] = conncomp(graph(sparse(Ag + Ag')));
 n_comp = length(binsize);
 ind_comp = bin;
 
@@ -46,17 +48,17 @@ if(numel(A_dir_com)>1)
     % disp("WARNING: graph disconnected, largest component was used instead, with size: " + n)
 end
 
-for i = 1:size(Agg,1) % Makes Ag directional
-    for j = i+1 : size(Agg,1)
-        if Agg(i,j) ~= 0
-            if randi([0,1]) >= 0.5
-                Agg(i,j) = 0;
-            else
-                Agg(j,i) = 0;
-            end
-        end
-    end
-end
+% for i = 1:size(Agg,1) % Makes Ag directional
+%     for j = i+1 : size(Agg,1)
+%         if Agg(i,j) ~= 0
+%             if randi([0,1]) >= 0.5
+%                 Agg(i,j) = 0;
+%             else
+%                 Agg(j,i) = 0;
+%             end
+%         end
+%     end
+% end
 
 if nargout>2
     m = nnz(G); % Note: number of non zero elements

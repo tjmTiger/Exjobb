@@ -1,5 +1,6 @@
 clear; clc;
-% multithreading()
+multithreading()
+% OBS: RERUN state feedback for erdos renyi since the code is now changed.
 
 % % state feedback
 % TEST(@test_fraction_size, "Size", 100:50:200, "Fractions", 0.05:0.05:0.3, "sample_size", 500)
@@ -36,3 +37,4 @@ clear; clc;
 % TEST(@test_scale_fraction_beta, "Beta", 0.2:0.2:0.8, "Fractions", 0.05:0.05:0.3, "graph_generating_algorithm", "Scale Free", "sample_size", 500, "ddp", "dynamical_feedback")
 % TEST(@test_scale_size_alphagamma, "Alpha", 0.2:0.2:0.8, "Size", 30:30:180, "graph_generating_algorithm", "Scale Free", "sample_size", 500, "ddp", "dynamical_feedback")
 % TEST(@test_scale_size_beta, "Beta", 0.2:0.2:0.8, "Size", 30:30:180, "graph_generating_algorithm", "Scale Free", "sample_size", 500, "ddp", "dynamical_feedback")
+

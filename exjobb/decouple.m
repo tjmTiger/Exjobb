@@ -32,41 +32,49 @@ end
 
 N = numnodes(G);
 T = [];
-if isempty(options.list_targ)
-    while isempty(T) % add targets and disturbances
-        n_dist = ceil(fract_dist*N);
-        n_targ = ceil(fract_targ*N);
-        T = sort(randsample(N, n_dist));
-        D = sort(randsample(setdiff(1:N', T), n_targ))';
-        T = sort(setdiff(randsample(N, n_targ),D));
-    end
-else
-    if isempty(options.list_dist)
-        disp("ERROR, Invalid input, list_dist cant be empty if list_targ is not empty.")
-        return
-    end
-    list_dist = options.list_dist;
-    list_targ = options.list_targ;
-    % if length(list_targ) > length(list_dist)
-    %     list_targ = setdiff(list_targ, list_dist);
-    % else
-    %     list_dist = setdiff(list_dist, list_targ);
-    % end
+n_dist = ceil(fract_dist*N);
+n_targ = ceil(fract_targ*N);
+T = sort(randsample(N, n_targ));
+D = sort(randsample(setdiff(1:N', T), n_dist))';
+% D = sort(randsample(N, n_dist));
+% T = sort(randsample(setdiff(1:N', D), n_targ))';
 
-    while isempty(T) % add targets and disturbances
-        n_dist = ceil(fract_dist*N);
-        n_targ = ceil(fract_targ*N);
-        if n_dist > length(list_dist)
-            disp("WARNING: Request " + n_dist + " distubances, but only " + length(list_dist) + " provided!")
-            n_dist = length(list_dist);
-        elseif n_targ > length(list_targ)
-            disp("WARNING: Request " + n_targ + " targets, but only " + length(list_targ) + " provided!")
-            n_targ = length(list_targ);
-        end
-        D = sort(randsample(list_dist, n_dist));
-        T = sort(setdiff(randsample(N, n_targ),D));
-    end
-end
+% if isempty(options.list_targ)
+%     while isempty(T) % add targets and disturbances
+%         n_dist = ceil(fract_dist*N);
+%         n_targ = ceil(fract_targ*N);
+%         % T = sort(randsample(N, n_dist));
+%         % D = sort(randsample(setdiff(1:N', T), n_targ))';
+%         D = sort(randsample(N, n_dist));
+%         T = sort(randsample(setdiff(1:N', D), n_targ))';
+%     end
+% else
+%     if isempty(options.list_dist)
+%         disp("ERROR, Invalid input, list_dist cant be empty if list_targ is not empty.")
+%         return
+%     end
+%     list_dist = options.list_dist;
+%     list_targ = options.list_targ;
+%     % if length(list_targ) > length(list_dist)
+%     %     list_targ = setdiff(list_targ, list_dist);
+%     % else
+%     %     list_dist = setdiff(list_dist, list_targ);
+%     % end
+% 
+%     while isempty(T) % add targets and disturbances
+%         n_dist = ceil(fract_dist*N);
+%         n_targ = ceil(fract_targ*N);
+%         if n_dist > length(list_dist)
+%             disp("WARNING: Request " + n_dist + " distubances, but only " + length(list_dist) + " provided!")
+%             n_dist = length(list_dist);
+%         elseif n_targ > length(list_targ)
+%             disp("WARNING: Request " + n_targ + " targets, but only " + length(list_targ) + " provided!")
+%             n_targ = length(list_targ);
+%         end
+%         D = sort(randsample(list_dist, n_dist));
+%         T = sort(setdiff(randsample(N, n_targ),D));
+%     end
+% end
 
 n_dist = length(D);
 n_targ = length(T);
