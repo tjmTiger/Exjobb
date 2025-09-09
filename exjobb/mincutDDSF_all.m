@@ -28,27 +28,27 @@ function varargout = mincutDDSF_all(G,D,T,V_in_out,varargin)
     if nargin > 4
         if strcmp(varargin{1}, 'V_in')
             a = 1; % for switch
-            disp('Search for min V_in');
-            disp('')
+            % disp('Search for min V_in');
+            % disp('')
         elseif strcmp(varargin{1}, 'V_out')
             a = 2;
-            disp('Search for min V_out');
-            disp('')
+            % disp('Search for min V_out');
+            % disp('')
         else
-            disp('Varargin typing error: choose ''V_in'' or ''V_out'' as first additional input and ''all'' or ''partial'' as second additional input');
+            % disp('Varargin typing error: choose ''V_in'' or ''V_out'' as first additional input and ''all'' or ''partial'' as second additional input');
             return
         end
         if nargin > 5
             if strcmp(varargin{2}, 'all')
                 b = 2; % for switch
-                disp('Search for ''all'' optimal solutions');
-                disp('')
+                % disp('Search for ''all'' optimal solutions');
+                % disp('')
             elseif strcmp(varargin{2}, 'partial')
                 b = 1;
-                disp('Search for some optimal solutions');
-                disp('')
+                % disp('Search for some optimal solutions');
+                % disp('')
             else
-                disp('Varargin typing error: choose ''V_in'' or ''V_out'' as first additional input and ''all'' or ''partial'' as second additional input');
+                % disp('Varargin typing error: choose ''V_in'' or ''V_out'' as first additional input and ''all'' or ''partial'' as second additional input');
                 return
             end
         else
@@ -58,16 +58,16 @@ function varargout = mincutDDSF_all(G,D,T,V_in_out,varargin)
             a = 3; % use preset G_extended structure
             G_extended = varargin{3};
             b = 3; % search for all suboptimal solutions starting by G_extended, maxflow value is increased
-            disp('Warning: the solutions are found by starting with a preset weighted G_extended graph. Such solutions may not be optimal in the sense of the cardinality.')
+            % disp('Warning: the solutions are found by starting with a preset weighted G_extended graph. Such solutions may not be optimal in the sense of the cardinality.')
         elseif nargin > 7
-            disp('Error: too many inputs. Max nargin = 7.')
+            % disp('Error: too many inputs. Max nargin = 7.')
             return
         end
     elseif nargin == 4
         a = 1; % 'V_in' as default if varargin empty
         b = 1; % 'partial' as default if varargin empty
     else
-        disp('Not enough inputs: choose ''V_in'' or ''V_out'' as first additional input and ''all'' or ''partial'' as second additional input');
+        % disp('Not enough inputs: choose ''V_in'' or ''V_out'' as first additional input and ''all'' or ''partial'' as second additional input');
         return
     end
 
@@ -107,7 +107,7 @@ function varargout = mincutDDSF_all(G,D,T,V_in_out,varargin)
     
             else
                 V = {};
-                disp('Error: Target or Disturbance set is empty')
+                % disp('Error: Target or Disturbance set is empty')
                 return
             end
     
@@ -139,7 +139,7 @@ function varargout = mincutDDSF_all(G,D,T,V_in_out,varargin)
     
             else
                 V = {};
-                disp('Error: Target or Disturbance set is empty')
+                % disp('Error: Target or Disturbance set is empty')
                 return
             end
     
@@ -170,11 +170,11 @@ function varargout = mincutDDSF_all(G,D,T,V_in_out,varargin)
     
                 if maxFlow_n > maxFlow
                     if a == 1
-                        disp('V_in is the unique optimal solution provided by the algorithm')
-                        disp('')
+                        % disp('V_in is the unique optimal solution provided by the algorithm')
+                        % disp('')
                     elseif a == 2
-                        disp('V_out is the unique optimal solution provided by the algorithm')
-                        disp('')
+                        % disp('V_out is the unique optimal solution provided by the algorithm')
+                        % disp('')
                     end
                     break
                 end
@@ -359,7 +359,7 @@ function varargout = mincutDDSF_all(G,D,T,V_in_out,varargin)
                 end
                 k = k + 1;
                 if k == par*n
-                    disp('Warning: unable to compute new solutions. Probably the solution already exists.')
+                    % disp('Warning: unable to compute new solutions. Probably the solution already exists.')
                     maxFlow = maxFlow_n;
 %                     varargout{1} = [];
 %                     varargout{2} = [];
@@ -502,7 +502,7 @@ function varargout = mincutDDSF_all(G,D,T,V_in_out,varargin)
                 varargout{1} = V;
                 varargout{2} = G_cell;
             else
-                disp('The G_cell is displayed only if varargin{2} = ''all''')
+                % disp('The G_cell is % displayed only if varargin{2} = ''all''')
                 return;
             end
     

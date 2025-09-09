@@ -2,5 +2,5 @@ clear; clc;
 multithreading()
 
 pareto_erdos()
-pareto_strogatz()
-pareto_sfg()
+% pareto_strogatz()
+% pareto_sfg()

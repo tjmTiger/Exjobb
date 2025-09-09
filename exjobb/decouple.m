@@ -134,9 +134,14 @@ switch options.ddp
         [Vin, Vout_opt, C2] = constrained_optimal_solution(G,D,T,V_out_all,'V_in');
         [V_in_best, V_out_best, C, S] = global_constrained_optimal_solution(Vin_opt, Vout, C1, Vin, Vout_opt, C2);
         results_time = toc(t_start);
-
-        V_in = cell2mat(V_in_best);
-        V_out = cell2mat(V_out_best);
+        
+        if ~isempty(V_in_best) % if there is a solution, get one of those solutions
+            V_in = V_in_best{1};
+            V_out = V_out_best{1};
+        else % if no solution, set V_in and V_out to empty
+            V_in = [];
+            V_out = [];
+        end
 
         trivial_solutions = calc_trivial_solutions(V_in, T);
         cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
@@ -145,8 +150,15 @@ switch options.ddp
         t_start = tic;
         [V_out, V_in, TotalCost, S_Min, Z_Max] = cab_pair_backprop_new(G, D, T);
         results_time = toc(t_start);
-        V_in = cell2mat(V_in)';
-        V_out = cell2mat(V_out)';
+
+        if ~isempty(V_in) % if there is a solution, get one of those solutions
+            V_in = V_in{1};
+            V_out = V_out{1};
+        else % if no solution, set V_in and V_out to empty
+            V_in = [];
+            V_out = [];
+        end
+
         trivial_solutions = calc_trivial_solutions(V_in, T);
         cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
     otherwise

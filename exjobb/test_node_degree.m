@@ -2,7 +2,7 @@ function result = test_node_degree(graph_generating_algorithm, ~, node_degree, o
     switch graph_generating_algorithm{1}{1}
         case "Erdos Renyi"
             graph_algorithm = @erdos_renyi;
-            params = num2cell([options.size, 2.2*node_degree/(options.size-1)]);
+            params = num2cell([options.size, node_degree/(2*(options.size-1))]);
             [result.results_cost, result.results_time, result.results_trivial] = run_test( ...
                 graph_algorithm, ...
                 params, ...
@@ -45,6 +45,8 @@ function result = test_node_degree(graph_generating_algorithm, ~, node_degree, o
                 "ddp", options.ddp ...
                 );
     end
+end
 
 function result = iseven(m)
     result = rem(m, 2) == 0;
+end

@@ -14,11 +14,11 @@
 
 function [V_out, V_in, TotalCost, S_Min, Z_Max] = cab_pair_backprop_new(G, D, T)
     
-    disp('Warning: some (C,A,B) pairs could be suitable for DDP after precompensation by edge removal through output feedback. This algorithm provides only (C,A,B) pairs that do not request precompensation.');
+    % disp('Warning: some (C,A,B) pairs could be suitable for DDP after precompensation by edge removal through output feedback. This algorithm provides only (C,A,B) pairs that do not request precompensation.');
     
     if nargin > 3 || nargin < 3
     
-        disp("Error: number of inputs is incorrect, they must be 3 or 4.");
+        % disp("Error: number of inputs is incorrect, they must be 3 or 4.");
         V_out = [];
         V_in = [];
         TotalCost = [];
@@ -78,7 +78,7 @@ function [V_out, V_in, TotalCost, S_Min, Z_Max] = cab_pair_backprop_new(G, D, T)
                 S_min_out{i} = Smin_out;
     
                 %%%%%-----------------------
-                if isempty(intersect(Smin_out,T)) % disp('Problem: A*S goes in T and so is not in Zmax')
+                if isempty(intersect(Smin_out,T)) % % disp('Problem: A*S goes in T and so is not in Zmax')
                     % AAA: This was only necessary if N=0
     
                     xx(i) = 1;
@@ -146,7 +146,7 @@ function [V_out, V_in, TotalCost, S_Min, Z_Max] = cab_pair_backprop_new(G, D, T)
     
         if isempty(V_out_effective_tot)
     
-            disp('Problem: the V_out list provided is s.t. A*Smin goes in T and so is not in Zmax. Consider increasing the cost for V_out or add precompensation by edge removal through output feedback.'); % V_out is always contained in S_min
+            % disp('Problem: the V_out list provided is s.t. A*Smin goes in T and so is not in Zmax. Consider increasing the cost for V_out or add precompensation by edge removal through output feedback.'); % V_out is always contained in S_min
             return
     
         else
@@ -243,12 +243,12 @@ function [V_out, V_in, TotalCost, S_Min, Z_Max] = cab_pair_backprop_new(G, D, T)
     
     else
     
-        disp('Problem: V_out = [], DDP already solved, consider to redefine T, D, or G.');
+        % disp('Problem: V_out = [], DDP already solved, consider to redefine T, D, or G.');
         return
     
     end
 
     T = table((1:numel(V_out))', V_out, V_in, cellfun(@numel, V_out), cellfun(@numel, V_in),  TotalCost, Min_dim, 'VariableNames', {'(C,A,B)-pair number:', 'V_out_opt', 'V_in_opt', '# of Outputs', '# of Inputs', 'Minimal Cost C','Minimal reduced compensator dimension'});
-    disp(T);
+    % disp(T);
     
 end

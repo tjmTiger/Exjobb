@@ -24,7 +24,6 @@ G = spones(sprand(n, n, p));  % sparse matrix with edges probability p, spones m
 G = G - diag(diag(G));        % remove self-loops (set diagonal to zeros)
 Ag = full(G);
 
-
 % Get largest connected element
 [bin, binsize] = conncomp(graph(sparse(Ag + Ag')));
 n_comp = length(binsize);
