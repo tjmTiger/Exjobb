@@ -248,7 +248,7 @@ function [V_out, V_in, TotalCost, S_Min, Z_Max] = cab_pair_backprop_new(G, D, T)
     
     end
 
-    T = table((1:numel(V_out))', V_out, V_in, cellfun(@numel, V_out), cellfun(@numel, V_in),  TotalCost, Min_dim, 'VariableNames', {'(C,A,B)-pair number:', 'V_out_opt', 'V_in_opt', '# of Outputs', '# of Inputs', 'Minimal Cost C','Minimal reduced compensator dimension'});
+    % T = table((1:numel(V_out))', V_out, V_in, cellfun(@numel, V_out), cellfun(@numel, V_in),  TotalCost, Min_dim, 'VariableNames', {'(C,A,B)-pair number:', 'V_out_opt', 'V_in_opt', '# of Outputs', '# of Inputs', 'Minimal Cost C','Minimal reduced compensator dimension'});
     % disp(T);
     
 end

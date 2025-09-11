@@ -38,8 +38,8 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
             fontsize(12,"points")
             position = get(gcf, 'Position');
             position = [100, 100, 600, 600];
-            savefig(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," "))
-            print(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," ") + ".eps", "-depsc")
+            savefig(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," ") + "_" + options.ddp)
+            print(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," ") + "_" + options.ddp + ".eps", "-depsc")
         end
     end
 end
