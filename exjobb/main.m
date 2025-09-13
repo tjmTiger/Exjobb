@@ -6,7 +6,7 @@ clear; clc; close all;
 %                 Optimal for SF                %
 %                                               %
 %-----------------------------------------------%
-% [0.03, 2, 0.9, 0.02, 0, 0.98]
+% [0.03, 2, 0.9, 0.02, 0, 0.98] p, k, pw, alpha, beta, gamma
 
 % % state feedback
 % TEST(@test_fraction_size, "Size", 100:50:200, "Fractions", 0.05:0.05:0.3, "sample_size", 500)
