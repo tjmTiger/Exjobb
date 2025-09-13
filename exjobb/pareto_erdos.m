@@ -18,7 +18,7 @@ function pareto_erdos(ddp, n)
     obj2 = results(:,4);
     
     % find pareto front
-    is_pareto = ones(size(obj1));
+    is_pareto = true(size(obj1));
     for i = 1:length(obj1)
         for j = 1:length(obj1)
             if all([obj1(j), obj2(j)] <= [obj1(i), obj2(i)]) && ...
