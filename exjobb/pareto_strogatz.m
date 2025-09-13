@@ -1,4 +1,4 @@
-function pareto_strogatz()
+function pareto_strogatz(ddp)
     disp("pareto_strogatz")
     % Ranges
     params1 = 1:3;                 % first argument
@@ -9,7 +9,7 @@ function pareto_strogatz()
     % loop through parameters
     for p1 = params1
         for p2 = params2
-            [f1, f2] = DDP_watts_strogatz(p1, p2);  % returns [f1, f2]
+            [f1, f2] = DDP_watts_strogatz(p1, p2, ddp);  % returns [f1, f2]
             
             % [param1, param2, f1, f2]
             results = [results; p1, p2, f1, f2];
@@ -59,7 +59,7 @@ function pareto_strogatz()
     print(gcf, "figures_new/pareto_Strogatz" + ".eps", "-depsc")
 end
 
-function [cost, trivial] = DDP_watts_strogatz(k, beta)
+function [cost, trivial] = DDP_watts_strogatz(k, beta, ddp)
     disp("k = " + k)
     disp("beta = " + beta)
     fract_targ = 0.1;
@@ -72,7 +72,7 @@ function [cost, trivial] = DDP_watts_strogatz(k, beta)
         "sample_size", 500, ...
         "fraction_targets", fract_targ, ...
         "fraction_disturbances", fract_dist, ...
-        "ddp", "state_feedback", ...
+        "ddp", ddp, ...
         "seed", 1000 ...
         );
     cost = mean(costs);

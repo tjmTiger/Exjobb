@@ -71,7 +71,7 @@ function [V_in_best, V_out_best, C, S] = global_constrained_optimal_solution(V_i
         V_out_best = [];
         C = [];
         S =[];
-        disp('Error: Target or Disturbance may be empty')
+        % disp('Error: Target or Disturbance may be empty')
     
     end
 

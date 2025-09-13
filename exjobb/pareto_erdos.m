@@ -1,4 +1,4 @@
-function pareto_erdos()
+function pareto_erdos(ddp)
     disp("pareto_erdos")
     % Ranges
     params1 = linspace(0.03,1,98);  % first argument
@@ -7,7 +7,7 @@ function pareto_erdos()
     
     % loop through parameters
     for p1 = params1
-        [f1, f2] = DDP_erods_renyi(p1);  % returns [f1, f2]
+        [f1, f2] = DDP_erods_renyi(p1, ddp);  % returns [f1, f2]
         
         % [param1, param2, f1, f2]
         results = [results; p1, 0, f1, f2];
@@ -56,11 +56,11 @@ function pareto_erdos()
     print(gcf, "figures_new/pareto_Erdos" + ".eps", "-depsc")
 end
 
-function [cost, triv] = DDP_erods_renyi(p)
+function [cost, triv] = DDP_erods_renyi(p, ddp)
     disp("p = " + p)
     fract_targ = 0.1;
     fract_dist = 0.1;
-    n = 100;
+    n = 50;
     params = num2cell([n, p]);
     [costs, ~, triv] = run_test( ...
         @erdos_renyi, ...
@@ -68,7 +68,7 @@ function [cost, triv] = DDP_erods_renyi(p)
         "sample_size", 500, ...
         "fraction_targets", fract_targ, ...
         "fraction_disturbances", fract_dist, ...
-        "ddp", "state_feedback", ...
+        "ddp", ddp, ...
         "seed", 1000 ...
         );
     cost = mean(costs);

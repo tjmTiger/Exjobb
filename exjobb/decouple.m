@@ -151,9 +151,12 @@ switch options.ddp
         [V_out, V_in, TotalCost, S_Min, Z_Max] = cab_pair_backprop_new(G, D, T);
         results_time = toc(t_start);
 
-        if ~isempty(V_in) % if there is a solution, get one of those solutions
-            V_in = V_in{1};
-            V_out = V_out{1};
+        if ~isempty(V_in) % if there is a solution, get smallest of those solutions
+            V = cellfun(@numel, V_in) + cellfun(@numel, V_out);
+            i = find(V==min(V));
+
+            V_in = V_in{i};
+            V_out = V_out{i};
         else % if no solution, set V_in and V_out to empty
             V_in = [];
             V_out = [];

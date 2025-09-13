@@ -1,4 +1,4 @@
-function pareto_sfg()
+function pareto_sfg(ddp)
     disp("pareto_sfg")
     % Ranges
     params1 =linspace(0.01,0.05,10);  % first argument
@@ -10,7 +10,7 @@ function pareto_sfg()
     for p1 = params1
         for p2 = params2
             if p1 + p2 <= 1
-                [f1, f2] = DDP_sfg(p1, p2);  % returns [f1, f2]
+                [f1, f2] = DDP_sfg(p1, p2, ddp);  % returns [f1, f2]
                 
                 % [param1, param2, f1, f2]
                 results = [results; p1, p2, f1, f2];
@@ -70,7 +70,7 @@ function pareto_sfg()
     % 0.01; 0.00
 end
 
-function [cost, trivial] = DDP_sfg(alpha, beta)
+function [cost, trivial] = DDP_sfg(alpha, beta, ddp)
     disp("alpha: " + alpha + ", beta: " + beta)
     gamma = 1 - alpha - beta;
     % disp("alpha = " + alpha + ", beta = " + beta + ", gamma = " + gamma)
@@ -84,7 +84,7 @@ function [cost, trivial] = DDP_sfg(alpha, beta)
         "sample_size", 500, ...
         "fraction_targets", fract_targ, ...
         "fraction_disturbances", fract_dist, ...
-        "ddp", "state_feedback", ...
+        "ddp", ddp, ...
         "seed", 1000 ...
         );
     cost = mean(costs);

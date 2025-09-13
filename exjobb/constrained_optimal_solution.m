@@ -59,7 +59,7 @@ function [V_in, V_out, C] = constrained_optimal_solution(G,D,T,V,varargin)
                 V_in = V_in(idx); % select the optimal subcell
 
             else
-                disp('Error: Target or Disturbance may be empty')
+                % disp('Error: Target or Disturbance may be empty')
                 V_in = [];
                 V_out = [];
                 C = [];
@@ -90,7 +90,7 @@ function [V_in, V_out, C] = constrained_optimal_solution(G,D,T,V,varargin)
                 V_out = V_out(idx); % select the optimal subcell
 
             else
-                disp('Error: Target or Disturbance may be empty')
+                % disp('Error: Target or Disturbance may be empty')
                 V_in = [];
                 V_out = [];
                 C = [];

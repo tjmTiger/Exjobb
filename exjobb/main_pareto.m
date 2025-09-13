@@ -1,6 +1,6 @@
 clear; clc;
 multithreading()
 
-pareto_erdos()
-% pareto_strogatz()
-% pareto_sfg()
+pareto_erdos("output_feedback")
+pareto_strogatz("output_feedback")
+pareto_sfg("output_feedback")

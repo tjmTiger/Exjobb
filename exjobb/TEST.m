@@ -21,10 +21,14 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
         options.ddp string  = "state_feedback"
         options.boxchart {mustBeNumericOrLogical} = false
         options.seed {mustBeNumeric} = 0
+        options.default_p = [0.03, 2, 0.9, 0.02, 0, 0.98]
     end
 
 
-    for graph_generating_algorithm = {{"Erdos Renyi", [options.size, 0.03]}, {"Watts Strogratz", [options.size, 2, 0.9]}, {"Scale Free", [options.size, 0.02, 0, 0.98, 1, 1]}}
+    for graph_generating_algorithm = {...
+            {"Erdos Renyi", [options.size, options.default_p(1)]}, ...
+            {"Watts Strogratz", [options.size, options.default_p(2), options.default_p(3)]}, ...
+            {"Scale Free", [options.size, options.default_p(4), options.default_p(5), options.default_p(6), 1, 1]}}
         if ismember(graph_generating_algorithm{1}{1}, options.graph_generating_algorithm)
             results = {};
             figure();
@@ -32,14 +36,14 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
                 for v2 = variable2
                     results{end+1} = test_function(graph_generating_algorithm, v1, v2, options);
                 end
-                plot_results(results, variable2, "legend_title", variable1_name, "legend_entries", string(v1), "graph_name", graph_generating_algorithm{1}{1}, "x_label", variable2_name, "boxchart", options.boxchart);
+                plot_results(results, variable2, "legend_title", erase(variable1_name, "_"), "legend_entries", erase(string(v1), "_"), "graph_name", graph_generating_algorithm{1}{1}, "x_label", erase(variable2_name, "_"), "boxchart", options.boxchart);
                 results = {};
             end
             fontsize(12,"points")
             position = get(gcf, 'Position');
             position = [100, 100, 600, 600];
-            savefig(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," ") + "_" + options.ddp)
-            print(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," ") + "_" + options.ddp + ".eps", "-depsc")
+            savefig(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," "))
+            print(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," ") + ".eps", "-depsc")
         end
     end
 end
