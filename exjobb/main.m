@@ -1,5 +1,5 @@
 clear; clc; close all;
-multithreading()
+% multithreading()
 
 %-----------------------------------------------%
 %                                               %

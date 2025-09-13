@@ -1,18 +1,18 @@
-function pareto_strogatz(ddp)
+function pareto_strogatz(ddp, n)
     disp("pareto_strogatz")
     % Ranges
     params1 = 1:3;                 % first argument
-    params2 = linspace(0,1,101);  % second argument
+    params2 = linspace(0,1,11);  % second argument
     
     results = [];
     
     % loop through parameters
     for p1 = params1
         for p2 = params2
-            [f1, f2] = DDP_watts_strogatz(p1, p2, ddp);  % returns [f1, f2]
+            [f1, f2] = DDP_watts_strogatz(p1, p2, ddp, n);  % returns [f1, f2]
             
             % [param1, param2, f1, f2]
-            results = [results; p1, p2, f1, f2];
+            results = [results; 2.*p1, p2, f1, f2];
         end
     end
     % extract objectives
@@ -55,16 +55,15 @@ function pareto_strogatz(ddp)
     legend('All Samples','Pareto','Location','best');
     title('Pareto Front for Watts Strogats');
     grid on;
-    savefig(gcf, "figures_new/pareto_Strogatz")
-    print(gcf, "figures_new/pareto_Strogatz" + ".eps", "-depsc")
+    savefig(gcf, "figures_new/pareto_Strogatz_" + ddp)
+    print(gcf, "figures_new/pareto_Strogatz_" + ddp + ".eps", "-depsc")
 end
 
-function [cost, trivial] = DDP_watts_strogatz(k, beta, ddp)
+function [cost, trivial] = DDP_watts_strogatz(k, beta, ddp, n)
     disp("k = " + k)
     disp("beta = " + beta)
     fract_targ = 0.1;
     fract_dist = 0.1;
-    n = 100;
     params = num2cell([n, k, beta]);
     [costs, ~, trivials] = run_test( ...
         @watts_strogatz, ...

@@ -1,7 +1,7 @@
-function pareto_sfg(ddp)
+function pareto_sfg(ddp, n)
     disp("pareto_sfg")
     % Ranges
-    params1 =linspace(0.01,0.05,10);  % first argument
+    params1 = linspace(0.01,0.05,9);  % first argument
     params2 = linspace(0,1,11);  % second argument
     
     results = [];
@@ -10,7 +10,7 @@ function pareto_sfg(ddp)
     for p1 = params1
         for p2 = params2
             if p1 + p2 <= 1
-                [f1, f2] = DDP_sfg(p1, p2, ddp);  % returns [f1, f2]
+                [f1, f2] = DDP_sfg(p1, p2, ddp, n);  % returns [f1, f2]
                 
                 % [param1, param2, f1, f2]
                 results = [results; p1, p2, f1, f2];
@@ -59,8 +59,8 @@ function pareto_sfg(ddp)
     legend('All Samples','Pareto','Location','best');
     title('Pareto Front for Scale Free');
     grid on;
-    savefig(gcf, "figures_new/pareto_ScaleFree")
-    print(gcf, "figures_new/pareto_ScaleFree" + ".eps", "-depsc")
+    savefig(gcf, "figures_new/pareto_ScaleFree_" + ddp)
+    print(gcf, "figures_new/pareto_ScaleFree_" + ddp + ".eps", "-depsc")
     
     % pareto front (alpha; beta)
     % 0.10; 0.00
@@ -70,13 +70,12 @@ function pareto_sfg(ddp)
     % 0.01; 0.00
 end
 
-function [cost, trivial] = DDP_sfg(alpha, beta, ddp)
+function [cost, trivial] = DDP_sfg(alpha, beta, ddp, n)
     disp("alpha: " + alpha + ", beta: " + beta)
     gamma = 1 - alpha - beta;
     % disp("alpha = " + alpha + ", beta = " + beta + ", gamma = " + gamma)
     fract_targ = 0.1;
     fract_dist = 0.1;
-    n = 100;
     params = num2cell([n, alpha, beta, gamma, 1, 1]);
     [costs, ~, trivials] = run_test( ...
         @sfg, ...
