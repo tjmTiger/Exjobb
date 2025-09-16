@@ -21,7 +21,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
         options.ddp string  = "state_feedback"
         options.boxchart {mustBeNumericOrLogical} = false
         options.seed {mustBeNumeric} = 0
-        options.default_p = [0.03, 2, 0.9, 0.02, 0, 0.98]
+        options.default_p = [0.03, 2, 0.9, 1, 0, 0]; % p, k, pw, alpha, beta, gamma
     end
 
 
@@ -31,12 +31,20 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
             {"Scale Free", [options.size, options.default_p(4), options.default_p(5), options.default_p(6), 1, 1]}}
         if ismember(graph_generating_algorithm{1}{1}, options.graph_generating_algorithm)
             results = {};
+            old_results = {}; % for comparing DF with OF
             figure();
             for v1 = variable1
+                old_results_count = 1; % for comparing DF with OF
                 for v2 = variable2
+                    if numel(old_results) >= old_results_count
+                        options.old_results = old_results{old_results_count};
+                    else
+                        options.old_results = {};
+                    end
                     results{end+1} = test_function(graph_generating_algorithm, v1, v2, options);
                 end
                 plot_results(results, variable2, "legend_title", erase(variable1_name, "_"), "legend_entries", erase(string(v1), "_"), "graph_name", graph_generating_algorithm{1}{1}, "x_label", erase(variable2_name, "_"), "boxchart", options.boxchart);
+                old_results = results;
                 results = {};
             end
             fontsize(12,"points")

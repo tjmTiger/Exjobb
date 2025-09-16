@@ -22,6 +22,7 @@ function [results_cost, results_time, results_trivial] = run_test(algorithm, par
         options.fraction_targets {mustBeNumeric} = 0.1
         options.fraction_disturbances {mustBeNumeric} = 0.1
         options.ddp {mustBeText}
+        options.old_results = {}
     end
     seed = options.seed;
     
@@ -30,9 +31,9 @@ function [results_cost, results_time, results_trivial] = run_test(algorithm, par
     results_trivial = zeros(1,options.sample_size);
     start_t = tic();
     % disp(options.fraction_targets)
-    parfor i = 1:options.sample_size % parfor
+    for i = 1:options.sample_size % parfor
         G = algorithm(parameters{:}, seed + i);
-        [results_cost(i), results_time(i), results_trivial(i)] = decouple(G, options.fraction_targets, options.fraction_disturbances, "ddp", options.ddp, "seed", seed+i);
+        [results_cost(i), results_time(i), results_trivial(i)] = decouple(G, options.fraction_targets, options.fraction_disturbances, "ddp", options.ddp, "seed", seed+i, "old_results", options.old_results);
     end
     disp("Parfor finished in: " + toc(start_t))
 end

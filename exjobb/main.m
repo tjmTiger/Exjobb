@@ -1,5 +1,5 @@
 clear; clc; close all;
-% multithreading()
+multithreading()
 
 %-----------------------------------------------%
 %                                               %
@@ -7,6 +7,7 @@ clear; clc; close all;
 %                                               %
 %-----------------------------------------------%
 % min cost
+
 % [0.03, 2, 0.9, 0.02, 0, 0.98] p, k, pw, alpha, beta, gamma
 
 % % state feedback
@@ -39,10 +40,12 @@ clear; clc; close all;
 %                                               %
 %-----------------------------------------------%
 % min cost
+
 default_p = [0.03, 2, 0.9, 1, 0, 0]; % p, k, pw, alpha, beta, gamma
 
-TEST(@test_OFDF_size, "Feedback", ["output_feedback", "dynamical_feedback"], "Size", 20:10:80, "fract_targ", 0.3, "sample_size", 500, "default_p", default_p)
-TEST(@test_OFDF_node_degree, "Feedback", ["output_feedback", "dynamical_feedback"], "AverageDegree", 2:1:7, "sample_size", 500, "boxchart", true, "size", 50, "default_p", default_p)
+TEST(@test_OFDF_node_degree, "Feedback", ["output_feedback", "dynamical_feedback"], "AverageDegree", 2:1:7, "sample_size", 500, "size", 50, "default_p", default_p)
 TEST(@test_OFDF_strogatz_beta, "Feedback", ["output_feedback", "dynamical_feedback"], "Beta", 0:0.1:1, "graph_generating_algorithm", "Watts Strogratz", "sample_size", 500, "size", 50, "default_p", default_p)
 TEST(@test_OFDF_scale_alphagamma, "Feedback", ["output_feedback", "dynamical_feedback"], "Alpha", 0:0.1:1, "graph_generating_algorithm", "Scale Free", "sample_size", 500, "size", 50, "default_p", default_p)
 TEST(@test_OFDF_scale_beta, "Feedback", ["output_feedback", "dynamical_feedback"], "Beta", 0:0.1:0.8, "graph_generating_algorithm", "Scale Free", "sample_size", 500, "size", 50, "default_p", default_p)
+
+TEST(@test_OFDF_size, "Feedback", ["output_feedback", "dynamical_feedback"], "Size", 20:10:80, "fract_targ", 0.3, "sample_size", 500, "default_p", default_p)

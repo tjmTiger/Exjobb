@@ -148,9 +148,9 @@ switch options.ddp
         cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
 
     case "dynamical_feedback"
-        max_V = options.old_results.results_cost * ( n_targ + n_dist );
+        max_cost = options.old_results.results_cost * ( n_targ + n_dist );
         t_start = tic;
-        [V_out, V_in, ~, ~, ~] = cab_pair_backprop_newnew(G, D, T, max_V);
+        [V_out, V_in, TotalCost, S_Min, Z_Max] = cab_pair_backprop_new(G, D, T);
         results_time = toc(t_start);
 
         if ~isempty(V_in) % if there is a solution, get smallest of those solutions
