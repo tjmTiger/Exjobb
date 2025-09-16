@@ -1,8 +1,9 @@
 function pareto_sfg(ddp, n)
     disp("pareto_sfg")
     % Ranges
-    params1 = linspace(0.01,0.05,9);  % first argument
-    params2 = linspace(0,1,11);  % second argument
+    % state
+    params1 = linspace(0.1,0.30,3);  % first argument (alpha)
+    params2 = linspace(0,0.1,11);  % second argument (beta)
     
     results = [];
     
@@ -14,7 +15,7 @@ function pareto_sfg(ddp, n)
                 
                 % [param1, param2, f1, f2]
                 results = [results; p1, p2, f1, f2];
-                disp(f1 + ", " + f2)
+                % disp(f1 + ", " + f2)
             end
         end
     end

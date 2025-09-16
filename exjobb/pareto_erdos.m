@@ -2,7 +2,7 @@ function pareto_erdos(ddp, n)
     disp("pareto_erdos")
     % Ranges
     % params1 = linspace(0.03,1,98);  % first argument
-    params1 = logspace(0, -1.5229, 30);
+    params1 = logspace(0, -1.5229, 100);
     
     results = [];
     

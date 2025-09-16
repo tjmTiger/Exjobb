@@ -6,6 +6,7 @@ clear; clc; close all;
 %                 Optimal for SF                %
 %                                               %
 %-----------------------------------------------%
+% min cost
 % [0.03, 2, 0.9, 0.02, 0, 0.98] p, k, pw, alpha, beta, gamma
 
 % % state feedback
@@ -37,7 +38,8 @@ clear; clc; close all;
 %                 Optimal for OF                %
 %                                               %
 %-----------------------------------------------%
-% todo: få parametrar
+% min cost
+% [0.03, 2, 0.8, 0.01, 0, 0.99] p, k, pw, alpha, beta, gamma
 
 % TEST(@test_OFDF_size, "Feedback", ["output_feedback", "dynamical_feedback"], "Size", 20:10:80, "fract_targ", 0.3, "sample_size", 500)
 % TEST(@test_OFDF_node_degree, "Feedback", ["output_feedback", "dynamical_feedback"], "AverageDegree", 2:1:7, "sample_size", 500, "boxchart", true, "size", 50)
