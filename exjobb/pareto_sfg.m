@@ -2,8 +2,8 @@ function pareto_sfg(ddp, n)
     disp("pareto_sfg")
     % Ranges
     % state
-    params1 = linspace(0.1,1,10);  % first argument (alpha)
-    params2 = linspace(0,1,11);  % second argument (beta)
+    params1 = linspace(0,1,11);  % first argument (alpha)
+    params2 = linspace(0,0.9,10);  % second argument (beta)
     % params3 = linspace(0,1,11); % third argument (gamma)
     
     results = [];
@@ -121,7 +121,8 @@ function pareto_sfg(ddp, n)
     c = 1;
     for p3_last = linspace(0,1,11)
         for i = 1:numel(params_used(:,1))
-            p3 = 1 - params_used(i,1) - params_used(i,2);
+            p3 = round(1 - params_used(i,1) - params_used(i,2), 1);
+            disp(p3_last + ", " + p3)
             if p3 == p3_last
                 obj = [obj; obj1(i) obj2(i)];
             end
