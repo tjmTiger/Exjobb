@@ -17,7 +17,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
         options.fract_targ double = 0.1
         options.fract_dist double = 0.1
         
-        options.graph_generating_algorithm = ["Erdos Renyi", "Watts Strogratz", "Scale Free"]
+        options.graph_generating_algorithm = ["Erdos Renyi"]% , "Watts Strogratz", "Scale Free"]
         options.ddp string  = "state_feedback"
         options.boxchart {mustBeNumericOrLogical} = false
         options.seed {mustBeNumeric} = 0
