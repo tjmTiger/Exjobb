@@ -124,7 +124,6 @@ switch options.ddp
         
         trivial_solutions = calc_trivial_solutions(V_in, T);
         cost = (2*numel(V_in)) / ( n_targ + n_dist );
-        disp(cost)
 
     case "output_feedback"
         t_start = tic;
