@@ -38,6 +38,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
                 for v2 = variable2
                     if numel(old_results) >= old_results_count
                         options.old_results = old_results{old_results_count};
+                        old_results_count = old_results_count+1;
                     else
                         options.old_results = {};
                     end

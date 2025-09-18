@@ -13,6 +13,7 @@ arguments
     options.list_targ = []
     options.list_dist = []
     options.old_results
+    options.parfor_i
 end
 
 % cleaned up
@@ -83,22 +84,7 @@ n_targ = length(T);
 V_in_initial = []; % control on targets if those are directly connected to a disturbance
 population = setdiff(setdiff(1:N, T), D);
 
-% figure; % After edge removal by action of V_in_initial on targets directly connected to disturbances
-% p = plot(G,'b');
-% title('$\mathcal{G}$')
-% nodeColors = 1 * ones(N, 1); % Default to value 3 (Yellow)
-% nodeColors(T) = 2;
-% nodeColors(D) = 3;
-% p.NodeCData = nodeColors;
-% colormap(jet); % Use the 'jet' colormap
-% p.MarkerSize = 8; % Increase or decrease the size of the nodes
-% hold on; % Hold on to the current plot
-% legendEntries = {'Disturbance', 'Target', 'Other nodes'};
-% hRed = scatter(nan, nan, 100, 'r', 'filled'); % Placeholder for red nodes
-% hGreen = scatter(nan, nan, 100, 'g', 'filled'); % Placeholder for green nodes
-% hYellow = scatter(nan, nan, 100, 'b', 'filled'); % Placeholder for yellow nodes
-% legend([hRed, hGreen, hYellow], legendEntries, 'Location', 'best');
-% hold off; % Release the hold on the current plot
+% plot_system(G, T, D)
 
 A = full(adjacency(G))';
 G = digraph(A');
@@ -144,14 +130,30 @@ switch options.ddp
             V_out = [];
         end
 
-        trivial_solutions = calc_trivial_solutions(V_in, T);
+        trivial_solutions = calc_trivial_solutions([V_in V_out], [T; D]);
         cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
 
     case "dynamical_feedback"
-        max_V = options.old_results.results_cost * ( n_targ + n_dist );
+        numel_V_OF = options.old_results.results_cost(options.parfor_i) * ( n_targ + n_dist ); % convert old cost back to number of V_in + V_out
         t_start = tic;
-        [V_out, V_in, ~, ~, ~] = cab_pair_backprop_newnew(G, D, T, max_V);
+        [V_out, V_in, ~, ~, ~] = cab_pair_backprop_new(G, D, T);
         results_time = toc(t_start);
+
+        % How many of solutions with lower cost than OF have 0 trivial solutions?
+        V_in_new = {};
+        V_out_new = {};
+        no_triv_count = 0;
+        for i = 1:numel(V_in)
+            if numel(V_in{i}) + numel(V_out{i}) <= numel_V_OF
+                V_in_new{end+1} = V_in{i};
+                V_out_new{end+1} = V_out{i};
+                if no_trivial_solutions(V_in{i}, V_out{i}, T, D)
+                    no_triv_count = no_triv_count+1;
+                    % disp("Found!!!!")
+                end
+            end
+        end
+        
 
         if ~isempty(V_in) % if there is a solution, get smallest of those solutions
             V = cellfun(@numel, V_in) + cellfun(@numel, V_out);
@@ -163,8 +165,12 @@ switch options.ddp
             V_in = [];
             V_out = [];
         end
-
-        trivial_solutions = calc_trivial_solutions(V_in, T);
+        
+        if (numel(V_in_new) + numel(V_out_new)) ~= 0
+            trivial_solutions = no_triv_count / (numel(V_in_new) + numel(V_out_new)); % calc_trivial_solutions([V_in V_out], [T; D]);
+        else % Avoid division with 0
+            trivial_solutions = 0;
+        end
         cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
     otherwise
         disp("ERROR: Invalid type of ddp. Possible options are: state_feedback, output_feedback or dynamical_feedback")
@@ -180,4 +186,29 @@ function trivial_solutions = calc_trivial_solutions(V_in, T)
     if (v_in_on_T == 0) & (numel(V_in) == 0)
             trivial_solutions = 0;
     end
+end
+
+function out = no_trivial_solutions(V_in, V_out, T, D)
+    out = calc_trivial_solutions([V_in V_out], [T; D]) == 0;
+end
+
+function plot_system(G, T, D)
+    N = numnodes(G);
+
+    figure; % After edge removal by action of V_in_initial on targets directly connected to disturbances
+    p = plot(G,'b');
+    title('$\mathcal{G}$')
+    nodeColors = 1 * ones(N, 1); % Default to value 3 (Yellow)
+    nodeColors(T) = 2;
+    nodeColors(D) = 3;
+    p.NodeCData = nodeColors;
+    colormap(jet); % Use the 'jet' colormap
+    p.MarkerSize = 8; % Increase or decrease the size of the nodes
+    hold on; % Hold on to the current plot
+    legendEntries = {'Disturbance', 'Target', 'Other nodes'};
+    hRed = scatter(nan, nan, 100, 'r', 'filled'); % Placeholder for red nodes
+    hGreen = scatter(nan, nan, 100, 'g', 'filled'); % Placeholder for green nodes
+    hYellow = scatter(nan, nan, 100, 'b', 'filled'); % Placeholder for yellow nodes
+    legend([hRed, hGreen, hYellow], legendEntries, 'Location', 'best');
+    hold off; % Release the hold on the current plot
 end
