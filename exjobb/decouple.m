@@ -95,19 +95,6 @@ switch options.ddp
         V_in = submincutDDSF_final2(G,D,T,'V_in');
         results_time = toc(t_start);
         
-        % V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
-        % check and display how many control nodes are placed on target nodes
-        % v_in_on_T = numel(V_in);
-        % for v_in = V_in_all
-        %     v_in = v_in{1};
-        %     [~,~,ic] = unique([v_in T']);
-        %     a_counts = accumarray(ic,1);
-        %     v_in_on_T_next = sum(a_counts(:,1)~=1);
-        %     if v_in_on_T > v_in_on_T_next
-        %             v_in_on_T = v_in_on_T_next;
-        %     end
-        % end
-        
         trivial_solutions = calc_trivial_solutions(V_in, T);
         cost = (2*numel(V_in)) / ( n_targ + n_dist );
 
@@ -198,17 +185,21 @@ function plot_system(G, T, D)
     figure; % After edge removal by action of V_in_initial on targets directly connected to disturbances
     p = plot(G,'b');
     title('$\mathcal{G}$')
-    nodeColors = 1 * ones(N, 1); % Default to value 3 (Yellow)
+    nodeColors = 1 * ones(N, 1);
     nodeColors(T) = 2;
     nodeColors(D) = 3;
     p.NodeCData = nodeColors;
-    colormap(jet); % Use the 'jet' colormap
-    p.MarkerSize = 8; % Increase or decrease the size of the nodes
-    hold on; % Hold on to the current plot
+    
+    blue = [0 0 0.6]; green = [0 1 0]; red = [1 0 0];
+    map = [blue; green; red];
+    colormap(map)
+    p.MarkerSize = 8;
+
+    hold on;
     legendEntries = {'Disturbance', 'Target', 'Other nodes'};
-    hRed = scatter(nan, nan, 100, 'r', 'filled'); % Placeholder for red nodes
-    hGreen = scatter(nan, nan, 100, 'g', 'filled'); % Placeholder for green nodes
-    hYellow = scatter(nan, nan, 100, 'b', 'filled'); % Placeholder for yellow nodes
+    hRed = scatter(nan, nan, 100, red, 'filled');
+    hGreen = scatter(nan, nan, 100, green, 'filled');
+    hYellow = scatter(nan, nan, 100, blue, 'filled');
     legend([hRed, hGreen, hYellow], legendEntries, 'Location', 'best');
-    hold off; % Release the hold on the current plot
+    hold off;
 end
