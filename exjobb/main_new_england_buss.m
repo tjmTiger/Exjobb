@@ -20,17 +20,25 @@ A2=[-K(1:m,1:m) -K(1:m,m+1:n+m) zeros(m,n); zeros(n,n+m) eye(n);  -K(m+1:n+m,1:e
 A2e=E2\A2;
 G = digraph(A2e');
 
+% G = G - diag(diag(G));  % remove self-loops (set diagonal to zeros)
+
+% ---------------
+% Defina Clusters
+% ---------------
+% 39 - 49 : generators (exclude 49 & 39!!!)
+C1 = [48 47 40];
+C2 = [41 42];
+C3 = [46 45 43 44];
+
+plot_clusters(G, C1, C2, C3)
+%
 % -----------
 % Set D and T
 % -----------
 rng(1)
-C1 = [28 29 26 48 38 25 47 37 2 30 40];
-C2 = [5 7 8 6 41 31 11 12 13 10 32 42];
-C3 = [16 24 21 23 22 46 36 45 35 19 43 33 20 34 44];
-T = randsample([C1 C2], 5)';
-D = randsample(C3, 5)';
+T = randsample([C1 C2], 2)';
+D = randsample(C3, 2)';
 
-plot_clusters(G, C1, C2, C3)
 plot_system(G, T, D);
 
 % --------
@@ -58,17 +66,16 @@ switch ddp
 
 
     case "dynamical_feedback"
-        % numel_V_OF = options.old_results.results_cost(options.parfor_i) * ( n_targ + n_dist ); % convert old cost back to number of V_in + V_out
         t_start = tic;
         [V_out, V_in, ~, ~, ~] = cab_pair_backprop_new(G, D, T);
         results_time = toc(t_start);
 
-        % get filter very bad solutions
+        % filter out very bad solutions
         V_in_best = {};
         V_out_best = {};
-        short = numel(V_in{1}) + numel(V_out{1});
+        good_solution_length = numel(V_in{1}) + numel(V_out{1});
         for i = 1:numel(V_in)
-            if numel(V_in{i}) + numel(V_out{i}) <= short
+            if numel(V_in{i}) + numel(V_out{i}) <= good_solution_length
                 V_in_best{end+1} = V_in{i};
                 V_out_best{end+1} = V_out{i};
             end
