@@ -154,7 +154,7 @@ switch options.ddp
         end
         
         if (numel(V_in_new) + numel(V_out_new)) ~= 0
-            trivial_solutions = no_triv_count / (numel(V_in_new) + numel(V_out_new)); % calc_trivial_solutions([V_in V_out], [T; D]);
+            trivial_solutions = 1 - (no_triv_count / (numel(V_in_new) + numel(V_out_new))); % calc_trivial_solutions([V_in V_out], [T; D]);
         else % Avoid division with 0
             trivial_solutions = 0;
         end
