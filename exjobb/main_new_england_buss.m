@@ -40,51 +40,65 @@ T = randsample([C1 C2], 2)';
 D = randsample(C3, 2)';
 
 plot_system(G, T, D);
-
+decouple_2(G, T, D, "output_feedback")
+decouple_2(G, T, D, "dynamical_feedback")
 % --------
 % Decouple
 % --------
-ddp = "dynamical_feedback";
-n_targ = numel(T);
-n_dist = numel(D);
-switch ddp
-    case "state_feedback"
-        t_start = tic;
-        V_in = submincutDDSF_final2(G,D,T,'V_in');
-        results_time = toc(t_start);
+function [cost] = decouple_2(G, T, D, ddp)
+    n_targ = numel(T);
+    n_dist = numel(D);
+    switch ddp
+        case "state_feedback"
+            t_start = tic;
+            V_in = submincutDDSF_final2(G,D,T,'V_in');
+            results_time = toc(t_start);
+    
+        case "output_feedback"
+            t_start = tic;
+            V_in = submincutDDSF_final2(G,D,T,'V_in');
+            V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
+            [Vin_opt, Vout, C1] = constrained_optimal_solution(G,D,T,V_in_all,'V_out');
+            V_out = submincutDDSF_final2(G,D,T,'V_out');
+            V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
+            [Vin, Vout_opt, C2] = constrained_optimal_solution(G,D,T,V_out_all,'V_in');
+            [V_in_best, V_out_best, C, S] = global_constrained_optimal_solution(Vin_opt, Vout, C1, Vin, Vout_opt, C2);
+            results_time = toc(t_start);
 
-    case "output_feedback"
-        t_start = tic;
-        V_in = submincutDDSF_final2(G,D,T,'V_in');
-        V_in_all = mincutDDSF_all(G,D,T,V_in,'V_in','all');
-        [Vin_opt, Vout, C1] = constrained_optimal_solution(G,D,T,V_in_all,'V_out');
-        V_out = submincutDDSF_final2(G,D,T,'V_out');
-        V_out_all = mincutDDSF_all(G,D,T,V_out,'V_out','all');
-        [Vin, Vout_opt, C2] = constrained_optimal_solution(G,D,T,V_out_all,'V_in');
-        [V_in_best, V_out_best, C, S] = global_constrained_optimal_solution(Vin_opt, Vout, C1, Vin, Vout_opt, C2);
-        results_time = toc(t_start);
-
-
-    case "dynamical_feedback"
-        t_start = tic;
-        [V_out, V_in, ~, ~, ~] = cab_pair_backprop_new(G, D, T);
-        results_time = toc(t_start);
-
-        % filter out very bad solutions
-        V_in_best = {};
-        V_out_best = {};
-        good_solution_length = numel(V_in{1}) + numel(V_out{1});
-        for i = 1:numel(V_in)
-            if numel(V_in{i}) + numel(V_out{i}) <= good_solution_length
-                V_in_best{end+1} = V_in{i};
-                V_out_best{end+1} = V_out{i};
+            if ~isempty(V_in_best) % if there is a solution, get one of those solutions
+                V_in = V_in_best{1};
+                V_out = V_out_best{1};
+            else % if no solution, set V_in and V_out to empty
+                V_in = [];
+                V_out = [];
             end
-        end
+            cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
+    
+        case "dynamical_feedback"
+            t_start = tic;
+            [V_out, V_in, ~, ~, ~] = cab_pair_backprop_new(G, D, T);
+            results_time = toc(t_start);
+    
+            % filter out very bad solutions
+            V_in_best = {};
+            V_out_best = {};
+            good_solution_length = numel(V_in{1}) + numel(V_out{1});
+            for i = 1:numel(V_in)
+                if numel(V_in{i}) + numel(V_out{i}) <= good_solution_length
+                    V_in_best{end+1} = V_in{i};
+                    V_out_best{end+1} = V_out{i};
+                end
+            end
 
-    otherwise
-        disp("ERROR: Invalid type of ddp. Possible options are: state_feedback, output_feedback or dynamical_feedback")
+            V_in = V_in_best{1}; % OBS! NOT BEST SOLUTION!!!!!!
+            V_out = V_out_best{1};
+
+            cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
+    
+        otherwise
+            disp("ERROR: Invalid type of ddp. Possible options are: state_feedback, output_feedback or dynamical_feedback")
+    end
 end
-
 
 
 

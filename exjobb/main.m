@@ -15,6 +15,7 @@ clear; clc; close all;
 % TEST(@test_different_fractions, "FracDist", 0.05:0.05:0.3, "FracTarg", 0.05:0.05:0.3, "sample_size", 500)
 % TEST(@test_size, "", "", "Size", 30:30:200, "fract_targ", 0.3, "sample_size", 500, "boxchart", true)
 % TEST(@test_node_degree, "", "", "AverageDegree", 2:1:7, "sample_size", 500, "boxchart", true)
+% TEST(@test_erdos_fraction_p, "Fractions", 0.05:0.05:0.3, "p", [0.03 0.2 0.4 0.6 0.8 1], "graph_generating_algorithm", "Erdos Renyi", "sample_size", 500)
 % TEST(@test_strogatz_fraction_beta, "Fractions", 0.05:0.05:0.3, "Beta", 0:0.1:1, "graph_generating_algorithm", "Watts Strogratz", "sample_size", 500)
 % TEST(@test_strogatz_size_beta, "Size", 100:50:200, "Beta", 0:0.1:1, "graph_generating_algorithm", "Watts Strogratz", "sample_size", 500)
 % TEST(@test_scale_fraction_alphagamma, "Fractions", 0.05:0.05:0.3, "Alpha", 0:0.1:1, "graph_generating_algorithm", "Scale Free", "sample_size", 500)
@@ -27,6 +28,9 @@ clear; clc; close all;
 % TEST(@test_different_fractions, "FracDist", 0.05:0.05:0.3, "FracTarg", 0.05:0.05:0.3, "sample_size", 500, "ddp", "output_feedback")
 % TEST(@test_size, "", "", "Size", 30:30:200, "fract_targ", 0.3, "sample_size", 500, "ddp", "output_feedback", "boxchart", true)
 % TEST(@test_node_degree, "", "", "AverageDegree", 2:1:7, "sample_size", 500, "ddp", "output_feedback", "boxchart", true)
+
+TEST(@test_erdos_fraction_p, "Fractions", 0.05:0.05:0.3, "p", [0.03 0.2 0.4 0.6 0.8 1], "graph_generating_algorithm", "Erdos Renyi", "sample_size", 500, "ddp", "output_feedback")
+
 % TEST(@test_strogatz_fraction_beta, "Fractions", 0.05:0.05:0.3, "Beta", 0:0.1:1, "graph_generating_algorithm", "Watts Strogratz", "sample_size", 500, "ddp", "output_feedback")
 % TEST(@test_strogatz_size_beta, "Size", 100:50:200, "Beta", 0:0.1:1, "graph_generating_algorithm", "Watts Strogratz", "sample_size", 500, "ddp", "output_feedback")
 % TEST(@test_scale_fraction_alphagamma, "Fractions", 0.05:0.05:0.3, "Alpha", 0:0.1:1, "graph_generating_algorithm", "Scale Free", "sample_size", 500, "ddp", "output_feedback")
