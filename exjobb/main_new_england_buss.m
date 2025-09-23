@@ -66,10 +66,12 @@ end
 
 figure;
 subplot(1,2,1)
-boxplot([results_cost_OF' results_cost_DF'], ["OF" "DF"])
+boxplot([results_cost_OF' results_cost_DF'], ["Output Feedback" "Dynamical Feedback"])
 
 subplot(1,2,2)
-boxplot(results_trivial_DF, "DF")
+boxplot(results_trivial_DF, "Dynamical Feedback")
+
+title("39 Bus New England System")
 
 fontsize(12,"points")
 position = get(gcf, 'Position');
