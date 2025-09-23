@@ -66,18 +66,23 @@ end
 
 figure;
 subplot(1,2,1)
-boxplot([results_cost_OF' results_cost_DF'], ["Output Feedback" "Dynamical Feedback"])
+boxplot([results_cost_OF' results_cost_DF'], ["Output" "Dynamical"])
+title("Cost")
+ylabel("Cost")
 
 subplot(1,2,2)
-boxplot(results_trivial_DF, "Dynamical Feedback")
+boxplot(results_trivial_DF, "Dynamical")
+title("No Interaction Sol.")
+ylabel("Index")
 
-title("39 Bus New England System")
+
+sgtitle("New England System")
 
 fontsize(12,"points")
 position = get(gcf, 'Position');
 position = [100, 100, 600, 600];
-savefig(gcf, "figures_new/new_england")
-print(gcf, "figures_new/new_england" + ".eps", "-depsc")
+% savefig(gcf, "figures_new/new_england")
+% print(gcf, "figures_new/new_england" + ".eps", "-depsc")
 
 % ---------
 % Functions
