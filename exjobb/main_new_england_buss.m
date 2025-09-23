@@ -47,7 +47,7 @@ results_cost_OF = zeros(1,60);
 % results_trivial_OF = zeros(1,60);
 results_cost_DF = zeros(1,60);
 results_trivial_DF = zeros(1,60);
-% All possible combinations
+% All possible combinations with T in C1, C2 and D in C3
 T_candidates = nchoosek([C1 C2],2);
 D_candidates = nchoosek(C3,2);
 i = 1;
