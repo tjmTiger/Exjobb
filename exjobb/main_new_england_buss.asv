@@ -34,59 +34,43 @@ C3 = [46 45 43 44];
 % C2 = [5 7 8 6 41 31 11 12 13 10 32 42];
 % C3 = [16 24 21 23 22 46 36 45 35 19 43 33 20 34 44];
 
-% plot_clusters(G, C1, C2, C3)
-
+plot_clusters(G, C1, C2, C3)
+%
 % -----------
 % Set D and T
 % -----------
 rng(1)
 % T = randsample([C1 C2], 2)';
 % D = randsample(C3, 2)';
-
-results_cost_OF = zeros(1,60);
-% results_trivial_OF = zeros(1,60);
-results_cost_DF = zeros(1,60);
-results_trivial_DF = zeros(1,60);
+C12 = [C1 C2];
+n_C12 = numel(C12);
+n_C3 = numel(C3);
 % All possible combinations
-T_candidates = nchoosek([C1 C2],2);
-D_candidates = nchoosek(C3,2);
-i = 1;
-for T = T_candidates'
-    for D = D_candidates
-        disp(i)
-        % plot_system(G, T, D);
-        [cost_OF, ~] = decouple_2(G, T, D, "output_feedback");
-        [cost_DF, trivial_DF] = decouple_2(G, T, D, "dynamical_feedback", 'cost_OF', cost_OF);
-        results_cost_OF(i) = cost_OF;
-        results_cost_DF(i) = cost_DF;
-        results_trivial_DF(i) = trivial_DF;
-        i = i+1;
+for t1 = 1:n_C12
+    for t2 = t1:n_C12
+        for d1 = n_C3
+            for d2 = d1:n_C3
+                T = [t1 t2]';
+                D = [d1 d2]';
+                [cost_OF, triv_OF] = decouple_2(G, T, D, "output_feedback")
+                decouple_2(G, T, D, "dynamical_feedback")
+            end
+        end
     end
 end
 
-figure;
-subplot(1,2,1)
-boxplot([results_cost_OF' results_cost_DF'], ["OF" "DF"])
+plot_system(G, T, D);
 
-subplot(1,2,2)
-boxplot(results_trivial_DF, "DF")
-
-fontsize(12,"points")
-position = get(gcf, 'Position');
-position = [100, 100, 600, 600];
-savefig(gcf, "figures_new/new_england")
-print(gcf, "figures_new/new_england" + ".eps", "-depsc")
-
-% ---------
-% Functions
-% ---------
+% --------
+% Decouple
+% --------
 function [cost, triv] = decouple_2(G, T, D, ddp, options)
     arguments
         G
         T
         D
         ddp
-        options.cost_OF
+        options.OF_cost
     end
     n_targ = numel(T);
     n_dist = numel(D);
@@ -114,49 +98,27 @@ function [cost, triv] = decouple_2(G, T, D, ddp, options)
                 V_in = [];
                 V_out = [];
             end
-
-            triv = 0;
             cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
-            
     
         case "dynamical_feedback"
-            numel_V_OF = options.cost_OF * ( n_targ + n_dist );
             t_start = tic;
             [V_out, V_in, ~, ~, ~] = cab_pair_backprop_new(G, D, T);
             results_time = toc(t_start);
     
-            % How many of solutions with lower cost than OF have 0 trivial solutions?
-            V_in_new = {};
-            V_out_new = {};
-            no_triv_count = 0;
+            % filter out very bad solutions
+            V_in_best = {};
+            V_out_best = {};
+            good_solution_length = numel(V_in{1}) + numel(V_out{1});
             for i = 1:numel(V_in)
-                if numel(V_in{i}) + numel(V_out{i}) <= numel_V_OF
-                    V_in_new{end+1} = V_in{i};
-                    V_out_new{end+1} = V_out{i};
-                    if no_trivial_solutions(V_in{i}, V_out{i}, T, D)
-                        no_triv_count = no_triv_count+1;
-                        % disp("Found!!!!")
-                    end
+                if numel(V_in{i}) + numel(V_out{i}) <= good_solution_length
+                    V_in_best{end+1} = V_in{i};
+                    V_out_best{end+1} = V_out{i};
                 end
             end
-            
-    
-            if ~isempty(V_in) % if there is a solution, get smallest of those solutions
-                V = cellfun(@numel, V_in) + cellfun(@numel, V_out);
-                i = find(V==min(V));
-    
-                V_in = V_in{i};
-                V_out = V_out{i};
-            else % if no solution, set V_in and V_out to empty
-                V_in = [];
-                V_out = [];
-            end
-            
-            if (numel(V_in_new) + numel(V_out_new)) ~= 0
-                triv = 1 - (no_triv_count / (numel(V_in_new) + numel(V_out_new))); % calc_trivial_solutions([V_in V_out], [T; D]);
-            else % Avoid division with 0
-                triv = 0;
-            end
+
+            V_in = V_in_best{1}; % OBS! NOT BEST SOLUTION!!!!!!
+            V_out = V_out_best{1};
+
             cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
     
         otherwise
@@ -164,6 +126,11 @@ function [cost, triv] = decouple_2(G, T, D, ddp, options)
     end
 end
 
+
+
+% ---------
+% Functions
+% ---------
 function trivial_solutions = calc_trivial_solutions(V_in, T)
     [~,~,ic] = unique([V_in T']);
     a_counts = accumarray(ic,1);
