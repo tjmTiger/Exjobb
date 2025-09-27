@@ -1,17 +1,33 @@
 function [cost, results_time, trivial_solutions] = decouple(G, fract_targ, fract_dist, options)
-% Note: frac_targ + frac_dist <= 1
-% Choices for ddp: 
-%   state_feedback
-%   output_feedback
-%   dynamical_feedback
+% DECOUPLE
+%   Description:
+%       Adds targets and disturbances, decouples using specified ddp.
+%   Output Arguments:
+%       results_cost    : Cost according to cost function depending on ddp
+%       results_time    : Time it took to decouple.
+%       results_trivial : Ammount of trivial solutions.
+%   Input Arguments:
+%       G               : digraph object
+%       fract_targ      : float, fraction of targets
+%                         numel(T) = nunodes(G)*fract_targ
+%       fract_dist      : float, fraction of disturbances
+%                         numel(D) = nunodes(G)*fract_dist
+%                         Note: frac_targ + frac_dist <= 1
+%       options         : ddp - specify ddp algorithm default is state.
+%                               Choices:
+%                                 "state_feedback" (default)
+%                                 "output_feedback"
+%                                 "dynamical_feedback"
+%                         seed - specify seed for rng
+%                         old_results, parfor_i - used for DF trivial solutions
 arguments
-    G 
-    fract_targ 
-    fract_dist
-    options.ddp {mustBeText} = "state_feedback"
+    G
+    fract_targ single
+    fract_dist single
+    options.ddp string = "state_feedback"
     options.seed {mustBeNumeric} = -1
-    options.list_targ = []
-    options.list_dist = []
+    % options.list_targ = []
+    % options.list_dist = []
     options.old_results
     options.parfor_i
 end
@@ -27,74 +43,34 @@ end
 
 switch options.seed
     case -1
-        % pass
+        % no seed given
     otherwise
         rng(options.seed)
 end
 
 N = numnodes(G);
+% choose targets and disturbances
 T = [];
 n_dist = ceil(fract_dist*N);
 n_targ = ceil(fract_targ*N);
 T = sort(randsample(N, n_targ));
 D = sort(randsample(setdiff(1:N', T), n_dist))';
-% D = sort(randsample(N, n_dist));
-% T = sort(randsample(setdiff(1:N', D), n_targ))';
-
-% if isempty(options.list_targ)
-%     while isempty(T) % add targets and disturbances
-%         n_dist = ceil(fract_dist*N);
-%         n_targ = ceil(fract_targ*N);
-%         % T = sort(randsample(N, n_dist));
-%         % D = sort(randsample(setdiff(1:N', T), n_targ))';
-%         D = sort(randsample(N, n_dist));
-%         T = sort(randsample(setdiff(1:N', D), n_targ))';
-%     end
-% else
-%     if isempty(options.list_dist)
-%         disp("ERROR, Invalid input, list_dist cant be empty if list_targ is not empty.")
-%         return
-%     end
-%     list_dist = options.list_dist;
-%     list_targ = options.list_targ;
-%     % if length(list_targ) > length(list_dist)
-%     %     list_targ = setdiff(list_targ, list_dist);
-%     % else
-%     %     list_dist = setdiff(list_dist, list_targ);
-%     % end
-% 
-%     while isempty(T) % add targets and disturbances
-%         n_dist = ceil(fract_dist*N);
-%         n_targ = ceil(fract_targ*N);
-%         if n_dist > length(list_dist)
-%             disp("WARNING: Request " + n_dist + " distubances, but only " + length(list_dist) + " provided!")
-%             n_dist = length(list_dist);
-%         elseif n_targ > length(list_targ)
-%             disp("WARNING: Request " + n_targ + " targets, but only " + length(list_targ) + " provided!")
-%             n_targ = length(list_targ);
-%         end
-%         D = sort(randsample(list_dist, n_dist));
-%         T = sort(setdiff(randsample(N, n_targ),D));
-%     end
-% end
+% plot_system(G, T, D)
 
 n_dist = length(D);
 n_targ = length(T);
 
-V_in_initial = []; % control on targets if those are directly connected to a disturbance
-population = setdiff(setdiff(1:N, T), D);
-
-% plot_system(G, T, D)
-
 A = full(adjacency(G))';
 G = digraph(A');
 
+% decouple using chosen ddp algorithm
 switch options.ddp
     case "state_feedback"
         t_start = tic;
         V_in = submincutDDSF_final2(G,D,T,'V_in');
+
+        % return:
         results_time = toc(t_start);
-        
         trivial_solutions = calc_trivial_solutions(V_in, T);
         cost = (2*numel(V_in)) / ( n_targ + n_dist );
 
@@ -109,7 +85,7 @@ switch options.ddp
         [V_in_best, V_out_best, C, S] = global_constrained_optimal_solution(Vin_opt, Vout, C1, Vin, Vout_opt, C2);
         results_time = toc(t_start);
         
-        if ~isempty(V_in_best) % if there is a solution, get one of those solutions
+        if ~isempty(V_in_best) % if there is one or more solutions, pick one of those solutions
             V_in = V_in_best{1};
             V_out = V_out_best{1};
         else % if no solution, set V_in and V_out to empty
@@ -126,7 +102,8 @@ switch options.ddp
         [V_out, V_in, ~, ~, ~] = cab_pair_backprop_new(G, D, T);
         results_time = toc(t_start);
 
-        % How many of solutions with lower cost than OF have 0 trivial solutions?
+        % How many of solutions with lower cost than OF have 0 trivial
+        % solutions? (index for DF)
         V_in_new = {};
         V_out_new = {};
         no_triv_count = 0;
@@ -155,7 +132,7 @@ switch options.ddp
         
         if (numel(V_in_new) + numel(V_out_new)) ~= 0
             trivial_solutions = 1 - (no_triv_count / (numel(V_in_new) + numel(V_out_new))); % calc_trivial_solutions([V_in V_out], [T; D]);
-        else % Avoid division with 0
+        else % Avoid division with 0 (issue when V_in and V_out are empty)
             trivial_solutions = 0;
         end
         cost = ( numel(V_in) + numel(V_out)) / ( n_targ + n_dist );
@@ -164,25 +141,33 @@ switch options.ddp
 end
 end
 
-function trivial_solutions = calc_trivial_solutions(V_in, T)
-    [~,~,ic] = unique([V_in T']);
+function trivial_solutions = calc_trivial_solutions(V, TD)
+% calculates trivial solution according to index formula.
+% for SF use calc_trivial_solutions(V_in, T)
+% for OF use calc_trivial_solutions([V_in V_out], [T D])
+    [~,~,ic] = unique([V TD']);
     a_counts = accumarray(ic,1);
-    v_in_on_T = sum(a_counts(:,1)~=1);
+    v_on_TD = sum(a_counts(:,1)~=1);
 
-    trivial_solutions = v_in_on_T/numel(V_in);
-    if (v_in_on_T == 0) & (numel(V_in) == 0)
+    trivial_solutions = v_on_TD/numel(V);
+    if (v_on_TD == 0) & (numel(V) == 0)
             trivial_solutions = 0;
     end
 end
 
 function out = no_trivial_solutions(V_in, V_out, T, D)
+% return true if (V_in U V_out) ∩ (T U D) = ∅, else return false
     out = calc_trivial_solutions([V_in V_out], [T; D]) == 0;
 end
 
 function plot_system(G, T, D)
+% Plot with targets and disturbances marked
+% G: digraph object
+% T: array of targets
+% D: array of disturbances
     N = numnodes(G);
 
-    figure; % After edge removal by action of V_in_initial on targets directly connected to disturbances
+    figure;
     p = plot(G,'b');
     title('$\mathcal{G}$')
     nodeColors = 1 * ones(N, 1);

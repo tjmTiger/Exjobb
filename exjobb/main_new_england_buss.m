@@ -34,15 +34,15 @@ C3 = [46 45 43 44];
 % C2 = [5 7 8 6 41 31 11 12 13 10 32 42];
 % C3 = [16 24 21 23 22 46 36 45 35 19 43 33 20 34 44];
 
-% plot_clusters(G, C1, C2, C3)
-
+plot_clusters(G, C1, C2, C3)
+%%
 % -----------
 % Set D and T
 % -----------
 rng(1)
 % T = randsample([C1 C2], 2)';
 % D = randsample(C3, 2)';
-
+results_cost_SF = zeros(1,60);
 results_cost_OF = zeros(1,60);
 % results_trivial_OF = zeros(1,60);
 results_cost_DF = zeros(1,60);
@@ -52,27 +52,30 @@ T_candidates = nchoosek([C1 C2],2);
 D_candidates = nchoosek(C3,2);
 i = 1;
 for T = T_candidates'
-    for D = D_candidates
+    for D = D_candidates'
         disp(i)
         % plot_system(G, T, D);
-        [cost_OF, ~] = decouple_2(G, T, D, "output_feedback");
-        [cost_DF, trivial_DF] = decouple_2(G, T, D, "dynamical_feedback", 'cost_OF', cost_OF);
-        results_cost_OF(i) = cost_OF;
-        results_cost_DF(i) = cost_DF;
-        results_trivial_DF(i) = trivial_DF;
+        % [cost_OF, ~] = decouple_2(G, T, D, "output_feedback");
+        % [cost_DF, trivial_DF] = decouple_2(G, T, D, "dynamical_feedback", 'cost_OF', cost_OF);
+        % results_cost_OF(i) = cost_OF;
+        % results_cost_DF(i) = cost_DF;
+        % results_trivial_DF(i) = trivial_DF;
+        [cost_SF, trivial_SF] = decouple_2(G, T, D, "state_feedback");
+        results_cost_SF(i) = cost_SF;
+        results_trivial_SF(i) = trivial_SF;
         i = i+1;
     end
 end
-
+%%
 figure;
 subplot(1,2,1)
-boxplot([results_cost_OF' results_cost_DF'], ["Output" "Dynamical"])
+boxplot(results_cost_SF, "State")
 title("Cost")
 ylabel("Cost")
 
 subplot(1,2,2)
-boxplot(results_trivial_DF, "Dynamical")
-title("No Interaction Sol.")
+boxplot(results_trivial_SF, "State")
+title("NTrivial Sol.")
 ylabel("Index")
 
 
@@ -102,6 +105,9 @@ function [cost, triv] = decouple_2(G, T, D, ddp, options)
             t_start = tic;
             V_in = submincutDDSF_final2(G,D,T,'V_in');
             results_time = toc(t_start);
+
+            triv = calc_trivial_solutions(V_in, T);
+            cost = (2*numel(V_in)) / ( n_targ + n_dist );
     
         case "output_feedback"
             t_start = tic;

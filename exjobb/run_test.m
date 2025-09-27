@@ -1,7 +1,9 @@
 function [results_cost, results_time, results_trivial] = run_test(algorithm, parameters, options)
+% RUN_TEST
 %   Description:
-%       Run DDP on a random graph created according to algorithm provided,
-%       with parameters passed in.
+%       Run DDP on a sample size of random graphs created according to
+%       algorithm provided with parameters passed in using
+%       seed ∈ [seed, seed + sample_size].
 %   Output Arguments:
 %       results_cost    : Cost according to cost function defined in
 %                         decouple() function.
@@ -9,20 +11,28 @@ function [results_cost, results_time, results_trivial] = run_test(algorithm, par
 %                         properly when using multi threding
 %       results_trivial : Ammount of trivial solutions.
 %   Input Arguments:
-%       algorithm       : @Function for graph generating alorithm that
+%       algorithm       : @function for graph generating alorithm that
 %                         returns a digraph object.
-%       parameters      : Parameters to be passed into the alorithm func.
-%       options         : seed, sample_size, fraction_targets, fraction_disturbances
-
+%       parameters      : parameters to be passed into the alorithm func.
+%       options         : seed - specify seed for rng
+%                         sample_size - specify how many graphs each combination
+%                                       of variables will be tested on.
+%                         fraction_targets - what fraction of nodes will be chosen as targets
+%                         fraction_disturbances - what fraction of nodes will be chosen as disturbances
+%                         ddp - specify ddp algorithm default is state.
+%                               Choices:
+%                                 "state_feedback" (default)
+%                                 "output_feedback"
+%                                 "dynamical_feedback"
     arguments
         algorithm
         parameters {mustBeCell}
         options.sample_size {mustBeNumeric}
-        options.seed {mustBeNumeric} = 1000
-        options.fraction_targets {mustBeNumeric} = 0.1
-        options.fraction_disturbances {mustBeNumeric} = 0.1
-        options.ddp {mustBeText}
-        options.old_results = {}
+        options.seed {mustBeNumeric} = 1000 % NOTE: not only place where seed it chosen!!!!, change in TEST() too!!!
+        options.fraction_targets single = 0.1
+        options.fraction_disturbances single = 0.1
+        options.ddp string
+        options.old_results = {} % for comparing DF with OF
     end
     seed = options.seed;
     
@@ -30,10 +40,11 @@ function [results_cost, results_time, results_trivial] = run_test(algorithm, par
     results_time = zeros(1,options.sample_size);
     results_trivial = zeros(1,options.sample_size);
     start_t = tic();
-    % disp(options.fraction_targets)
-    parfor i = 1:options.sample_size % parfor
+    parfor i = 1:options.sample_size % parallel processing for speed, change "parfor" to "for" when debugging (ty cant halt functions inside a parfor loop)
+        % create random graph
         G = algorithm(parameters{:}, seed + i);
+        % add targets and disturbances, decouple useing given ddp.
         [results_cost(i), results_time(i), results_trivial(i)] = decouple(G, options.fraction_targets, options.fraction_disturbances, "ddp", options.ddp, "seed", seed+i, "old_results", options.old_results, "parfor_i", i);
     end
-    disp("Parfor finished in: " + toc(start_t))
+    disp("run_test finished in: " + toc(start_t))
 end

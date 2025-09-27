@@ -1,53 +1,39 @@
 function  G = sfg(n, alpha, beta, gamma, delta_in, delta_out, seed)
-%     Gustav: This implementation is based on a python implementaion from 
-%     https://networkx.github.io/documentation/latest/reference/generators.html
-%
-%     Returns a scale-free directed graph.
-% 
-%     Parameters
-%     ----------
-%     n : integer
-%         Number of nodes in graph
-%     alpha : float 
-%         Probability for adding a new node connected to an existing node
-%         chosen randomly according to the in-degree distribution.
-%     beta : float
-%         Probability for adding an edge between two existing nodes.
-%         One existing node is chosen randomly according the in-degree 
-%         distribution and the other chosen randomly according to the out-degree 
-%         distribution.     
-%     gamma : float
-%         Probability for adding a new node conecgted to an existing node
-%         chosen randomly according to the out-degree distribution.
-%     delta_in : float
-%         Bias for choosing ndoes from in-degree distribution.
-%     delta_out : float
-%         Bias for choosing ndoes from out-degree distribution.
-%     create_using : graph, optional (default MultiDiGraph)
-%         Use this graph instance to start the process (default=3-cycle).
-%     seed : integer, optional
-%         Seed for random number generator
-% 
-%     Examples
-%     --------
-%     Create a scale-free graph on one hundred nodes::
-% 
-%     >>> G = nx.scale_free_graph(100)
-%   
-%     Notes
-%     -----
-%     The sum of ``alpha``, ``beta``, and ``gamma`` must be 1.
-% 
-%     References
-%     ----------  
-%     .. [1] B. Bollob?s, C. Borgs, J. Chayes, and O. Riordan,
-%            Directed scale-free graphs,
-%            Proceedings of the fourteenth annual ACM-SIAM Symposium on
-%            Discrete Algorithms, 132--139, 2003.
-
-
-
-%------------------------------------------------------------------%
+% SFG
+%    Description:
+%       Returns a scale-free directed graph.
+%       This implementation is based on a python implementaion from 
+%       https://networkx.github.io/documentation/latest/reference/generators.html
+%       Note: Sum of "alpha", "beta", and "gamma" must be 1.
+%    Output Arguments:
+%       G      : generated random digraph
+%    Input Arguments:
+%       n      : integer, number of nodes in graph
+%       alpha  : float, probability for adding a new node connected to an
+%                existing node chosen randomly according to the in-degree distribution.
+%       beta   : float, probability for adding an edge between two existing nodes.
+%                One existing node is chosen randomly according the in-degree 
+%                distribution and the other chosen randomly according to the
+%                out-degree distribution.     
+%       gamma  : float, probability for adding a new node conecgted to an existing node
+%                chosen randomly according to the out-degree distribution.
+%       delta_in : float, bias for choosing ndoes from in-degree distribution.
+%       delta_out: float, bias for choosing ndoes from out-degree distribution.
+%       seed   : integer, seed for rng.
+%    References:
+%           [1] B. Bollob?s, C. Borgs, J. Chayes, and O. Riordan,
+%               Directed scale-free graphs,
+%               Proceedings of the fourteenth annual ACM-SIAM Symposium on
+%               Discrete Algorithms, 132--139, 2003.
+arguments
+    n {mustBeNumeric}
+    alpha single
+    beta single
+    gamma single
+    delta_in {mustBeNumeric}
+    delta_out {mustBeNumeric}
+    seed {mustBeNumeric}
+end
 rng(seed)
 G = speye(9);
 G = [[sparse(1,9) 1];[G sparse(9,1)]];
@@ -64,64 +50,50 @@ end
 
 if abs(alpha+beta+gamma - 1)>1e-10
     beta = beta - (alpha+beta+gamma - 1);
-    disp("alpha+beta+gamma must equal 1. Beta is set to " + beta + " to compensate.")
+    % disp("alpha+beta+gamma must equal 1. Beta is set to " + beta + " to compensate.")
 end
-        
-% G.name="directed_scale_free_graph(%s,alpha=%s,beta=%s,gamma=%s,delta_in=%s,delta_out=%s)"%(n,alpha,beta,gamma,delta_in,delta_out)
-
-% seed random number generated (uses None as default)
-rng(seed);
 
 while size(G,1) < n
     r = rand();
-    
     n_now = size(G,1);
-    % random choice in alpha,beta,gamma ranges
+    % random choice in alpha, beta, gamma ranges
+    % alpha
     if r<alpha
-        % alpha
         % add new node v
         G = [G sparse(n_now,1);sparse(1,n_now+1)];
         v = n_now+1;
         % choose w according to in-degree and delta_in
         w = choose_node(G, sum(G,1),delta_in);
+    % beta
     elseif r < alpha+beta
-        % beta
         % choose v according to out-degree and delta_out
         v = choose_node(G, sum(G,2),delta_out);
         % choose w according to in-degree and delta_in
         w = choose_node(G, sum(G,1),delta_in);
+    % gamma
     else
-        % gamma
         % choose v according to out-degree and delta_out
         v = choose_node(G, sum(G,2),delta_out);
         % add new node w
         G = [G sparse(n_now,1);sparse(1,n_now+1)];
         w = n_now+1;
     end
-    G(v,w) = 1;
+    G(v,w) = 1; % add edge
 
 end
 
-% GL: Remove self-loops
+% remove self-loops (there are other ways to do it: G = G - diag(diag(G));)
 for i = 1:n
     G(i,i) = 0;
 end
 
-G = digraph(G); % matrix form
+G = digraph(G);
 end
 
 function i = choose_node(G,distribution,delta)
+    % no idea, but it works
     cumsum_ = cumsum(distribution+delta);
     cumsum_ = cumsum_./cumsum_(end);
-    % normalization 
-%     psum=sum(distribution) + delta*length(distribution);
-%     distribution+delta
     r=rand();
-%     for i = 1:length(distribution)
-%         cumsum_ = cumsum_ + (distribution(i)+delta)/psum;
-%         if r < cumsum_
-%             break
-%         end
-%     end
     i = find(r<cumsum_,1);
 end

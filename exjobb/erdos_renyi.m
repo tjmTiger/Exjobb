@@ -1,24 +1,28 @@
-function [Gg,n,m] = erdos_renyi(n,p,seed) % cleaned up version
+function [Gg,n,m] = erdos_renyi(n,p,seed)
+% ERDOS_RENYI
 %    Description:
-%        this function create Erdos-Renyi random Graph*
-%        *This code only generate approximately Erdos-Renyi Random Graph. 
-%        Since Erdos-Renyi Model only consider the undirected, non-self-loop
-%        graphs. However, this code would firstly create a directed graph with,
-%        self-loops. And then transform the directed graph into undirected simply
-%        by ignore the upper triangular adjacency matrix and delete the self-loops
+%        Function generates a directed Erdos-Renyi random graph without self-loops.
+%        Note: This code only generate approximately Erdos-Renyi random graph. 
+%        Since Erdos-Renyi model only consider the undirected, non-self-loop
+%        graphs. However, this code creates a directed graph, deletes
+%        self-loops and only returns largest connected component.
 %        
-%        However, when the graph size n is large enough, the generated graph would
-%        be approximately similar to the expected Erdos-Renyi Model.
+%        However, when the graph size n and probability p are large enough, the generated graph would
+%        be almost same as Erdos-Renyi Model with directed edges.
 %    Output Arguments:
-%        G : generated random graph
-%        n : graph size, number of vertexes, |V|
-%        m : graph size, number of edges, |E|
+%        Gg : generated random digraph
+%        n  : graph size, number of nodes, |V|
+%        m  : graph size, number of edges, |E|
 %    Input Arguments:
-%        n : graph size, number of vertexes, |V|
-%        p : the probability p of the second definition of Erdos-Renyi
-%        model. Note: this algorithm works only well for p << 1!!!
-%        s : 1 or 0 (if connceted component graph has nn=n or nn <= n)
-%        seed: seed of the function. 
+%        n : integer, graph size, number of nodes, |V|
+%        p : float, the probability p in the second definition of Erdos-Renyi
+%            model. Note: this algorithm works only well for p << 1! (see sprand())
+%        seed: seed for rng.
+arguments
+    n {mustBeNumeric}
+    p single
+    seed {mustBeNumeric}
+end
 rng(seed);
 G = spones(sprand(n, n, p));  % sparse matrix with edges probability p, spones makes it unweighted
 G = G - diag(diag(G));        % remove self-loops (set diagonal to zeros)
@@ -29,34 +33,23 @@ Ag = full(G);
 n_comp = length(binsize);
 ind_comp = bin;
 
-if n_comp > 1
-    for i = 1:n_comp % Make array of graphs in out graph
+if n_comp > 1 % If disconnected, make array of disconnected parts of our graph.
+    for i = 1:n_comp
         A_dir_com{i} = Ag(ind_comp==i,ind_comp==i);
     end
-else
+else % if connected, put just out graph in the array.
     A_dir_com{1} = Ag;
 end
 
+% sort disconnected parts by size.
 [~,ind_sort_com] = sort(binsize,'descend'); 
 
-
-Agg = A_dir_com{ind_sort_com(1)};% Get largest graph according to ind_sort_com created earlier
+% Get largest graph according to ind_sort_com created earlier
+Agg = A_dir_com{ind_sort_com(1)};
 n = size(Agg,1);
 
-if(numel(A_dir_com)>1)
-    % disp("WARNING: graph disconnected, largest component was used instead, with size: " + n)
-end
-
-% for i = 1:size(Agg,1) % Makes Ag directional
-%     for j = i+1 : size(Agg,1)
-%         if Agg(i,j) ~= 0
-%             if randi([0,1]) >= 0.5
-%                 Agg(i,j) = 0;
-%             else
-%                 Agg(j,i) = 0;
-%             end
-%         end
-%     end
+% if(numel(A_dir_com)>1)
+%     disp("WARNING: graph disconnected, largest component was used instead, with size: " + n)
 % end
 
 if nargout>2
