@@ -2,7 +2,7 @@ function pareto_strogatz(ddp, n)
     disp("pareto_strogatz")
     % Ranges
     params1 = 1:2;                 % first argument
-    params2 = linspace(0,1,51);    % second argument
+    params2 = linspace(0,1,21); % linspace(0,1,51);    % second argument
     
     results = [];
     
@@ -33,9 +33,29 @@ function pareto_strogatz(ddp, n)
     
     %% plot
     figure; hold on;
-    
+
     % all samples in light blue
     scatter(obj1, obj2, 20, 'b', 'filled', 'MarkerFaceAlpha',0.3);
+    % colors = [255 0 0; 255 125 0; 255 255 0; 125 255 0; 0 255 0; 0 255 125; 0 255 255; 0 125 255; 0 0 255; 125 0 255; 255 0 255; 255 0 125]./255;
+    % p1_last = params_used(1,1);
+    % obj = [];
+    % c = 1;
+    % for i = 1:numel(params1)*numel(params2)
+    %     color = colors(c,:);
+    %     plot(obj(:,1), obj(:,2), "o-",'Color',color,'MarkerSize',4, 'MarkerFaceColor', color)
+    % end
+
+    for i = 1:numel(params_used(:,1))
+        p1 = params_used(i,1);
+        if p1 ~= p1_last
+            color = colors(c,:);
+            plot(obj(:,1), obj(:,2), "o-",'Color',color,'MarkerSize',4, 'MarkerFaceColor', color)
+            obj = [];
+            c = min(c+1, 12);
+            p1_last = p1;
+        end
+        obj = [obj; obj1(i) obj2(i)];
+    end
     
     % pareto points big dark blue
     paretoPoints = results(is_pareto, :);  % [mode, param, f1, f2]
@@ -68,7 +88,7 @@ function [cost, trivial] = DDP_watts_strogatz(k, beta, ddp, n)
     [costs, ~, trivials] = run_test( ...
         @watts_strogatz, ...
         params, ...
-        "sample_size", 500, ...
+        "sample_size", 8, ...
         "fraction_targets", fract_targ, ...
         "fraction_disturbances", fract_dist, ...
         "ddp", ddp, ...
