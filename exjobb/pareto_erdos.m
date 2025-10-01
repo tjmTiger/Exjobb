@@ -1,18 +1,24 @@
-function pareto_erdos(ddp, n)
+function pareto_erdos(ddp, n, options)
+    arguments
+        ddp 
+        n 
+        options.params1 = linspace(0.03,1,98)
+    end
     disp("pareto_erdos")
     % Ranges
-    % params1 = linspace(0.03,1,98);  % first argument
-    params1 = logspace(0, -1.5229, 100);
+    params1 = options.params1;  % first argument 
     
-    results = [];
-    
+    results = zeros(numel(params1),4);
+
     % loop through parameters
-    for p1 = params1
+    for i = 1:numel(params1)
+        p1 = params1(i);
         [f1, f2] = DDP_erods_renyi(p1, ddp, n);  % returns [f1, f2]
         
         % [param1, param2, f1, f2]
-        results = [results; p1, 0, f1, f2];
+        results(i,:) = [p1 0 f1 f2];
     end
+
     % extract objectives
     obj1 = results(:,3);
     obj2 = results(:,4);
@@ -33,7 +39,8 @@ function pareto_erdos(ddp, n)
     figure; hold on;
     
     % all samples in light blue
-    scatter(obj1, obj2, 20, 'b', 'filled', 'MarkerFaceAlpha',0.3);
+    % scatter(obj1, obj2, 20, 'b', 'filled', 'MarkerFaceAlpha',0.3);
+    plot(obj1, obj2, "o-", 'MarkerSize', 4)
     
     % pareto points big dark blue
     paretoPoints = results(is_pareto, :);  % [mode, param, f1, f2]
