@@ -74,59 +74,64 @@ clc;
 %         disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
 %         results(i) = size(G.Nodes, 1);
 %     end
-%     graph_name = convertCharsToStrings(tags{tag});
+%     graph_name = erase(convertCharsToStrings(tags{tag}), " network");
+%     graph_name = replace(graph_name, "communication", "com.");
+%     graph_name = replace(graph_name, "communitie", "com.");
 %     hold on
 %     add2boxchart(results, graph_name, "Real Networks, Sizes", "Size [psc]", "Graph category")
 %     hold off
 %     set(gca, 'YScale', 'log')
 % end
 %
-% %% plot all graph topologies
-% load formated_data.mat;
+%% plot all graph topologies
+load formated_data.mat;
+
+tags = keys(formated_data);
+val = values(formated_data);
+for tag = 1:length(tags)
+    disp(tags{tag})
+    n_graphs = length(val{tag});
+
+    graph_name = convertCharsToStrings(tags{tag});
+    x = ceil(sqrt(n_graphs));
+    % figure();
+    for i = 1:length(val{tag})
+        G = val{tag}{i}{1};
+        disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
+        % subplot(x*x,1,i)
+        figure();
+        plot(G)
+        print(gcf, "figures_new/" + erase(graph_name," ") + "_" + num2str(i) + ".eps", "-depsc")
+        close all;
+    end
+    sgtitle(graph_name)
+end
+
+% %%
+% %-----------------------------------------------%
+% %                                               %
+% %              Technological network            %
+% %                                               %
+% %-----------------------------------------------%
+% clear;
+% clc;
+% multithreading()
 % 
-% tags = keys(formated_data);
-% val = values(formated_data);
-% for tag = 1:length(tags)
-%     disp(tags{tag})
-%     n_graphs = length(val{tag});
+% % number of nodes: 677
+% test_hubs(11, 140, [340, 80, 359], ['r', 'b', 'g'], "Technological")
 % 
-%     graph_name = convertCharsToStrings(tags{tag});
-%     x = ceil(sqrt(n_graphs));
-%     figure();
-%     for i = 1:length(val{tag})
-%         G = val{tag}{i}{1};
-%         disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
-%         subplot(x,x,i)
-%         plot(G)
-%     end
-%     sgtitle(graph_name)
-% end
-
-%%
-%-----------------------------------------------%
-%                                               %
-%              Technological network            %
-%                                               %
-%-----------------------------------------------%
-clear;
-clc;
-multithreading()
-
-% number of nodes: 677
-test_hubs(11, 140, [340, 80, 359], ['r', 'b', 'g'], "Technological")
-
-%
-%-----------------------------------------------%
-%                                               %
-%                Electrical network             %
-%                                               %
-%-----------------------------------------------%
-clear;
-clc;
-multithreading()
-
-% number of nodes: 4941
-test_hubs(12, 500, [4463, 3743, 2539, 97], ['r', 'b', 'g','k'], "Electrical")
+% %
+% %-----------------------------------------------%
+% %                                               %
+% %                Electrical network             %
+% %                                               %
+% %-----------------------------------------------%
+% clear;
+% clc;
+% multithreading()
+% 
+% % number of nodes: 4941
+% test_hubs(12, 500, [4463, 3743, 2539, 97], ['r', 'b', 'g','k'], "Electrical")
 
 %-----------------------------------------------%
 %                                               %

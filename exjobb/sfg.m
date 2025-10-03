@@ -15,7 +15,7 @@ function  G = sfg(n, alpha, beta, gamma, delta_in, delta_out, seed)
 %                One existing node is chosen randomly according the in-degree 
 %                distribution and the other chosen randomly according to the
 %                out-degree distribution.     
-%       gamma  : float, probability for adding a new node conecgted to an existing node
+%       gamma  : float, probability for adding a new node connected to an existing node
 %                chosen randomly according to the out-degree distribution.
 %       delta_in : float, bias for choosing ndoes from in-degree distribution.
 %       delta_out: float, bias for choosing ndoes from out-degree distribution.

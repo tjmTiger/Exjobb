@@ -3,7 +3,7 @@ clear; clc;
 graph_sizes = 100:100:400;
 sample_size = 200;
 
-for graph_gen_alg = "sfg" %["erdos renyi", "watts strogatz ring", "watts strogatz"]%, "sfg"]
+for graph_gen_alg = ["scalefree1", "scalefree2"] % ["erdos renyi" , "watts strogatz ring", "watts strogatz", "sfg1", "sfg2"]
     results = [];
     subplot_num = 1;
     figure();
@@ -12,12 +12,12 @@ for graph_gen_alg = "sfg" %["erdos renyi", "watts strogatz ring", "watts strogat
         subplot(2,2,subplot_num)
         subplot_num = subplot_num + 1;
         hold on
-        title(graph_gen_alg + " " + string(n))
+        title(graph_gen_alg + " n = " + string(n))
         for sample = 1:sample_size
             switch graph_gen_alg
                 case "erdos renyi"
                     p = 0.03;
-                    G = erdos_renyi(n, p, 1, sample);
+                    G = erdos_renyi(n, p, sample);
                 case "watts strogatz ring"
                     k = 2;
                     beta = 0;
@@ -26,31 +26,40 @@ for graph_gen_alg = "sfg" %["erdos renyi", "watts strogatz ring", "watts strogat
                     k = 2;
                     beta = 0.2;
                     G = watts_strogatz(n, k, beta, sample);
-                case "sfg"
-                    alpha = 0.01;
-                    beta = 0.98;
-                    gamma = 0.01;
+                case "scalefree1"
+                    alpha = 0.5;
+                    beta = 0;
+                    gamma = 0.5;
+                    G = sfg(n, alpha, beta, gamma, 1, 1, sample);
+                case "scalefree2"
+                    alpha = 0.1;
+                    beta = 0.8;
+                    gamma = 0.1;
                     G = sfg(n, alpha, beta, gamma, 1, 1, sample);
             end
             for i = 1:numnodes(G)
                 degrees(end+1) = indegree(G, i);%  + outdegree(G, i);
             end
         end
-        % yyaxis left
-        % [counts,bins] = histcounts(degrees);
-        deg = degrees;                       % degree of each node
-        [k_counts, k_bins] = histcounts(deg, 'BinMethod', 'integers');
-         
-        % Shift bin centers
-        k_vals = k_bins(1:end-1) + diff(k_bins)/2;
-         
-        % Remove zero-count bins (for log scale)
-        mask = (k_counts > 0);
-        k_vals = k_vals(mask);
-        k_counts = k_counts(mask);
-        % histogram('BinEdges',bins,'BinCounts',counts/sample_size)
 
-        loglog(k_vals, k_counts./sample_size)
+        switch graph_gen_alg
+            case {"scalefree1", "scalefree2"}
+                deg = degrees;                       % degree of each node
+                [k_counts, k_bins] = histcounts(deg, 'BinMethod', 'integers');
+                 
+                % Shift bin centers
+                k_vals = k_bins(1:end-1) + diff(k_bins)/2;
+                 
+                % Remove zero-count bins (for log scale)
+                mask = (k_counts > 0);
+                k_vals = k_vals(mask);
+                k_counts = k_counts(mask);
+                loglog(k_vals, k_counts./sample_size)
+            otherwise
+                % yyaxis left
+                [counts,bins] = histcounts(degrees);
+                histogram('BinEdges',bins,'BinCounts',counts/sample_size)
+        end
 
         xlabel("Degree")
         ylabel("Frequency")
@@ -70,7 +79,7 @@ for graph_gen_alg = "sfg" %["erdos renyi", "watts strogatz ring", "watts strogat
                 plot(k, n.*P_poisson, "red");
             case "watts strogatz"
                 % pass
-            case "sfg"
+            case {"scalefree1", "scalefree2"}
                 % todo: try with polyfit
                 k = 0:nchoosek(n, 2);
 
@@ -88,8 +97,18 @@ for graph_gen_alg = "sfg" %["erdos renyi", "watts strogatz ring", "watts strogat
         end
         hold off
     end
-    fontsize(10,"points")
+    interpreter = 'latex';
+    all_text = findall(gcf, "-property", "Interpreter");
+    set(all_text, "Interpreter", interpreter)
+
+    all_text = findall(gcf, "-property", "TickLabelInterpreter");
+    set(all_text, "TickLabelInterpreter", interpreter)
+
+    all_text = findall(gcf, "-property", "Fontsize");
+    set(all_text, "Fontsize", 12) % 12
+
     position = get(gcf, 'Position');
     position = [100, 100, 600, 600];
+    savefig(gcf, "figures_new/validation_" + erase(graph_gen_alg," "))
     print(gcf, "figures_new/validation_" + erase(graph_gen_alg," ") + ".eps", "-depsc")
 end
