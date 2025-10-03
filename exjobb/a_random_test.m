@@ -73,18 +73,3 @@ clear;clc;close all;
 % G = sfg(n, alpha, beta, gamma, delta_in, delta_out, 1);
 % figure;plot(G)
 % disp(2*numedges(G) / numnodes(G))
-
-n = 50;
-delta_in = 1; delta_out = 1;
-beta = 0;
-alpha = (1 - beta)/2;
-gamma = alpha;
-G = sfg(n, alpha, beta, gamma, delta_in, delta_out, 1);
-figure;plot(G)
-
-delta_in = 10; delta_out = 10;
-beta = 0;
-alpha = (1 - beta)/2;
-gamma = alpha;
-G = sfg(n, alpha, beta, gamma, delta_in, delta_out, 1);
-figure;plot(G)
