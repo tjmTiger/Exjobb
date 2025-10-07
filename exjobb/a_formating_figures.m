@@ -1,7 +1,7 @@
 clear;clc;close all;
 
 interpreter = 'latex';
-location = "./figures_dynamical_feedback_2/";
+location = "./figures_output_feedback/";
 local_figures = struct2table(dir(location + "*.fig")).name;
 
 for figure_name = local_figures'
@@ -18,7 +18,7 @@ for figure_name = local_figures'
     set(all_text, "Fontsize", 12)
 
     savefig(fig, location + figure_name)
-    print(fig, location +  erase(figure_name,".fig") + ".eps", "-depsc")
+    % print(fig, location +  erase(figure_name,".fig") + ".eps", "-depsc")
     close all;
 end
 
