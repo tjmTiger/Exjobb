@@ -3,7 +3,7 @@ clear; clc;
 graph_sizes = 100:100:400;
 sample_size = 200;
 
-for graph_gen_alg = ["scalefree1", "scalefree2"] % ["erdos renyi" , "watts strogatz ring", "watts strogatz", "sfg1", "sfg2"]
+for graph_gen_alg = ["erdos renyi"] % ["erdos renyi" , "watts strogatz ring", "watts strogatz", "scalefree1", "scalefree2"]
     results = [];
     subplot_num = 1;
     figure();
@@ -69,14 +69,11 @@ for graph_gen_alg = ["scalefree1", "scalefree2"] % ["erdos renyi" , "watts strog
             case "erdos renyi"
                 k = 0:nchoosek(n, 2); % n-1;      % Possible degree values (from 0 to n-1)
                 P_k = binopdf(k, n, p);  % Binomial degree distribution
-
-                % yyaxis right
                 plot(k, n.*P_k, "green");
 
-                lambda = (n-1)*p;
-                P_poisson = poisspdf(k, lambda);
-
-                plot(k, n.*P_poisson, "red");
+                % lambda = (n-1)*p;
+                % P_poisson = poisspdf(k, lambda);
+                % plot(k, n.*P_poisson, "red");
             case "watts strogatz"
                 % pass
             case {"scalefree1", "scalefree2"}
