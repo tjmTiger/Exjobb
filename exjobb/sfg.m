@@ -50,7 +50,7 @@ end
 
 if abs(alpha+beta+gamma - 1)>1e-10
     beta = beta - (alpha+beta+gamma - 1);
-    % disp("alpha+beta+gamma must equal 1. Beta is set to " + beta + " to compensate.")
+    disp("alpha+beta+gamma must equal 1. Beta is set to " + beta + " to compensate.")
 end
 
 while size(G,1) < n

@@ -79,16 +79,15 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
                     % perform test according to given test_function.
                     results{end+1} = test_function(graph_generating_algorithm, v1, v2, options);
                 end
-                plot_results(results, variable2, "legend_title", erase(variable1_name, "_"), "legend_entries", erase(string(v1), "_"), "graph_name", graph_generating_algorithm{1}{1}, "x_label", erase(variable2_name, "_"), "boxchart", options.boxchart);
+                plot_results(results, variable2, "legend_title", variable1_name, "legend_entries", string(v1), "graph_name", graph_generating_algorithm{1}{1}, "x_label", variable2_name, "boxchart", options.boxchart);
                 old_results = results;
                 results = {};
             end
-            fontsize(12,"points")
             position = get(gcf, 'Position');
             position = [100, 100, 600, 600];
-            % save figures, comment out if u dont want to add "figures_new" to direcotry with this function
-            savefig(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," "))
-            print(gcf, "figures_new/" + variable1_name + "_" + variable2_name + "_" + erase(graph_generating_algorithm{1}{1}," ") + ".eps", "-depsc")
+            % save figures, comment out or add folder named "figures_new" to direcotry with this function
+            illegal_chars = [" ","\","}","{","^","$"];
+            savefig(gcf, "figures_new/" + erase(options.ddp, illegal_chars) + "_" + erase(variable1_name, illegal_chars) + "_" + erase(variable2_name, illegal_chars) + "_" + erase(graph_generating_algorithm{1}{1},illegal_chars))
         end
     end
 end
@@ -197,6 +196,16 @@ function plot_results(tests, x_axis, options)
     ax = gca; 
     ax.ColorOrder = mycolors;
     hold off;
+
+    interpreter = 'latex';
+    all_text = findall(gcf, "-property", "Interpreter");
+    set(all_text, "Interpreter", interpreter)
+
+    all_text = findall(gcf, "-property", "TickLabelInterpreter");
+    set(all_text, "TickLabelInterpreter", interpreter)
+
+    all_text = findall(gcf, "-property", "Fontsize");
+    set(all_text, "Fontsize", 12)
 end
 
 

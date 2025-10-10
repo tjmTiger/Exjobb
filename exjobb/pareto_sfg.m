@@ -1,4 +1,9 @@
-function pareto_sfg(ddp, n)
+function pareto_sfg(ddp, n, options)
+arguments
+    ddp
+    n
+    options.sample_size = 500
+end
     disp("pareto_sfg")
     % Ranges
     % state
@@ -13,7 +18,7 @@ function pareto_sfg(ddp, n)
         for p2 = params2
             if p1 + p2 <= 1
                 params_used(end+1,:) = [p1,p2];
-                [f1, f2] = DDP_sfg(p1, p2, ddp, n);  % returns [f1, f2]
+                [f1, f2] = DDP_sfg(p1, p2, ddp, n, options.sample_size);  % returns [f1, f2]
                 
                 % [param1, param2, f1, f2]
                 results = [results; p1, p2, f1, f2];
@@ -165,9 +170,9 @@ function pareto_sfg(ddp, n)
     % 0.01; 0.00
 end
 
-function [cost, trivial] = DDP_sfg(alpha, beta, ddp, n)
+function [cost, trivial] = DDP_sfg(alpha, beta, ddp, n, sample_size)
     disp("alpha: " + alpha + ", beta: " + beta)
-    gamma = 1 - alpha - beta;
+    gamma = round(1 - alpha - beta, 3);
     % disp("alpha = " + alpha + ", beta = " + beta + ", gamma = " + gamma)
     fract_targ = 0.1;
     fract_dist = 0.1;
@@ -175,7 +180,7 @@ function [cost, trivial] = DDP_sfg(alpha, beta, ddp, n)
     [costs, ~, trivials] = run_test( ...
         @sfg, ...
         params, ...
-        "sample_size", 500, ...
+        "sample_size", sample_size, ...
         "fraction_targets", fract_targ, ...
         "fraction_disturbances", fract_dist, ...
         "ddp", ddp, ...
