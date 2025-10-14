@@ -1,4 +1,15 @@
 function result = test_OFDF_scale_beta(graph_generating_algorithm, ddp, beta, options)
+% TEST_OFDF_SCALE_BETA
+%   Description:
+%       Test for scale free graphs for different beta. Includes a variable for
+%       passing old results to calculate no interaction index (options.old_results).
+%   Output Arguments:
+%       result     : set containing cost, runtime and trivial solutions.
+%   Input Arguments:
+%       graph_generating_algorithm : "Scale Free"
+%       ddp                 : ddp to be used ("output_feedback" or "dynamical_feedback")
+%       beta                : float, scale free parameter
+%       options             : size, sample_size, fract_targ, fract_dist, ddp, seed, old_results
     if graph_generating_algorithm{1}{1} == "Scale Free"
         alpha = (1-beta)/2;
         gamma = 1-beta-alpha;

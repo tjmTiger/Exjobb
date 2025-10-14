@@ -22,16 +22,16 @@ local_figures = struct2table(dir(location + "*.fig")).name;
 %     close all;
 % end
 
-% % Save all figures in a dir to .eps to specified dir
-% location2 = "./figures_new/";
-% for figure_name = local_figures'
-%     figure_name = cell2mat(figure_name);
-%     fig = openfig(location + figure_name);
-% 
-%     % savefig(fig, location + figure_name)
-%     print(fig, location2 +  erase(figure_name,".fig") + ".eps", "-depsc")
-%     close all;
-% end
+% Save all figures in a dir to .eps to specified dir
+location2 = "./figures_new/";
+for figure_name = local_figures'
+    figure_name = cell2mat(figure_name);
+    fig = openfig(location + figure_name);
+
+    % savefig(fig, location + figure_name)
+    print(fig, location2 +  erase(figure_name,".fig") + ".eps", "-depsc")
+    close all;
+end
 
 % % for saving legend
 % for figure_name = local_figures'

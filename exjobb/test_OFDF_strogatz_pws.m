@@ -1,21 +1,19 @@
-function result = test_OFDF_scale_alphagamma(graph_generating_algorithm, ddp, alpha, options)
-% TEST_OFDF_SCALE_ALPHAGAMMA
+function result = test_OFDF_strogatz_pws(graph_generating_algorithm, ddp, p_ws, options)
+% TEST_OFDF_STROGATZ_PWS
 %   Description:
-%       Test for scale free graphs for different alpha. Includes a variable for
+%       Tests for watts strogatz graphs for different p_ws. Includes a variable for
 %       passing old results to calculate no interaction index (options.old_results).
 %   Output Arguments:
 %       result     : set containing cost, runtime and trivial solutions.
 %   Input Arguments:
-%       graph_generating_algorithm : "Scale Free"
+%       graph_generating_algorithm : "Watts Strogratz"
 %       ddp                 : ddp to be used ("output_feedback" or "dynamical_feedback")
-%       alpha               : float, scale free parameter
+%       p_ws                : float, watts strogatz node degree
 %       options             : size, sample_size, fract_targ, fract_dist, ddp, seed, old_results
-    if graph_generating_algorithm{1}{1} == "Scale Free"
-        beta = 0;
-        gamma = 1-alpha;
-        params = num2cell([graph_generating_algorithm{1}{2}(1), alpha, beta, gamma, 1, 1]);
+    if graph_generating_algorithm{1}{1} == "Watts Strogratz"
+        params = num2cell([graph_generating_algorithm{1}{2}(1), graph_generating_algorithm{1}{2}(2), p_ws]);
         [result.results_cost, result.results_time, result.results_trivial] = run_test( ...
-            @sfg, ...
+            @watts_strogatz, ...
             params, ...
             "sample_size", options.sample_size, ...
             "fraction_targets", options.fract_targ, ...

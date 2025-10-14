@@ -12,7 +12,7 @@ function [results_cost, results_time, results_trivial] = run_test(algorithm, par
 %       results_trivial : Ammount of trivial solutions.
 %   Input Arguments:
 %       algorithm       : @function for graph generating alorithm that
-%                         returns a digraph object.
+%                         returns a digraph object. (@sfg, @erods_renyi etc.)
 %       parameters      : parameters to be passed into the alorithm func.
 %       options         : seed - specify seed for rng
 %                         sample_size - specify how many graphs each combination
@@ -28,7 +28,7 @@ function [results_cost, results_time, results_trivial] = run_test(algorithm, par
         algorithm
         parameters {mustBeCell}
         options.sample_size {mustBeNumeric}
-        options.seed {mustBeNumeric} = 1000 % NOTE: not only place where seed it chosen!!!!, change in TEST() too!!!
+        options.seed {mustBeNumeric} = 1000 % NOTE: not the only place where default seed is chosen!!!!, change in TEST() too!!!
         options.fraction_targets single = 0.1
         options.fraction_disturbances single = 0.1
         options.ddp string

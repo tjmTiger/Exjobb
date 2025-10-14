@@ -1,4 +1,15 @@
 function result = test_OFDF_node_degree(graph_generating_algorithm, ddp, node_degree, options)
+% TEST_OFDF_NODE_DEGREE
+%   Description:
+%       Test for graphs with requested node degree. Includes a variable for
+%       passing old results to calculate no interaction index (options.old_results).
+%   Output Arguments:
+%       result     : set containing cost, runtime and trivial solutions.
+%   Input Arguments:
+%       graph_generating_algorithm : "Erdos Renyi", "Watts Strogratz" or "Scale Free"
+%       ddp        : ddp to be used ("output_feedback" or "dynamical_feedback")
+%       node_degree: integer, requested average node degree
+%       options    : size, sample_size, fract_targ, fract_dist, ddp, seed, old_results
     switch graph_generating_algorithm{1}{1}
         case "Erdos Renyi"
             graph_algorithm = @erdos_renyi;

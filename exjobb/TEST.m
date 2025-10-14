@@ -32,6 +32,29 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
 %                                    false: present data in normal plot. (default)
 %                         seed - specify seed for rng
 %                         default_p - array of default parameters [p, k, p_ws, alpha, beta, gamma]
+%
+%   Example of @test_funtion:
+%
+%       function result = test_different_fractions(graph_generating_algorithm, fract_dist, fract_targ, options)
+%           switch graph_generating_algorithm{1}{1}
+%               case "Erdos Renyi"
+%                   graph_algorithm = @erdos_renyi;
+%               case "Watts Strogratz"
+%                   graph_algorithm = @watts_strogatz;
+%               case "Scale Free"
+%                   graph_algorithm = @sfg;
+%           end
+%           params = num2cell(graph_generating_algorithm{1}{2});
+%           [result.results_cost, result.results_time, result.results_trivial] = run_test( ...
+%               graph_algorithm, ...
+%               params, ...
+%               "sample_size", options.sample_size, ...
+%               "fraction_targets", fract_targ, ...
+%               "fraction_disturbances", fract_dist, ...
+%               "ddp", options.ddp, ...
+%               "seed", options.seed ...
+%               );
+%       end
     arguments
         % Function defining the test.
         test_function
@@ -53,7 +76,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
         options.graph_generating_algorithm {mustBeText} = ["Erdos Renyi" , "Watts Strogratz", "Scale Free"]
         options.ddp string  = "state_feedback"
         options.boxchart {mustBeNumericOrLogical} = false
-        options.seed {mustBeNumeric} = 1000
+        options.seed {mustBeNumeric} = 1000 % NOTE: not the only place where default seed is chosen!!!!, change in run_test() too!!!
         % default [p, k, pw, alpha, beta, gamma] parameters for random graph generation, note: not always used
         options.default_p {mustBeNumeric} = [0.03, 2, 0.9, 1, 0, 0]; % chosen according to pareto, [p, k, p_ws, alhpa. beta, gamma]
     end

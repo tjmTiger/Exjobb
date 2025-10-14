@@ -1,4 +1,15 @@
 function result = test_OFDF_erdos_p(graph_generating_algorithm, ddp, p, options)
+% TEST_OFDF_ERDOS_P
+%   Description:
+%       Test for erdos renyi graphs for different p. Includes a variable for
+%       passing old results to calculate no interaction index (options.old_results).
+%   Output Arguments:
+%       result     : set containing cost, runtime and trivial solutions.
+%   Input Arguments:
+%       graph_generating_algorithm : "Erdos Renyi"
+%       ddp                 : ddp to be used ("output_feedback" or "dynamical_feedback")
+%       p                   : float, erdos ranyi edge probability
+%       options             : size, sample_size, fract_targ, fract_dist, ddp, seed, old_results
     if graph_generating_algorithm{1}{1} == "Erdos Renyi"
         params = num2cell([options.size, p]);
         [result.results_cost, result.results_time, result.results_trivial] = run_test( ...

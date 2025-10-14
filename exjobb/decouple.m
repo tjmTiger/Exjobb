@@ -19,7 +19,7 @@ function [cost, results_time, trivial_solutions] = decouple(G, fract_targ, fract
 %                                 "output_feedback"
 %                                 "dynamical_feedback"
 %                         seed - specify seed for rng
-%                         old_results, parfor_i - used for DF trivial solutions
+%                         old_results, parfor_i - used for index in OF-DF tests
 arguments
     G
     fract_targ single
@@ -28,14 +28,9 @@ arguments
     options.seed {mustBeNumeric} = -1
     % options.list_targ = []
     % options.list_dist = []
-    options.old_results
-    options.parfor_i
+    options.old_results % used for OF-DF tests to calc index
+    options.parfor_i    % used for OF-DF tests to calc index
 end
-
-% cleaned up
-set(groot,'defaultAxesTickLabelInterpreter','latex');
-set(groot,'defaulttextinterpreter','latex');
-set(groot,'defaultLegendInterpreter','latex');
 
 if fract_targ + fract_dist > 1
     error('Invalid argument list. fract_targ + fract_dist must be lesst than 1')
@@ -43,7 +38,7 @@ end
 
 switch options.seed
     case -1
-        % no seed given
+        % no seed
     otherwise
         rng(options.seed)
 end
@@ -147,10 +142,10 @@ function trivial_solutions = calc_trivial_solutions(V, TD)
 % for OF use calc_trivial_solutions([V_in V_out], [T D])
     [~,~,ic] = unique([V TD']);
     a_counts = accumarray(ic,1);
-    v_on_TD = sum(a_counts(:,1)~=1);
+    V_on_TD = sum(a_counts(:,1)~=1);
 
-    trivial_solutions = v_on_TD/numel(V);
-    if (v_on_TD == 0) & (numel(V) == 0)
+    trivial_solutions = V_on_TD/numel(V);
+    if (V_on_TD == 0) & (numel(V) == 0)
             trivial_solutions = 0;
     end
 end
@@ -161,10 +156,14 @@ function out = no_trivial_solutions(V_in, V_out, T, D)
 end
 
 function plot_system(G, T, D)
-% Plot with targets and disturbances marked
+% Plot graph G with targets T and disturbances D marked
 % G: digraph object
 % T: array of targets
 % D: array of disturbances
+    set(groot,'defaultAxesTickLabelInterpreter','latex');
+    set(groot,'defaulttextinterpreter','latex');
+    set(groot,'defaultLegendInterpreter','latex');
+
     N = numnodes(G);
 
     figure;

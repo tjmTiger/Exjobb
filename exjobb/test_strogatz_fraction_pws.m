@@ -1,20 +1,18 @@
-function result = test_scale_fraction_alphagamma(graph_generating_algorithm, fraction, alpha, options)
-% TEST_SCALE_FRACTION_ALPHAGAMMA
+function result = test_strogatz_fraction_pws(graph_generating_algorithm, fraction, p_ws, options)
+% TEST_STROGATZ_FRACTION_PWS
 %   Description:
-%       Test for scale free graphs for different alpha and fractions
+%       Tests for watts strogatz graphs for different p_ws and fractions
 %   Output Arguments:
 %       result     : set containing cost, runtime and trivial solutions.
 %   Input Arguments:
-%       graph_generating_algorithm : "Scale Free"
+%       graph_generating_algorithm : "Watts Strogratz"
 %       fraction            : float, fraction of targets and disturbances
-%       alpha               : float, scale free parameter
+%       p_ws                : float, watts strogatz node degree
 %       options             : size, sample_size, ddp, seed
-    if graph_generating_algorithm{1}{1} == "Scale Free"
-        beta = 0;
-        gamma = 1-alpha;
-        params = num2cell([options.size, alpha, beta, gamma, 1, 1]);
+    if graph_generating_algorithm{1}{1} == "Watts Strogratz"
+        params = num2cell([options.size, 2, p_ws]);
         [result.results_cost, result.results_time, result.results_trivial] = run_test( ...
-            @sfg, ...
+            @watts_strogatz, ...
             params, ...
             "sample_size", options.sample_size, ...
             "fraction_targets", fraction, ...

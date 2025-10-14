@@ -4,7 +4,7 @@ function result = test_different_fractions(graph_generating_algorithm, fract_dis
 %       Tests how graphs are effected by fraction of targets and fraction
 %       of disturbances. Fraction of distrubances in legend, fraction of targets on x-axis
 %   Output Arguments:
-%       result    : set, contains cost, runtime and trivial solutions.
+%       result    : set containing cost, runtime and trivial solutions.
 %   Input Arguments:
 %       graph_generating_algorithm : "Erdos Renyi", "Watts Strogratz" or "Scale Free"
 %       fract_dist: float, fraction of disturbances |D|/n

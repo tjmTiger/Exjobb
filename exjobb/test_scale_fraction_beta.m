@@ -1,4 +1,14 @@
 function result = test_scale_fraction_beta(graph_generating_algorithm, fraction, beta, options)
+% TEST_SCALE_FRACTION_BETA
+%   Description:
+%       Test for scale free graphs for different beta and fractions
+%   Output Arguments:
+%       result     : set containing cost, runtime and trivial solutions.
+%   Input Arguments:
+%       graph_generating_algorithm : "Scale Free"
+%       fraction            : float, fraction of targets and disturbances
+%       beta                : float, scale free parameter
+%       options             : size, sample_size, ddp, seed
     if graph_generating_algorithm{1}{1} == "Scale Free"
         alpha = (1-beta)/2;
         gamma = 1-beta-alpha;

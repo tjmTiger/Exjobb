@@ -1,8 +1,18 @@
-function result = test_scale_size_beta(graph_generating_algorithm, size, beta, options)
+function result =   (graph_generating_algorithm, n, beta, options)
+% TEST_SCALE_SIZE_BETA
+%   Description:
+%       Test for scale free graphs for different beta and sizes
+%   Output Arguments:
+%       result     : set containing cost, runtime and trivial solutions.
+%   Input Arguments:
+%       graph_generating_algorithm : "Scale Free"
+%       n                   : float, fraction of targets and disturbances
+%       beta                : float, scale free parameter
+%       options             : sample_size, fract_targ, fract_dist, ddp, seed
     if graph_generating_algorithm{1}{1} == "Scale Free"
         alpha = (1-beta)/2;
         gamma = 1-beta-alpha;
-        params = num2cell([size, alpha, beta, gamma, 1, 1]);
+        params = num2cell([n, alpha, beta, gamma, 1, 1]);
         [result.results_cost, result.results_time, result.results_trivial] = run_test( ...
             @sfg, ...
             params, ...

@@ -1,4 +1,14 @@
 function result = test_erdos_fraction_p(graph_generating_algorithm, fraction, p, options)
+% TEST_ERDOS_FRACTION_P
+%   Description:
+%       Test for erdos renyi graphs for different p and fractions
+%   Output Arguments:
+%       result     : set containing cost, runtime and trivial solutions.
+%   Input Arguments:
+%       graph_generating_algorithm : "Erdos Renyi"
+%       fraction            : float, fraction of targets and disturbances
+%       p                   : float, erdos ranyi edge probability
+%       options             : size, sample_size, ddp, seed
     if graph_generating_algorithm{1}{1} == "Erdos Renyi"
         params = num2cell([options.size, p]);
         [result.results_cost, result.results_time, result.results_trivial] = run_test( ...

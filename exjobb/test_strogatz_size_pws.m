@@ -1,20 +1,18 @@
-function result = test_scale_size_alphagamma(graph_generating_algorithm, n, alpha, options)
-% TEST_SCALE_SIZE_ALPHAGAMMA
+function result = test_strogatz_size_pws(graph_generating_algorithm, n, pws, options)
+% TEST_STROGATZ_SIZE_PWS
 %   Description:
-%       Test for scale free graphs for different alpha and sizes
+%       Test for watts strogatz graphs for different p and sizes
 %   Output Arguments:
 %       result     : set containing cost, runtime and trivial solutions.
 %   Input Arguments:
-%       graph_generating_algorithm : "Scale Free"
-%       n                   : float, fraction of targets and disturbances
-%       alpha               : float, scale free parameter
+%       graph_generating_algorithm : "Watts Strogratz"
+%       n                   : integer, graph size
+%       p_ws                : float, watts strogatz node degree
 %       options             : sample_size, fract_targ, fract_dist, ddp, seed
-    if graph_generating_algorithm{1}{1} == "Scale Free"
-        beta = 0;
-        gamma = 1-alpha;
-        params = num2cell([n, alpha, beta, gamma, 1, 1]);
+    if graph_generating_algorithm{1}{1} == "Watts Strogratz"
+        params = num2cell([n, graph_generating_algorithm{1}{2}(2), pws]);
         [result.results_cost, result.results_time, result.results_trivial] = run_test( ...
-            @sfg, ...
+            @watts_strogatz, ...
             params, ...
             "sample_size", options.sample_size, ...
             "fraction_targets", options.fract_targ, ...

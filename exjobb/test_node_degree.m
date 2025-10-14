@@ -1,14 +1,13 @@
 function result = test_node_degree(graph_generating_algorithm, ~, node_degree, options)
-% TEST_SIZE
+% TEST_NODE_DEGREE
 %   Description:
-%       Generetes graphs with requested node degree, and runs tests on
-%       them.
+%       Test for graphs with requested node degree.
 %   Output Arguments:
-%       result     : set, contains cost, runtime and trivial solutions.
+%       result     : set containing cost, runtime and trivial solutions.
 %   Input Arguments:
 %       graph_generating_algorithm : "Erdos Renyi", "Watts Strogratz" or "Scale Free"
 %       ~          : ignored input
-%       node_degree: integer, wanted average node degree
+%       node_degree: integer, requested average node degree
 %       options    : size, sample_size, fract_targ, fract_dist, ddp, seed
     switch graph_generating_algorithm{1}{1}
         case "Erdos Renyi"

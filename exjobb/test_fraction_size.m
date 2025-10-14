@@ -4,7 +4,7 @@ function result = test_fraction_size(graph_generating_algorithm, n, fraction, op
 %       Tests how differently sized graphs are effected by fraction of
 %       targets/disturbances. Size (n) in legend, fraction on x-axis
 %   Output Arguments:
-%       result    : set, contains cost, runtime and trivial solutions.
+%       result    : set containing cost, runtime and trivial solutions.
 %   Input Arguments:
 %       graph_generating_algorithm : "Erdos Renyi", "Watts Strogratz" or "Scale Free"
 %       n         : integer, graph size, number of nodes, |V|

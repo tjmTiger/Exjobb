@@ -3,7 +3,7 @@ function result = test_size(graph_generating_algorithm, ~, n, options)
 %   Description:
 %       Tests how graphs are effected by their sizes.
 %   Output Arguments:
-%       result    : set, contains cost, runtime and trivial solutions.
+%       result    : set containing cost, runtime and trivial solutions.
 %   Input Arguments:
 %       graph_generating_algorithm : "Erdos Renyi", "Watts Strogratz" or "Scale Free"
 %       ~         : ignored input
