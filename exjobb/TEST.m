@@ -78,7 +78,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
         options.boxchart {mustBeNumericOrLogical} = false
         options.seed {mustBeNumeric} = 1000 % NOTE: not the only place where default seed is chosen!!!!, change in run_test() too!!!
         % default [p, k, pw, alpha, beta, gamma] parameters for random graph generation, note: not always used
-        options.default_p {mustBeNumeric} = [0.03, 2, 0.9, 1, 0, 0]; % chosen according to pareto, [p, k, p_ws, alhpa. beta, gamma]
+        options.default_p {mustBeNumeric} = [0.03, 2, 0.9, 1, 0, 0]; % chosen according to pareto, [p, k, p_ws, alhpa, beta, gamma]
     end
 
 
@@ -93,7 +93,8 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
             for v1 = variable1 % variable1 is plotted as separate lines
                 old_results_count = 1; % for comparing DF with OF
                 for v2 = variable2 % variable2 is plotted on x-axis
-                    if numel(old_results) >= old_results_count % pass correct OF test result to DF test (from same graph)
+                    % pass correct OF test result to DF test (from same graph seed)
+                    if numel(old_results) >= old_results_count
                         options.old_results = old_results{old_results_count};
                         old_results_count = old_results_count+1;
                     else
@@ -108,8 +109,8 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
             end
             position = get(gcf, 'Position');
             position = [100, 100, 600, 600];
-            % save figures, comment out or add folder named "figures_new" to direcotry with this function
-            illegal_chars = [" ","\","}","{","^","$"];
+            % save figures, add folder named "figures_new" to direcotry with this function
+            illegal_chars = [" ","\","}","{","^","$"]; % characters not to be included in figure name
             savefig(gcf, "figures_new/" + erase(options.ddp, illegal_chars) + "_" + erase(variable1_name, illegal_chars) + "_" + erase(variable2_name, illegal_chars) + "_" + erase(graph_generating_algorithm{1}{1},illegal_chars))
         end
     end

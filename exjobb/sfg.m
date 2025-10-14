@@ -35,9 +35,8 @@ arguments
     seed {mustBeNumeric}
 end
 rng(seed)
-G = speye(9);
-G = [[sparse(1,9) 1];[G sparse(9,1)]];
 
+% Chack if parameters are ok
 if alpha < 0
     disp('alpha must be >= 0.')
 end
@@ -53,6 +52,11 @@ if abs(alpha+beta+gamma - 1)>1e-10
     disp("alpha+beta+gamma must equal 1. Beta is set to " + beta + " to compensate.")
 end
 
+% Initial graph (ring lattice)
+G = speye(9);
+G = [[sparse(1,9) 1];[G sparse(9,1)]];
+
+% Add nodes untill graph has size n.
 while size(G,1) < n
     r = rand();
     n_now = size(G,1);
@@ -78,20 +82,17 @@ while size(G,1) < n
         G = [G sparse(n_now,1);sparse(1,n_now+1)];
         w = n_now+1;
     end
-    G(v,w) = 1; % add edge
+    G(v,w) = 1; % add previously defined edge
 
 end
-
-% remove self-loops (there are other ways to do it: G = G - diag(diag(G));)
-for i = 1:n
-    G(i,i) = 0;
-end
+% remove self-loops (not sure if there can even be self loops to begin with)
+G = G - diag(diag(G));
 
 G = digraph(G);
 end
 
 function i = choose_node(G,distribution,delta)
-    % no idea, but it works
+    % no idea how this part works
     cumsum_ = cumsum(distribution+delta);
     cumsum_ = cumsum_./cumsum_(end);
     r=rand();
