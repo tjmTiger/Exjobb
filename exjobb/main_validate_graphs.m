@@ -3,7 +3,7 @@ clear; clc;
 graph_sizes = 100:100:400;
 sample_size = 200;
 
-for graph_gen_alg = ["erdos renyi"] % ["erdos renyi" , "watts strogatz ring", "watts strogatz", "scalefree1", "scalefree2"]
+for graph_gen_alg = ["Erdos Renyi" , "Watts Strogatz ring", "Watts Strogatz", "Scale Free $\alpha=0.5$,", "Scale Free $\alpha=0.1$,"]
     results = [];
     subplot_num = 1;
     figure();
@@ -12,26 +12,26 @@ for graph_gen_alg = ["erdos renyi"] % ["erdos renyi" , "watts strogatz ring", "w
         subplot(2,2,subplot_num)
         subplot_num = subplot_num + 1;
         hold on
-        title(graph_gen_alg + " n = " + string(n))
+        title(graph_gen_alg + " $n$ = " + string(n))
         for sample = 1:sample_size
             switch graph_gen_alg
-                case "erdos renyi"
+                case "Erdos Renyi"
                     p = 0.03;
                     G = erdos_renyi(n, p, sample);
-                case "watts strogatz ring"
+                case "Watts Strogatz ring"
                     k = 2;
                     beta = 0;
                     G = watts_strogatz(n, k, beta, sample);
-                case "watts strogatz"
+                case "Watts Strogatz"
                     k = 2;
                     beta = 0.2;
                     G = watts_strogatz(n, k, beta, sample);
-                case "scalefree1"
+                case "Scale Free $\alpha=0.5$,"
                     alpha = 0.5;
                     beta = 0;
                     gamma = 0.5;
                     G = sfg(n, alpha, beta, gamma, 1, 1, sample);
-                case "scalefree2"
+                case "Scale Free $\alpha=0.1$,"
                     alpha = 0.1;
                     beta = 0.8;
                     gamma = 0.1;
@@ -43,7 +43,7 @@ for graph_gen_alg = ["erdos renyi"] % ["erdos renyi" , "watts strogatz ring", "w
         end
 
         switch graph_gen_alg
-            case {"scalefree1", "scalefree2"}
+            case {"Scale Free $\alpha=0.5$,", "Scale Free $\alpha=0.1$,"}
                 deg = degrees;                       % degree of each node
                 [k_counts, k_bins] = histcounts(deg, 'BinMethod', 'integers');
                  
@@ -54,29 +54,29 @@ for graph_gen_alg = ["erdos renyi"] % ["erdos renyi" , "watts strogatz ring", "w
                 mask = (k_counts > 0);
                 k_vals = k_vals(mask);
                 k_counts = k_counts(mask);
-                loglog(k_vals, k_counts./sample_size)
+                loglog(k_vals, (k_counts./sample_size)./n)
             otherwise
                 % yyaxis left
                 [counts,bins] = histcounts(degrees);
-                histogram('BinEdges',bins,'BinCounts',counts/sample_size)
+                histogram('BinEdges',bins,'BinCounts',(counts/sample_size)/n)
         end
 
-        xlabel("Degree")
-        ylabel("Frequency")
+        xlabel("In-degree")
+        ylabel("$P(k_{in})$")
         xlim([0,max(degrees)])
 
         switch graph_gen_alg
-            case "erdos renyi"
+            case "Erdos Renyi"
                 k = 0:nchoosek(n, 2); % n-1;      % Possible degree values (from 0 to n-1)
                 P_k = binopdf(k, n, p);  % Binomial degree distribution
-                plot(k, n.*P_k, "green");
+                plot(k, P_k, "green");
 
                 % lambda = (n-1)*p;
                 % P_poisson = poisspdf(k, lambda);
-                % plot(k, n.*P_poisson, "red");
-            case "watts strogatz"
+                % plot(k, P_poisson, "red");
+            case "Watts Strogatz"
                 % pass
-            case {"scalefree1", "scalefree2"}
+            case {"Scale Free $\alpha=0.5$,", "Scale Free $\alpha=0.1$,"}
                 % todo: try with polyfit
                 k = 0:nchoosek(n, 2);
 
@@ -88,7 +88,7 @@ for graph_gen_alg = ["erdos renyi"] % ["erdos renyi" , "watts strogatz ring", "w
 
                 P_k = P_k_in;
                 % yyaxis right
-                loglog(k, n.*P_k, "r");
+                loglog(k, P_k, "r");
                 set(gca, 'YScale', 'log')
                 set(gca, 'XScale', 'log')
         end
@@ -106,6 +106,7 @@ for graph_gen_alg = ["erdos renyi"] % ["erdos renyi" , "watts strogatz ring", "w
 
     position = get(gcf, 'Position');
     position = [100, 100, 600, 600];
-    savefig(gcf, "figures_new/validation_" + erase(graph_gen_alg," "))
-    print(gcf, "figures_new/validation_" + erase(graph_gen_alg," ") + ".eps", "-depsc")
+    illegal_chars = [" ","\","}","{","^","$",".","=",","]; % characters not to be included in figure name
+    savefig(gcf, "figures_new/validation_" + erase(graph_gen_alg, illegal_chars))
+    print(gcf, "figures_new/validation_" + erase(graph_gen_alg, illegal_chars) + ".eps", "-depsc")
 end
