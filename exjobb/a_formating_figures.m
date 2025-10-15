@@ -23,7 +23,7 @@ local_figures = struct2table(dir(location + "*.fig")).name;
 % end
 
 % Save all figures in a dir to .eps to specified dir
-location2 = "./figures_new/";
+location2 = "./figures_other/";
 for figure_name = local_figures'
     figure_name = cell2mat(figure_name);
     fig = openfig(location + figure_name);
