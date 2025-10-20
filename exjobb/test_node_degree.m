@@ -11,7 +11,7 @@ function result = test_node_degree(graph_generating_algorithm, ~, node_degree, o
 %       options    : size, sample_size, fract_targ, fract_dist, ddp, seed
     switch graph_generating_algorithm{1}{1}
         case "Erdos Renyi"
-            graph_algorithm = @erdos_renyi;
+            graph_algorithm = @erdos_renyi_unconnected;
             params = num2cell([options.size, node_degree/(2*(options.size-1))]);
             [result.results_cost, result.results_time, result.results_trivial] = run_test( ...
                 graph_algorithm, ...

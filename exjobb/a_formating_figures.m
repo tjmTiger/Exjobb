@@ -1,7 +1,7 @@
 clear;clc;close all;
 
 interpreter = 'latex';
-location = "./figures_other/";
+location = "./figures_new/";
 local_figures = struct2table(dir(location + "*.fig")).name;
 
 % for figure_name = local_figures'
@@ -23,7 +23,7 @@ local_figures = struct2table(dir(location + "*.fig")).name;
 % end
 
 % Save all figures in a dir to .eps to specified dir
-location2 = "./figures_other/";
+location2 = "./figures_new/";
 for figure_name = local_figures'
     figure_name = cell2mat(figure_name);
     fig = openfig(location + figure_name);

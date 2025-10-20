@@ -11,8 +11,8 @@ function result = test_OFDF_scale_beta(graph_generating_algorithm, ddp, beta, op
 %       beta                : float, scale free parameter
 %       options             : size, sample_size, fract_targ, fract_dist, ddp, seed, old_results
     if graph_generating_algorithm{1}{1} == "Scale Free"
-        alpha = (1-beta)/2;
-        gamma = 1-beta-alpha;
+        alpha = 1-beta;
+        gamma = 0;
         params = num2cell([options.size, alpha, beta, gamma, 1, 1]);
         [result.results_cost, result.results_time, result.results_trivial] = run_test( ...
             @sfg, ...

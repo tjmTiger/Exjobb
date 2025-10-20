@@ -110,7 +110,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
             position = get(gcf, 'Position');
             position = [100, 100, 600, 600];
             % save figures, add folder named "figures_new" to direcotry with this function
-            illegal_chars = [" ","\","}","{","^","$"]; % characters not to be included in figure name
+            illegal_chars = [" ","\","}","{","^","$",".","=",","]; % characters not to be included in figure name
             savefig(gcf, "figures_new/" + erase(options.ddp, illegal_chars) + "_" + erase(variable1_name, illegal_chars) + "_" + erase(variable2_name, illegal_chars) + "_" + erase(graph_generating_algorithm{1}{1},illegal_chars))
         end
     end
