@@ -1,6 +1,6 @@
 function mustBeCell(A)
-%MUSTBENUMERIC Validate that value is cell
-%   MUSTBENUMERIC(A) throws an error if A contains nonnumeric values.
+%MUSTBECELL Validate that value is cell
+%   MUSTBECELL(A) throws an error if A is not a cell array.
 %   MATLAB call iscell to determine if a value is a cell.
 %
 %   See also: ISCELL.
