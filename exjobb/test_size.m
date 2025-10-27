@@ -1,7 +1,8 @@
 function result = test_size(graph_generating_algorithm, ~, n, options)
 % TEST_SIZE
 %   Description:
-%       Tests how graphs are effected by their sizes.
+%       Tests how graphs are effected by their sizes. Note: Erdos Renyi p = 0.1 regardless of default params
+%       due to graph size 180 > n > 30
 %   Output Arguments:
 %       result    : set containing cost, runtime and trivial solutions.
 %   Input Arguments:

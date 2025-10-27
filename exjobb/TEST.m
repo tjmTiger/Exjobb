@@ -36,6 +36,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
 %   Example of @test_funtion:
 %
 %       function result = test_different_fractions(graph_generating_algorithm, fract_dist, fract_targ, options)
+%           % pick DDP algorithm
 %           switch graph_generating_algorithm{1}{1}
 %               case "Erdos Renyi"
 %                   graph_algorithm = @erdos_renyi;
@@ -44,7 +45,9 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
 %               case "Scale Free"
 %                   graph_algorithm = @sfg;
 %           end
+%           % use default parameters for graph generation
 %           params = num2cell(graph_generating_algorithm{1}{2});
+%           % perform <sample_size> number of tests
 %           [result.results_cost, result.results_time, result.results_trivial] = run_test( ...
 %               graph_algorithm, ...
 %               params, ...
@@ -81,7 +84,6 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
         options.default_p {mustBeNumeric} = [0.03, 2, 0.9, 1, 0, 0]; % chosen according to pareto, [p, k, p_ws, alhpa, beta, gamma]
     end
 
-
     for graph_generating_algorithm = {...
             {"Erdos Renyi", [options.size, options.default_p(1)]}, ...
             {"Watts Strogratz", [options.size, options.default_p(2), options.default_p(3)]}, ...
@@ -109,7 +111,7 @@ function TEST(test_function, variable1_name, variable1, variable2_name, variable
             end
             position = get(gcf, 'Position');
             position = [100, 100, 600, 600];
-            % save figures, add folder named "figures_new" to direcotry with this function
+            % save figures, this requires folder named "figures_new" in direcotry containing this function
             illegal_chars = [" ","\","}","{","^","$",".","=",","]; % characters not to be included in figure name
             savefig(gcf, "figures_new/" + erase(options.ddp, illegal_chars) + "_" + erase(variable1_name, illegal_chars) + "_" + erase(variable2_name, illegal_chars) + "_" + erase(graph_generating_algorithm{1}{1},illegal_chars))
         end
