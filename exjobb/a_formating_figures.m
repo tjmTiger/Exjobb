@@ -1,7 +1,7 @@
 clear;clc;close all;
 
 interpreter = 'latex';
-location = "./figures_new/";
+location = "./figures_other/";
 local_figures = struct2table(dir(location + "*.fig")).name;
 
 % for figure_name = local_figures'

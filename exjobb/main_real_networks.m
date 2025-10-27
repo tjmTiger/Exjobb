@@ -1,89 +1,111 @@
-clear;
-close all;
-clc;
 %-----------------------------------------------%
 %                                               %
 %                  Real Networks                %
 %                                               %
 %-----------------------------------------------%
-% 
-% fract_targ = 0.1;
-% fract_dist = 0.1;
-% 
-% load formated_data.mat;
-% 
-% tags = keys(formated_data);
-% val = values(formated_data);
-% figure();
-% results_all = [];
-% results_time_all = [];
-% results_trivial_all = [];
-% for tag = 1:length(tags)
-%     disp(tags{tag})
-% 
-%     n_graphs = length(val{tag});
-%     results = [];
-%     results_time = [];
-%     results_trivial = [];
-% 
-%     for i = 1:length(val{tag})
-%         G = val{tag}{i}{1};
-%         disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
-%         test2do = n_tests(size(G.Nodes, 1), fract_targ, fract_dist);
-%         disp("test2do: " + test2do)
-%         for j = 1:test2do
-%             [results(end+1), results_time(end+1), results_trivial(end+1)] = decouple(G, fract_targ, fract_dist);
-%         end
-%     end
-%     graph_name = convertCharsToStrings(tags{tag});
-%     subplot(1,3,1);
-%     hold on
-%     add2boxchart(results, graph_name, "Cost", "Cost [-]", "Graph category")
-%     hold off
-%     subplot(1,3,2);
-%     hold on
-%     add2boxchart(results_time, graph_name, "Runtime", "Time [s]", "Graph category")
-%     hold off
-%     subplot(1,3,3);
-%     hold on
-%     add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Graph category")
-%     hold off
-% end
-% 
-% fontsize(12,"points")
-% position = get(gcf, 'Position');
-% position = [100, 100, 600, 600];
-% saveas(gcf, "figures_new/Real Networks.fig")
+clear;
+close all;
+clc;
 
-% %% Sizes of networks
-% load formated_data.mat;
-% 
-% tags = keys(formated_data);
-% val = values(formated_data);
-% figure();
-% for tag = 1:length(tags)
-%     disp(tags{tag})
-% 
-%     n_graphs = length(val{tag});
-%     results = zeros(1, n_graphs);
-%     results_time = zeros(1, n_graphs);
-%     results_trivial = zeros(1, n_graphs);
-% 
-%     for i = 1:length(val{tag})
-%         G = val{tag}{i}{1};
-%         disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
-%         results(i) = size(G.Nodes, 1);
-%     end
-%     graph_name = erase(convertCharsToStrings(tags{tag}), " network");
-%     graph_name = replace(graph_name, "communication", "com.");
-%     graph_name = replace(graph_name, "communitie", "com.");
-%     hold on
-%     add2boxchart(results, graph_name, "Real Networks, Sizes", "Size [psc]", "Graph category")
-%     hold off
-%     set(gca, 'YScale', 'log')
-% end
-%
-%% plot all graph topologies
+fract_targ = 0.1;
+fract_dist = 0.1;
+
+load formated_data.mat;
+
+tags = keys(formated_data); % get network type names
+val = values(formated_data); % get disctonary containing all digraphs, ordered by type of network
+figure();
+% store results of tests from all type of networks
+results_all = [];
+results_time_all = [];
+results_trivial_all = [];
+for tag = 1:length(tags) % iterate through all types of networks
+    disp(tags{tag})
+    
+    % temp. store results from current type of network
+    % n_graphs = length(val{tag}); % number of graphs of <tag> type
+    results = [];
+    results_time = [];
+    results_trivial = [];
+
+    for i = 1:length(val{tag})
+        G = val{tag}{i}{1};
+        % perform tests2do number of tests on each graph depending on its size and fraction of targets and disturbances
+        tests2do = n_tests(numnodes(G), fract_targ, fract_dist);
+        disp("Size: " + numnodes(G) + ", Tests to do: " + tests2do + ", Graphs left: " + (length(val{tag})-i)) % debugging info
+        % Forloop below can be improved by pre-defining sizes of results arrays so that parfor can be used (from parallel computing toolbox)
+        % Issue: size of results is dependent on number of graphs (n_graphs) and their sizes, i.e., number of tests per graph (tests2do)
+        for j = 1:tests2do
+            [results(end+1), results_time(end+1), results_trivial(end+1)] = decouple(G, fract_targ, fract_dist);
+        end
+    end
+    graph_name = convertCharsToStrings(tags{tag});
+    subplot(1,3,1);
+    hold on
+    add2boxchart(results, graph_name, "Cost", "Cost [-]", "Graph category")
+    hold off
+    subplot(1,3,2);
+    hold on
+    add2boxchart(results_time, graph_name, "Runtime", "Time [s]", "Graph category")
+    hold off
+    subplot(1,3,3);
+    hold on
+    add2boxchart(results_trivial, graph_name, "Trivial solutions", "Index [-]", "Graph category")
+    hold off
+end
+
+fontsize(12,"points")
+position = get(gcf, 'Position');
+position = [100, 100, 600, 600];
+saveas(gcf, "figures_new/Real Networks.fig")
+
+%-----------------------------------------------%
+%                                               %
+%          Plot sizes of real networks          %
+%                                               %
+%-----------------------------------------------%
+%%
+clear;
+close all;
+clc;
+
+load formated_data.mat;
+
+tags = keys(formated_data);
+val = values(formated_data);
+figure();
+for tag = 1:length(tags)
+    disp(tags{tag})
+
+    n_graphs = length(val{tag});
+    results = zeros(1, n_graphs);
+    results_time = zeros(1, n_graphs);
+    results_trivial = zeros(1, n_graphs);
+
+    for i = 1:length(val{tag})
+        G = val{tag}{i}{1};
+        disp("Left: " + (length(val{tag})-i) + ", Size: " + numnodes(G))
+        results(i) = numnodes(G);
+    end
+    graph_name = erase(convertCharsToStrings(tags{tag}), " network");
+    graph_name = replace(graph_name, "communication", "com.");
+    graph_name = replace(graph_name, "communitie", "com.");
+    hold on
+    add2boxchart(results, graph_name, "Real Networks, Sizes", "Size", "Graph category")
+    hold off
+    set(gca, 'YScale', 'log')
+end
+
+%-----------------------------------------------%
+%                                               %
+%        Plot topologies of real networks       %
+%                   (Appendix)                  %
+%-----------------------------------------------%
+%%
+clear;
+close all;
+clc;
+
 load formated_data.mat;
 
 tags = keys(formated_data);
@@ -97,7 +119,7 @@ for tag = 1:length(tags)
     % figure();
     for i = 1:length(val{tag})
         G = val{tag}{i}{1};
-        disp("Left: " + (length(val{tag})-i) + ", Size: " + size(G.Nodes, 1))
+        disp("Left: " + (length(val{tag})-i) + ", Size: " + numnodes(G))
         % subplot(x*x,1,i)
         figure();
         plot(G)
@@ -107,32 +129,6 @@ for tag = 1:length(tags)
     sgtitle(graph_name)
 end
 
-% %%
-% %-----------------------------------------------%
-% %                                               %
-% %              Technological network            %
-% %                                               %
-% %-----------------------------------------------%
-% clear;
-% clc;
-% multithreading()
-% 
-% % number of nodes: 677
-% test_hubs(11, 140, [340, 80, 359], ['r', 'b', 'g'], "Technological")
-% 
-% %
-% %-----------------------------------------------%
-% %                                               %
-% %                Electrical network             %
-% %                                               %
-% %-----------------------------------------------%
-% clear;
-% clc;
-% multithreading()
-% 
-% % number of nodes: 4941
-% test_hubs(12, 500, [4463, 3743, 2539, 97], ['r', 'b', 'g','k'], "Electrical")
-
 %-----------------------------------------------%
 %                                               %
 %                   Functions                   %
@@ -140,6 +136,7 @@ end
 %-----------------------------------------------%
 
 function add2boxchart(results, test_name, title_name, ylabel_name, xlabel_name)
+% Create boxchart from results
     fontsize(12,"points")
     position = get(gcf, 'Position');
     position = [100, 100, 600, 600];
@@ -160,6 +157,8 @@ function add2boxchart(results, test_name, title_name, ylabel_name, xlabel_name)
 end
 
 function n_tests = n_tests(n, fracT, fracD, hubT, hubD)
+% Calculate how many tests to perform on a graph based on its size and
+% fraction of targets/disturbances
     alpha  = 1;
     switch nargin
         case 3

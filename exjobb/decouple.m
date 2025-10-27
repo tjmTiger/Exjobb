@@ -25,7 +25,7 @@ arguments
     fract_targ single
     fract_dist single
     options.ddp string = "state_feedback"
-    options.seed {mustBeNumeric} = -1
+    options.seed {mustBeNumeric} = -1 % default setting = no seed
     % options.list_targ = []
     % options.list_dist = []
     options.old_results % used for OF-DF tests to calc index
@@ -97,8 +97,7 @@ switch options.ddp
         [V_out, V_in, ~, ~, ~] = cab_pair_backprop_new(G, D, T);
         results_time = toc(t_start);
 
-        % How many of solutions with lower cost than OF have 0 trivial
-        % solutions? (index for DF)
+        % How many of solutions with lower cost than OF have 0 trivial solutions? (index for DF)
         V_in_new = {};
         V_out_new = {};
         no_triv_count = 0;
@@ -108,7 +107,6 @@ switch options.ddp
                 V_out_new{end+1} = V_out{i};
                 if no_trivial_solutions(V_in{i}, V_out{i}, T, D)
                     no_triv_count = no_triv_count+1;
-                    % disp("Found!!!!")
                 end
             end
         end

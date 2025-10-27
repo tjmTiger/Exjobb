@@ -18,6 +18,7 @@ end
 switch graph_generating_algorithm{1}{1}
     case "Erdos Renyi"
         graph_algorithm = @erdos_renyi;
+        graph_generating_algorithm{1}{2}(2) = 0.1; % use p = 0.1 instead of 0.03
     case "Watts Strogratz"
         graph_algorithm = @watts_strogatz;
     case "Scale Free"
